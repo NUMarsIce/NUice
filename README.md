@@ -35,3 +35,6 @@ I suggest at least working up to the `Writing a Simple Service and Client` tutor
 
 # Repo Setup
 Hahaha, we have not gotten this far yet. Setting up all the ROS workspace stuff isn't a simple task.
+
+`source devel/setup.bash`
+`echo $ROS_PACKAGE_PATH`
