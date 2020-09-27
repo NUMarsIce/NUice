@@ -2,7 +2,7 @@
 
 This project uses ROS melodic on Ubuntu 18.04. I would suggest running [Ubuntu 18](https://releases.ubuntu.com/18.04.5/) on a Virtual Machine such as [VirtualBox](https://www.virtualbox.org/wiki/Downloads) if you do not want to dual boot. 
 
-In terminal, run these commands in succession (following this tutorial)
+In terminal, run these commands in succession (following [this](http://wiki.ros.org/melodic/Installation) tutorial)
 ```bash
 #Install sources and keys
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
