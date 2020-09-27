@@ -23,9 +23,9 @@ rosdep update
 ```
 
 Congrats! ROS Melodic should be installed. To test, run roscore:
-
-```roscore```
-
+```
+roscore
+```
 This should run and not show any errors. To close roscore do a classic `Ctrl+C`.
 
 # ROS Tutorials
