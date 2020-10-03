@@ -23,7 +23,7 @@ rosdep update
 ```
 
 Congrats! ROS Melodic should be installed. To test, run roscore:
-```
+```bash
 roscore
 ```
 This should run and not show any errors. To close roscore do a classic `Ctrl+C`.
@@ -36,5 +36,16 @@ I suggest at least working up to the `Writing a Simple Service and Client` tutor
 # Repo Setup
 Hahaha, we have not gotten this far yet. Setting up all the ROS workspace stuff isn't a simple task.
 
-`source devel/setup.bash`
-`echo $ROS_PACKAGE_PATH`
+```bash
+#Clone the Repo
+cd ~/
+git clone https://github.com/SpyGuyIan/NUice.git
+
+#Build the workspace
+cd NUice/catkin_ws/
+catkin_make
+
+#Automatically source our workspace so every new terminal knows about it
+echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
+
+```
