@@ -1,6 +1,6 @@
 # ROS Install
 
-This project uses ROS melodic on Ubuntu 18.04. I would suggest running [Ubuntu 18](https://releases.ubuntu.com/18.04.5/) on a Virtual Machine such as [VirtualBox](https://www.virtualbox.org/wiki/Downloads) if you do not want to dual boot. 
+This project uses ROS melodic on Ubuntu 18.04. I would suggest running [Ubuntu 18](https://releases.ubuntu.com/18.04.5/) on a Virtual Machine such as [VirtualBox](https://www.virtualbox.org/wiki/Downloads) if you do not want to dual boot. If you are unfamilliar with Virtual Machines, [this is a good tutorial](https://linuxhint.com/install_ubuntu_18-04_virtualbox/) to get one up and running.
 
 In terminal, run these commands in succession (following [this](http://wiki.ros.org/melodic/Installation) tutorial)
 ```bash
