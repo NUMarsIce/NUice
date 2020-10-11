@@ -34,7 +34,7 @@ If you are not already familliar with ROS, running through the tutorials will br
 I suggest at least working up to the `Writing a Simple Service and Client` tutorial as most of the important stuff will be covered there. Otherwise, please feel free to go as far as you desire as the tutorials go on further to teach you about building programs and using more fancy services.
 
 # Repo Setup
-Hahaha, we have not gotten this far yet. Setting up all the ROS workspace stuff isn't a simple task.
+If you feel comfortable with ROS, go ahead and get this repo set up on your local machine.
 
 ```bash
 #Clone the Repo
@@ -49,3 +49,5 @@ catkin_make
 echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
 
 ```
+
+A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
