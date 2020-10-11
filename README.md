@@ -2,7 +2,7 @@
 
 This project uses ROS melodic on Ubuntu 18.04. I would suggest running [Ubuntu 18](https://releases.ubuntu.com/18.04.5/) on a Virtual Machine such as [VirtualBox](https://www.virtualbox.org/wiki/Downloads) if you do not want to dual boot. If you are unfamilliar with Virtual Machines, [this is a good tutorial](https://linuxhint.com/install_ubuntu_18-04_virtualbox/) to get one up and running.
 
-In terminal, run these commands in succession (following [this](http://wiki.ros.org/melodic/Installation) tutorial)
+In terminal, run these commands in succession (we are following [this](http://wiki.ros.org/melodic/Installation) tutorial)
 ```bash
 #Install sources and keys
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -10,14 +10,14 @@ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31
 
 #Install ROS
 sudo apt update
-sudo apt install ros-melodic-desktop-full
+sudo apt install -y ros-melodic-desktop-full
 
 #Setup the environment
 echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
 #Install build tools
-sudo apt install python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential
+sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential
 sudo rosdep init
 rosdep update
 ```
