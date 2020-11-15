@@ -4,7 +4,7 @@ from std_msgs.msg import Float64
 drillSpeed = 1.0
 materialStrength = 1.0
 rop = 1.0
-# A constant of proportionality that
+# A constant of proportionality that depends on mechanical details of the drill
 C = 200
 
 def speedResponse(msg):
