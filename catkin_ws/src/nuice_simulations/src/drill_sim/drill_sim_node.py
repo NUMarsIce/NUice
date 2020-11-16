@@ -1,5 +1,6 @@
-import rospy
+#!/usr/bin/env python
 
+import rospy
 from std_msgs.msg import Float64
 
 requestedSpeed = 0.0
