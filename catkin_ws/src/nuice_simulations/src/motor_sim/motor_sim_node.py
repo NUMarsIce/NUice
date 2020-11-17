@@ -22,12 +22,12 @@ def speed_cb(spd):
 
 def main():
     #init names
-    rospy.init_node("sim_motor", anonymous=True)
+    rospy.init_node("sim_motor")
     
-    pub = rospy.Publisher("/sim_motor/cur_position", Float32, queue_size=1)
-    rospy.Subscriber("/sim_motor/setpoint", Float32, setpoint_cb)
-    rospy.Subscriber("/sim_motor/relative_move", Float32, relative_cb)
-    rospy.Subscriber("/sim_motor/speed", Float32, speed_cb)
+    pub = rospy.Publisher("cur_position", Float32, queue_size=1)
+    rospy.Subscriber("setpoint", Float32, setpoint_cb)
+    rospy.Subscriber("relative_move", Float32, relative_cb)
+    rospy.Subscriber("speed", Float32, speed_cb)
 
     position_cur = 0;
     speed_cur = 0
@@ -45,7 +45,7 @@ def main():
             position_cur += speed_cur
         else:
             position_cur = setpoint
-            cur_speed = 0
+            speed_cur = 0
         
         pub.publish(position_cur)
         rospy.sleep(.001) #dt of 1ms
