@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import rospy
 from std_msgs.msg import Float64
 
@@ -27,7 +28,7 @@ def run():
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         wob = (C * materialStrength * rop)/drillSpeed
-        pun.publish(wob)
+        pub.publish(wob)
         rate.sleep()
 
 
