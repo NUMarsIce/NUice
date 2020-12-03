@@ -60,14 +60,13 @@ sudo apt install python3 python3-pip git mercurial
 python3 -m pip install mbed-cli
 
 #Install GCC ARM compiler
-cd ~
-
-wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
-tar -xjvf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
-rm gcc-arm-none-eabi-9-2020-q2-update
+sudo apt-get install gcc-arm-none-eabi
 
 #Add mbed and GCC_ARM to PATH
-echo "export PATH=\$PATH:/home/$USER/gcc-arm-none-eabi-9-2020-q2-update/bin/:/home/$USER/.local/bin" >> ~/.bashrc
+echo "export PATH=\$PATH:/home/$USER/.local/bin" >> ~/.bashrc
+
+#Configure cmbed compiler
+mbed config -G GCC_ARM_PATH "/usr/bin/arm-none-eabi-gcc"
 
 
 ```
