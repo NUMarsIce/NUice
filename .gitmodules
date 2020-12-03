@@ -1,0 +1,3 @@
+[submodule "firmware/mbed/mbed-os"]
+	path = firmware/mbed/mbed-os
+	url = https://github.com/SpyGuyIan/mbed-os.git

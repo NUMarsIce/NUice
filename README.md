@@ -40,6 +40,7 @@ If you feel comfortable with ROS, go ahead and get this repo set up on your loca
 #Clone the repo
 cd ~/
 git clone https://github.com/SpyGuyIan/NUice.git
+git submodule update --init --recursive
 
 #Build the workspace
 cd NUice/catkin_ws/
@@ -65,8 +66,9 @@ sudo apt-get install gcc-arm-none-eabi
 #Add mbed and GCC_ARM to PATH
 echo "export PATH=\$PATH:/home/$USER/.local/bin" >> ~/.bashrc
 
-#Configure cmbed compiler
+#Configure mbed
 mbed config -G GCC_ARM_PATH "/usr/bin/arm-none-eabi-gcc"
+mbed config -G MBED_OS_DIR ~/NUice/firmware/mbed/mbed-os/
 
 
 ```
