@@ -28,16 +28,16 @@ roscore
 ```
 This should run and not show any errors. To close roscore do a classic `Ctrl+C`.
 
-# ROS Tutorials
+# ROS tutorials
 If you are not already familliar with ROS, running through the tutorials will bring you up to speed. [ROS's tutorials](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment) are great, but understand that you don't have to memorise everything they tell you. Also note that we will be using `catkin` to build and using the `ROS melodic` distro.
 
 I suggest at least working up to the `Writing a Simple Service and Client` tutorial as most of the important stuff will be covered there. Otherwise, please feel free to go as far as you desire as the tutorials go on further to teach you about building programs and using more fancy services.
 
-# Repo Setup
+# Repo setup
 If you feel comfortable with ROS, go ahead and get this repo set up on your local machine.
 
 ```bash
-#Clone the Repo
+#Clone the repo
 cd ~/
 git clone https://github.com/SpyGuyIan/NUice.git
 
@@ -51,3 +51,23 @@ echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
 
 A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
+
+# MBed CLI setup
+
+```bash
+#Install MBed CLI
+sudo apt install python3 python3-pip git mercurial
+python3 -m pip install mbed-cli
+
+#Install GCC ARM compiler
+cd ~
+
+wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
+tar -xjvf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
+rm gcc-arm-none-eabi-9-2020-q2-update
+
+#Add mbed and GCC_ARM to PATH
+echo "export PATH=\$PATH:/home/$USER/gcc-arm-none-eabi-9-2020-q2-update/bin/:/home/$USER/.local/bin" >> ~/.bashrc
+
+
+```
