@@ -54,7 +54,7 @@ echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
 A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
 
 # MBed CLI setup
-
+This assumes you are running linux, but it is possible to run on Windows (and possible mac).
 ```bash
 #Install MBed CLI
 sudo apt install python3 python3-pip git mercurial
@@ -69,6 +69,5 @@ echo "export PATH=\$PATH:/home/$USER/.local/bin" >> ~/.bashrc
 #Configure mbed
 mbed config -G GCC_ARM_PATH "/usr/bin/arm-none-eabi-gcc"
 mbed config -G MBED_OS_DIR ~/NUice/firmware/mbed/mbed-os/
-
 
 ```
