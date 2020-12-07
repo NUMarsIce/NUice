@@ -1,33 +1,37 @@
 #!/usr/bin/env python
-# license removed for brevity
+
 import rospy
 from std_msgs.msg import Float32
+from nuice_simulations.srv import MotorFloat32, MotorFloat32Response
 import numpy as np
 
 setpoint = 0
 speed_max = .1*2 #0.1m/s
-accel = 0.001    #1m/s^2
+accel = 0.0001    #0.1m/s^2
 
-def setpoint_cb(sp):
+def handle_setpoint(sp):
     global setpoint
     setpoint = sp.data
+    return MotorFloat32Response()
 
-def relative_cb(rel):
+def handle_relative(rel):
     global setpoint 
     setpoint += rel.data
+    return MotorFloat32Response()
 
-def speed_cb(spd):
+def handle_speed(spd):
     global speed_max 
     speed_max = spd.data/2
+    return MotorFloat32Response()
 
 def main():
     #init names
     rospy.init_node("sim_motor")
     
     pub = rospy.Publisher("cur_position", Float32, queue_size=1)
-    rospy.Subscriber("setpoint", Float32, setpoint_cb)
-    rospy.Subscriber("relative_move", Float32, relative_cb)
-    rospy.Subscriber("speed", Float32, speed_cb)
+    rospy.Service("setpoint", MotorFloat32, handle_setpoint)
+    rospy.Service("relative_move", MotorFloat32, handle_relative)
+    rospy.Service("speed", MotorFloat32, handle_speed)
 
     position_cur = 0;
     speed_cur = 0

@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-<<<<<<< HEAD
 import rospy
-=======
->>>>>>> a5709ee594c7a219ef54af10164992e79380372c
+
 
 import rospy
 from std_msgs.msg import Float64
@@ -24,10 +22,10 @@ def requestHandler(request):
 
 # Collect the desired speed of the drill and calulate the current speed using various technical details of the drill hardware.
 # Modify the voltage across the drill using a PID loop.
-def drillInit(requestedSpeed,currentSpeed,currentAccel,torqueConstant,current,changeInCurrent,voltage,errorSum,proportionalControl,integralControl):
-    rospy.init_node("drillSim", anonymous=True)
-    rospy.Subscriber("drillRequest", Float64, requestHandler)
-    pub = rospy.Publisher("drillSpeed", Float64, queue_size = 10)
+def drillInit(requestedSpeed, currentSpeed, currentAccel, torqueConstant, current, changeInCurrent, voltage, errorSum, proportionalControl, integralControl):
+    rospy.init_node("drill_sim", anonymous=True)
+    rospy.Subscriber("drill_request", Float64, requestHandler)
+    pub = rospy.Publisher("drill_speed", Float64, queue_size = 10)
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         currentSpeed += currentAccel
@@ -40,4 +38,4 @@ def drillInit(requestedSpeed,currentSpeed,currentAccel,torqueConstant,current,ch
 
 
 if __name__ == '__main__':
-    drillInit(requestedSpeed,currentSpeed,currentAccel,torqueConstant,current,changeInCurrent,voltage,errorSum,proportionalControl,integralControl)
+    drillInit(requestedSpeed, currentSpeed, currentAccel, torqueConstant, current, changeInCurrent, voltage, errorSum, proportionalControl, integralControl)

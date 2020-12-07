@@ -15,8 +15,8 @@ def runLayersSim():
         strength = getNextLayerStrength()
         setNextLayer(a,size,strength,layers)
         a = a + size
-    pub = rospy.Publisher('materialStrength',Float64,queue_size = 10)
-    rospy.init_node('layers_node',anonymous=True)
+    pub = rospy.Publisher('material_strength', Float64, queue_size = 10)
+    rospy.init_node('layers_node', anonymous=True)
     rate = rospy.Rate(10)
     i = 1
     while(i <= 1000 and not rospy.is_shutdown()):
