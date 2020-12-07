@@ -1,0 +1,20 @@
+<library path="src">
+  <class name="MotorWidget" type="motor_widget.motor_widget_module.MotorWidget" base_class_type="rqt_gui_py::Plugin">
+    <description>
+	Widget to deal with nuice motors
+    </description>
+    <qtgui>
+      <!-- optional grouping...
+      <group>
+        <label>Group</label>
+      </group>
+      <group>
+        <label>Subgroup</label>
+      </group>
+      -->
+      <label>Motors</label>
+      <icon type="theme">system-help</icon>
+      <statustip>Manage nuice motors</statustip>
+    </qtgui>
+  </class>
+</library>

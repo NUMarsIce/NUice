@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<robot name="PRISMM">
+
+  <link name="base_link">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://state_model/urdf/models/prismm_frame.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="rack">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://state_model/urdf/models/prismm_rack.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="drill">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://state_model/urdf/models/prismm_drill.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="probe">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://state_model/urdf/models/prismm_probe.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+
+  <joint name="frame_rack_link" type="prismatic">
+    <parent link="base_link"/>
+    <child link="rack"/>
+    <limit effort="1000.0" lower="-.45" upper=".45" velocity="0.5"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="drill_link" type="prismatic">
+    <parent link="rack"/>
+    <child link="drill"/>
+    <limit effort="1000.0" lower="0" upper="1.5" velocity="0.5"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+  <joint name="probe_link" type="prismatic">
+    <parent link="rack"/>
+    <child link="probe"/>
+    <limit effort="1000.0" lower="0" upper="1.5" velocity="1.8"/>    
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+</robot>

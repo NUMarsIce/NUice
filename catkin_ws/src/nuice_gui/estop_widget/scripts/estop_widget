@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+
+import sys
+
+from estop_widget.estop_widget_module import EstopWidget
+from rqt_gui.main import Main
+
+plugin = 'estop_widget'
+main = Main(filename=plugin)
+sys.exit(main.main(standalone=plugin))
