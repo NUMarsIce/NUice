@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import rospy
 from std_msgs.msg import Float64
 
@@ -19,15 +20,15 @@ def ropResponse(msg):
 # Collect the drill speed, the current rate of penetration, and the strength of the simulated layer we are passing
 # through, calculate the weight on the bit, and publish it.
 def run():
-    pub = rospy.Publisher('weightOnBit', Float64, queue_size = 10)
+    pub = rospy.Publisher('weight_on_bit', Float64, queue_size = 10)
     rospy.init_node('load_cell_sim_node', anonymous = True)
-    rospy.Subscriber('drillSpeed',Float64,speedResponse)
-    rospy.Subscriber('materialStrength',Float64,strengthResponse)
-    rospy.Subscriber('rateOfPenetration', Float64, ropResponse)
+    rospy.Subscriber('drill_speed',Float64,speedResponse)
+    rospy.Subscriber('material_strength',Float64,strengthResponse)
+    rospy.Subscriber('rate_of_penetration', Float64, ropResponse)
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         wob = (C * materialStrength * rop)/drillSpeed
-        pun.publish(wob)
+        pub.publish(wob)
         rate.sleep()
 
 

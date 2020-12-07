@@ -1,0 +1,9 @@
+<launch>
+	<node pkg="nuice_simulations" type="drill_sim_node.py" name="drill_sim_node"/>
+	<node pkg="nuice_simulations" type="load_cell_sim_node.py" name="load_cell_sim_node"/>
+	<!--<node pkg="nuice_simulations" type="estop_sim_node.py" name="estop_sim_node"/>-->
+	<node pkg="nuice_simulations" type="layers_sim_node.py" name="layers_sim_node"/>
+
+	<include file="$(find state_model)/launch/sim_display.launch"/>
+
+</launch>
