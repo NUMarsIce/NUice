@@ -39,8 +39,7 @@ If you feel comfortable with ROS, go ahead and get this repo set up on your loca
 ```bash
 #Clone the repo
 cd ~/
-git clone https://github.com/SpyGuyIan/NUice.git
-git submodule update --init --recursive
+git clone https://github.com/IanBurwell/NUice.git --recurse-submodules
 
 #Build the workspace
 cd NUice/catkin_ws/
