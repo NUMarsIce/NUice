@@ -39,7 +39,7 @@ If you feel comfortable with ROS, go ahead and get this repo set up on your loca
 ```bash
 #Clone the repo
 cd ~/
-git clone https://github.com/IanBurwell/NUice.git --recurse-submodules
+git clone https://github.com/IanBurwell/NUice.git
 
 #Build the workspace
 cd NUice/catkin_ws/
@@ -47,7 +47,6 @@ catkin_make
 
 #Automatically source our workspace so every new terminal knows about it
 echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
-
 ```
 
 A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
@@ -59,14 +58,14 @@ This assumes you are running linux, but it is possible to run on Windows (and po
 sudo apt install python3 python3-pip git mercurial
 python3 -m pip install mbed-cli
 
-#Install GCC ARM compiler
-sudo apt-get install gcc-arm-none-eabi
+#Install GCC ARM compiler (downloaded originally from [here](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))
+cd ~
+wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
+tar xjf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 && rm gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 
+echo "export PATH=\$PATH:~/gcc-arm-none-eabi-9-2020-q2-update/bin" >> ~/.bashrc
 
-#Add mbed and GCC_ARM to PATH
-echo "export PATH=\$PATH:/home/$USER/.local/bin" >> ~/.bashrc
-
-#Configure mbed
-mbed config -G GCC_ARM_PATH "/usr/bin/arm-none-eabi-gcc"
+#Configure mbed to use our mbed-os
 mbed config -G MBED_OS_DIR ~/NUice/firmware/mbed/mbed-os/
-
 ```
+#Do we need this?: mbed config -G GCC_ARM_PATH "~/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc"
+

@@ -10,22 +10,22 @@
 
 // Blinking rate in milliseconds
 #define BLINKING_RATE_MS    500
-USBSerial  serial;
+USBSerial  usbserial;
 
 int main()
 {
     // Initialise the digital pin LED1 as an output
     DigitalOut led(PA_9);
     DigitalOut led2(PA_10);
-    AnalogIn   ain(PA_0);
+    //AnalogIn   ain(PA_0);
     
     led2 = !led;
     while (true) {
         led = !led;
         led2 = !led2;
-        
-        serial.printf("%d\r\n", (int)(ain.read() * 10000));
-        
+    //    
+        usbserial.printf("Hello World\r");
+    //    
         thread_sleep_for(BLINKING_RATE_MS);
     }
 }
