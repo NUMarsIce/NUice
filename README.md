@@ -33,7 +33,7 @@ If you are not already familliar with ROS, running through the tutorials will br
 
 I suggest at least working up to the `Writing a Simple Service and Client` tutorial as most of the important stuff will be covered there. Otherwise, please feel free to go as far as you desire as the tutorials go on further to teach you about building programs and using more fancy services.
 
-# Repo setup
+# Repo setup (Linux for ROS)
 If you feel comfortable with ROS, go ahead and get this repo set up on your local machine.
 
 ```bash
@@ -52,6 +52,12 @@ echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
 A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
 
 # MBed CLI setup
+## Windows
+1. Download and run the MBed installer found [here](https://github.com/ARMmbed/mbed-cli-windows-installer/releases/latest).
+2. Download and install the GCC_ARM compiler [here](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). Make sure to check "Add path to environment variable" at the end of the installer.
+3. Set the `mbed-os` path to wherever you cloned the repo: `mbed config -G MBED_OS_DIR C:\<PATHTONUICE>\firmware\mbed\mbed-os`
+
+## Linux (Not working 100% currently)
 This assumes you are running linux, but it is possible to run on Windows (and possible mac).
 ```bash
 #Install MBed CLI
@@ -67,5 +73,5 @@ echo "export PATH=\$PATH:~/gcc-arm-none-eabi-9-2020-q2-update/bin" >> ~/.bashrc
 #Configure mbed to use our mbed-os
 mbed config -G MBED_OS_DIR ~/NUice/firmware/mbed/mbed-os/
 ```
-#Do we need this?: mbed config -G GCC_ARM_PATH "~/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc"
+[](Do we need this?: mbed config -G GCC_ARM_PATH "~/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc")
 

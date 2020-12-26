@@ -23,9 +23,9 @@ int main()
     while (true) {
         led = !led;
         led2 = !led2;
-    //    
-        usbserial.printf("Hello World\r");
-    //    
+       
+        usbserial.printf("Hello World\n");
+       
         thread_sleep_for(BLINKING_RATE_MS);
     }
 }
