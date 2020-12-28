@@ -26,6 +26,7 @@ def drillInit(requestedSpeed, currentSpeed, currentAccel, torqueConstant, curren
     rospy.init_node("drill_sim", anonymous=True)
     rospy.Subscriber("drill_request", Float64, requestHandler)
     pub = rospy.Publisher("drill_speed", Float64, queue_size = 10)
+    vpub = rospy.Publisher("drill_voltage", Float64, queue_size = 10)
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         currentSpeed += currentAccel
@@ -33,6 +34,7 @@ def drillInit(requestedSpeed, currentSpeed, currentAccel, torqueConstant, curren
         voltage = proportionalControl*(requestedSpeed - currentSpeed) + integralControl * errorSum
         errorSum += (requestedSpeed - currentSpeed)
         pub.publish(currentSpeed)
+        vpub.publish(voltage)
         rate.sleep()
 
 
