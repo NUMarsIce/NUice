@@ -3,6 +3,8 @@
 	<node pkg="nuice_simulations" type="load_cell_sim_node.py" name="load_cell_sim_node"/>
 	<!--<node pkg="nuice_simulations" type="estop_sim_node.py" name="estop_sim_node"/>-->
 	<node pkg="nuice_simulations" type="layers_sim_node.py" name="layers_sim_node"/>
+	<node pkg="nuice_simulations" type="motor_sim_node.py" name="motor_sim_node"/>
+	<node pkg="nuice_simulations" type="heat_sim_node.py" name="heat_sim_node"/>
 
 	<include file="$(find state_model)/launch/sim_display.launch"/>
 

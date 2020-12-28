@@ -1,9 +1,9 @@
+#!/usr/bin/env python
 import rospy
 from std_msgs.msg import Float64
 
 voltage = 0.0
 drill_speed = 0.0
-temp = 25.0
 
 def speed_handler(msg):
     drill_speed=msg.data
@@ -18,12 +18,14 @@ def initHeatNode():
     rospy.init_node("heat",anonymous=True)
     rospy.Subscriber("drill_speed", Float64, speed_handler)
     rospy.Subscriber("drill_voltage", Float64, voltage_handler)
+    temp = 25.0
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
-        energy_change = ((voltage**2)/(.00000276) - (2.56)(drill_speed**2))/2.0
+        energy_change = ((voltage**2)/(.00000276) - (2.56*(drill_speed)**2))/2.0
         temp_change = (energy_change)/(2658.0)
         temp += temp_change
         pub.publish(temp)
+        rate.sleep()
 
 if __name__=='__main__':
     initHeatNode()
