@@ -14,7 +14,7 @@ def voltage_handler(msg):
 #Calculate the energy going into heat and assume half is going into the drill.
 #Calculate the temperature change assuming the drill is made of pure titanium.
 def initHeatNode():
-    pub = rospy.Publisher('heatPub', Float64, queue_size=10)
+    pub = rospy.Publisher('heat', Float64, queue_size=10)
     rospy.init_node("heat",anonymous=True)
     rospy.Subscriber("drill_speed", Float64, speed_handler)
     rospy.Subscriber("drill_voltage", Float64, voltage_handler)
