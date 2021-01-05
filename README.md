@@ -51,3 +51,6 @@ echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
 
 A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
+
+# Firmware
+If you want to develop firmware, go to the `firmware` folder and view the README.
