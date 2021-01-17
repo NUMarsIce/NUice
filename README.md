@@ -20,6 +20,9 @@ source ~/.bashrc
 sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential
 sudo rosdep init
 rosdep update
+
+#Install some ros packages
+sudo apt install ros-melodic-rosserial-arduino ros-melodic-rosserial
 ```
 
 Congrats! ROS Melodic should be installed. To test, run roscore:
