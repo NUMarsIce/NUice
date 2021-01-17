@@ -38,9 +38,9 @@ arduino-cli completion bash > arduino-cli.sh
 sudo mv arduino-cli.sh /etc/bash_completion.d/
 ```
 
-Compile and upload (`-u`) the code including the libraries in `firmware/lib`. This must be run in the sketch folder
+Compile and upload (`-u`) the code including the libraries in `firmware/libraries`. This must be run in the sketch folder
 ```bash
-arduino-cli compile -b STM32:stm32:GenF4:pnum=Generic_F401RE,upload_method=dfuMethod,xserial=generic,usb=CDCgen,xusb=FS,opt=osstd,rtlib=nano -u --libraries ../lib
+arduino-cli compile -b STM32:stm32:GenF4:pnum=Generic_F401RE,upload_method=dfuMethod,xserial=generic,usb=CDCgen,xusb=FS,opt=osstd,rtlib=nano -u --libraries ../libraries
 ```
 
 Update ros_lib (if new custom messages are made)
