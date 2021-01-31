@@ -30,7 +30,7 @@ def main():
     
     pub = rospy.Publisher("cur_position", Float64, queue_size=10)
     roppub = rospy.Publisher("rate_of_penetration", Float64, queue_size=10)
-    rospy.Service("drill_motor/setpoint", MotorFloat64, handle_setpoint)
+    rospy.Service("setpoint", MotorFloat64, handle_setpoint)
     rospy.Service("relative_move", MotorFloat64, handle_relative)
     rospy.Service("speed", MotorFloat64, handle_speed)
     position_cur = 0
