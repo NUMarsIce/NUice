@@ -20,6 +20,9 @@ source ~/.bashrc
 sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential
 sudo rosdep init
 rosdep update
+
+#Install some ros packages
+sudo apt install ros-melodic-rosserial-arduino ros-melodic-rosserial
 ```
 
 Congrats! ROS Melodic should be installed. To test, run roscore:
@@ -51,3 +54,6 @@ echo "source ~/NUice/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
 
 A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/estop_sim/estop_sim_node.py`
+
+# Firmware
+If you want to develop firmware, go to the `firmware` folder and view the README.
