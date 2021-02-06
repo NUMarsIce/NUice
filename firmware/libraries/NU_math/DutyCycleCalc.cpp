@@ -1,4 +1,4 @@
-#include "headers/DutyCycleCalc.h"
+#include "DutyCycleCalc.h"
 
 DutyCycleCalc::DutyCycleCalc(long period) { period_ = period; }
 

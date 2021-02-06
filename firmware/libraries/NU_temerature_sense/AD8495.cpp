@@ -1,9 +1,4 @@
-/*
- *  AD8495 - Thermo couple breakout board
- *  Equations from : https://learn.adafruit.com/ad8495-thermocouple-amplifier/arduino
- *
- */
-#include "headers/AD8495.h"
+#include "AD8495.h"
 
 AD8495::AD8495(int pin) {
   pin_ = pin;

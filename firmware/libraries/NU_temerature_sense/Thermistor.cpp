@@ -1,10 +1,4 @@
-/*
- * Thermistor.cpp
- * Source code for simple thermistor
- *
- */
-
-#include "headers/Thermistor.h"
+#include "Thermistor.h"
 
 Thermistor::Thermistor(uint8_t pin, uint16_t b_coef, uint16_t therm_res, uint16_t series_res) {
   pin_ = pin;
