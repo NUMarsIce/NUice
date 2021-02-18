@@ -33,11 +33,10 @@ def main():
     rospy.Service("setpoint", MotorFloat64, handle_setpoint)
     rospy.Service("relative_move", MotorFloat64, handle_relative)
     rospy.Service("speed", MotorFloat64, handle_speed)
-
     position_cur = 0
     position_prev = 0
     speed_cur = 0
-    global speed_max, accel
+    global speed_max, accel,setpoint
     while not rospy.is_shutdown():
         #direction
         if position_cur > setpoint:
