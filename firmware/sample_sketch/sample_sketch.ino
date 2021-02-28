@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #include <ros.h>
 #include <std_msgs/Empty.h>
-#include <NU32Hardware.h>
+#include <NU32/NU32Hardware.h>
 
 ros::NodeHandle_<NU32Hardware> nh;
 
