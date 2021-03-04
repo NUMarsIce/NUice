@@ -12,7 +12,7 @@ void tare(const std_srvs::EmptyRequest &req, std_srvs::EmptyResponse &res);
 void set_speed(const std_msgs::Float64 & speed_msg);
 
 ros::NodeHandle_<NU32Hardware> nh;
-std_msgs::Int64 pub_msg;
+std_msgs::Int64 stepper_msg;
 std_msgs::Float64 pub_msg;
 ros::Publisher load_cell_pub("/load_cell", &pub_msg);
 ros::Publisher stepper_pos_pub("/stepper_position", &stepper_msg);
@@ -36,7 +36,7 @@ void loop() {
     nh.spinOnce();
     stepper_msg.data = accel_stepper.currentPosition();
     stepper_pos_pub.publish(&stepper_msg);
-    pub_msg.data = load_cell.getUnits();
+    pub_msg.data = load_cell.get_units();
     load_cell_pub.publish(&pub_msg);
     accel_stepper.runSpeed();
     delay(250);
