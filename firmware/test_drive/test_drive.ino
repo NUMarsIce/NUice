@@ -21,7 +21,7 @@ ros::NodeHandle_<NU32Hardware> nh;
 std_msgs::Int64 pub_msg, stepper_msg;
 ros::Publisher load_cell_pub("/load_cell", &pub_msg);
 ros::Publisher stepper_pos_pub("/stepper_position", &stepper_msg);
-ros::ServiceServer server = nh.advertiseService("/tare", tare);
+ros::ServiceServer<std_msgs::Empty, std_msgs::Empty> server = nh.advertiseService("/tare", tare);
 ros::Subscriber<std_msgs::Float64> stepper_sub("/set_speed", set_speed);
 HX711 load_cell;
 AccelStepper accel_stepper;
