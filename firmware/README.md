@@ -42,6 +42,7 @@ Compile and upload (`-u`) the code including the libraries in `firmware/librarie
 ```bash
 arduino-cli compile -b STM32:stm32:GenF4:pnum=Generic_F401RE,upload_method=dfuMethod,xserial=generic,usb=CDCgen,xusb=FS,opt=osstd,rtlib=nano -u --libraries ../libraries
 ```
+Add `--clean` if things are being wack, as messing with adding libraries might need this.
 
 Update ros_lib (if new custom messages are made)
 ```bash
