@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="rosserial_arduino" args="/dev/ttyACM0" type="serial_node.py" name="drill_test_bridge"/>
+	<!-- <node pkg="nuice_simulations" type="logg" name="load_cell_sim_node"/> -->
+</launch>
