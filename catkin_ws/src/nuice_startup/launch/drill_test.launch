@@ -1,4 +1,9 @@
 <launch>
+	<arg name="file"/>
+
 	<node pkg="rosserial_arduino" args="/dev/ttyACM0" type="serial_node.py" name="drill_test_bridge"/>
-	<!-- <node pkg="nuice_simulations" type="logg" name="load_cell_sim_node"/> -->
+	<node pkg="nuice_startup" type="logging_node.py" name="logging_node">
+		<param name="topics_list" value="/stepper_position,/load_cell"/>
+		<param name="data_file_name" value="$(arg file)"/>
+	<node>
 </launch>

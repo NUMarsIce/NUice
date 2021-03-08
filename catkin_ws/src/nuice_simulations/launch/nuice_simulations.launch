@@ -2,9 +2,7 @@
 	<rosparam command="load" file="$(find nuice_simulations)/config/logging_config.yaml"/>
 	<node pkg="nuice_simulations" type="drill_sim_node.py" name="drill_sim_node"/>
 	<node pkg="nuice_simulations" type="load_cell_sim_node.py" name="load_cell_sim_node"/>
-	<!--<node pkg="nuice_simulations" type="estop_sim_node.py" name="estop_sim_node"/>-->
 	<node pkg="nuice_simulations" type="layers_sim_node.py" name="layers_sim_node"/>
-	<!-- <node pkg="nuice_simulations" type="motor_sim_node.py" name="motor_sim_node"/> -->
 	<node pkg="nuice_simulations" type="heat_sim_node.py" name="heat_sim_node"/>
 	<node pkg="nuice_simulations" type="logging_sim_node.py" name="logging_node" output="screen"/>
 	<include file="$(find state_model)/launch/sim_display.launch"/>
