@@ -58,7 +58,7 @@ find_package(catkin REQUIRED COMPONENTS
 # Generate services in the 'srv' folder
 add_service_files(
   FILES
-  MotorFloat32.srv
+  MotorFloat64.srv
 )
 
 ## Generate actions in the 'action' folder
