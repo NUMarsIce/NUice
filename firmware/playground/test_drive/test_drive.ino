@@ -18,7 +18,7 @@ void tare(const std_msgs::Empty & tare_msg);
 void set_speed(const std_msgs::Float64 & speed_msg);
 void move(const std_msgs::Float64 & move_msg);
 
-std_msgs::Int64 stepper_msg;
+std_msgs::Float64 stepper_msg;
 std_msgs::Float64 pub_msg;
 ros::Publisher load_cell_pub("/load_cell", &pub_msg);
 
@@ -55,7 +55,7 @@ void loop() {
     accel_stepper.run();
 
     if(millis()-last_pub > 100){
-        stepper_msg.data = accel_stepper.currentPosition();
+        stepper_msg.data = accel_stepper.currentPosition()/200.0f*3.4395833;
         stepper_pos_pub.publish(&stepper_msg);
         last_pub = millis();
     }

@@ -14,8 +14,9 @@ def run():
     global values_list
     #Get the desired name of the data file and the topics to log.
     rospy.init_node("logging_node", anonymous=True)
-    topics_list = rospy.get_param("/topics_list")
-    data_file_name = rospy.get_param("/data_file_name")
+    data_file_name = rospy.get_param("data_file_name")
+    topics_list = rospy.get_param("topics_list")
+
     values_list = [0.0] * len(topics_list)
     #Subscribe to the topics in the list.
     for i in range(len(topics_list)):
