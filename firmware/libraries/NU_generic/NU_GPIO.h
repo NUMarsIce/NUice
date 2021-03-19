@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <NU_Driver.h>
 #include <std_msgs/Bool.h>
+#include <std_srvs/SetBool.h>
 
 class NUGPIO : NUDriver{
 
@@ -15,12 +16,14 @@ public:
 private:
     uint32_t pin_;
     uint8_t mode_;
-    
-    uint8_t pub_hz_ = 4;
-    long last_pub = millis();
+    int update_hz_;
+    long last_update = millis();
 
     std_msgs::Bool state_pub_msg_;
     ros::Publisher state_pub_;
+
+    ros::ServiceServer<std_srvs::SetBoolRequest, std_srvs::SetBoolResponse, NUGPIO> state_srv_;
+    void setStateSrvCb(const std_srvs::SetBoolRequest&, std_srvs::SetBoolResponse&);
 
     ros::Subscriber<std_msgs::Bool, NUGPIO> state_sub_;
     void setStateCb(const std_msgs::Bool& state_msg);

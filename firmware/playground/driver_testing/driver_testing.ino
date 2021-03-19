@@ -5,7 +5,7 @@
 
 ros::NodeHandle_<NU32Hardware> nh;
 
-NUGPIO led(nh, "ledA9", PA_9);
+NUGPIO led(nh, "led", 13);
 
 void setup(){
     nh.initNode();

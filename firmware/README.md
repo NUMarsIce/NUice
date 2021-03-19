@@ -8,6 +8,8 @@ curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.
 
 arduino-cli config init --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/master/STM32/package_stm_index.json
 arduino-cli core update-index
+arduino-cli core install arduino:avr
+arduino-cli core install STM32:stm32
 ```
 
 # STMCubeProgrammer install (optional)
