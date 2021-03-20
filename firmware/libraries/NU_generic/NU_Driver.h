@@ -1,11 +1,9 @@
-#pragma once
-
 /**
  *
  * Base driver class to be used by future drivers. 
  * Author: Ian Burwell 3/5/2021
  */
-
+#pragma once
 #include <ros.h>
 
 class NUDriver {

@@ -18,7 +18,7 @@ private:
     uint8_t mode_;
     uint8_t update_hz_;
     bool analog_;
-    long last_update = millis();
+    long last_update_ = millis();
 
     //Digital Publisher
     std_msgs::Bool state_pub_msg_;
