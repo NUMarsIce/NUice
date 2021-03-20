@@ -1,14 +1,17 @@
 #include "NU_GPIO.h"
 
 
-NUGPIO::NUGPIO(ros::NodeHandle& nh, const char* ns, uint8_t pin, uint8_t mode, uint8_t update_hz) 
+NUGPIO::NUGPIO(ros::NodeHandle& nh, const char* ns, uint8_t pin, uint8_t mode, bool analog, uint8_t update_hz) 
               : NUDriver(nh, ns),
                 state_pub_(appendNamespace("/current_state"), &state_pub_msg_),
-                state_sub_(appendNamespace("/set_state"), &NUGPIO::setStateCb, this)
+                state_sub_(appendNamespace("/set_state"), &NUGPIO::setStateCb, this),
+                analog_pub_(appendNamespace("/current_analog"), &analog_pub_msg_),
+                analog_sub_(appendNamespace("/set_analog"), &NUGPIO::setAnalogCb, this)
                 {
     pin_ = pin;
     mode_ = mode;
     update_hz_ = update_hz;
+    analog_ = analog;
 }
 
 void NUGPIO::setup(){
@@ -16,20 +19,34 @@ void NUGPIO::setup(){
 
     nh_.advertise(state_pub_);
 
-    if(mode_ == OUTPUT){
+    if(mode_ == OUTPUT && !analog_)
         nh_.subscribe(state_sub_);
-    }
+    
+    if(mode_ == INPUT && analog_)
+        nh_.subscribe(analog_sub_);
+    
     
 }
 
 void NUGPIO::update(){
     //publish state
     if(millis()-last_update > update_hz_){
+        state_pub_msg_.data = digitalRead(pin_);
         state_pub_.publish(&state_pub_msg_);
+
+        if(mode_ == INPUT && analog_){
+            analog_pub_msg_.data = analogRead(pin_);
+            analog_pub_.publish(&analog_pub_msg_);
+        }
+
         last_update = millis();
     }
 }
 
 void NUGPIO::setStateCb(const std_msgs::Bool& state_msg){
     digitalWrite(pin_, state_msg.data);
+}
+
+void NUGPIO::setAnalogCb(const std_msgs::UInt8& analog_msg){
+    analogWrite(pin_, analog_msg.data);
 }

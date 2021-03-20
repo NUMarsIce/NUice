@@ -6,7 +6,7 @@
 
 ros::NodeHandle nh;
 
-NUGPIO led(nh, "led", 13);
+NUGPIO led(nh, "led", 13, OUTPUT);
 
 void setup(){
     nh.getHardware()->setBaud(115200);

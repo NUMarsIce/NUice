@@ -1,47 +1,21 @@
-/**
- * 
- * 
- * 
- **/
+#define USE_USB
+
 #include <Arduino.h>
 #include <ros.h>
-#include <std_msgs/Empty.h>
-#include <NU32Hardware.h>
+#include <NU_GPIO.h>
 
-ros::NodeHandle_<NU32Hardware> nh;
+ros::NodeHandle nh;
 
-////////////////
-// Subscribers
-////////////////
-void messageCb( const std_msgs::Empty& toggle_msg){
-  digitalWrite(PA_9, HIGH-digitalRead(PA_9));   // blink the led
-}
-ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
+NUGPIO led(nh, "led", PA_9);
 
-
-////////////////
-// Publishers
-////////////////
-
-
-////////////////
-// Services
-////////////////
-
-void setup() {
-  //Initialise ros
-  nh.initNode();
-  //Subscribers
-  //Publishers
-  //Services
-  nh.subscribe(sub);
-
-  //Peripheral setup
-  pinMode(PA_9, OUTPUT);
+void setup(){
+    nh.getHardware()->setBaud(115200);
+    nh.initNode();
+    led.setup();
 }
 
-void loop() {
-  //loop
-  nh.spinOnce();
-  delay(1);
+
+void loop(){
+    nh.spinOnce();
+    led.update();
 }
