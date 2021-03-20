@@ -4,15 +4,15 @@
 #include <std_msgs/UInt8.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Empty.h>
-#include <NU32Hardware.h>
-#include "HX711.h"
+
+#include <HX711.h>
 #include <AccelStepper.h>
 
 const int LOADCELL_DOUT_PIN = PA_6;
 const int LOADCELL_SCK_PIN = PA_7;
 
 //For testing with the arduino mega
-ros::NodeHandle_<NU32Hardware> nh;
+ros::NodeHandle nh;
 
 void tare(const std_msgs::Empty & tare_msg);
 void set_speed(const std_msgs::Float64 & speed_msg);

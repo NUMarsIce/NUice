@@ -1,7 +1,7 @@
 #include "NU_GPIO.h"
 
 
-NUGPIO::NUGPIO(ros::NodeHandle_<NU32Hardware> nh, String ns, uint8_t pin, uint8_t mode) 
+NUGPIO::NUGPIO(ros::NodeHandle& nh, String ns, uint8_t pin, uint8_t mode) 
               : state_pub_(String(ns+"/current_state").c_str(), &state_pub_msg_),
                 state_sub_(String(ns+"/set_state").c_str(), &NUGPIO::setStateCb, this),
                 state_srv_(String(ns+"/set_state").c_str(), &NUGPIO::setStateSrvCb, this),

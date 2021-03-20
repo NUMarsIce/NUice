@@ -8,7 +8,7 @@
 class NUGPIO : NUDriver{
 
 public:
-    NUGPIO(ros::NodeHandle_<NU32Hardware> nh, String ns, uint8_t pin, uint8_t mode = OUTPUT);
+    NUGPIO(ros::NodeHandle& nh, String ns, uint8_t pin, uint8_t mode = OUTPUT);
 
     void setup();
     void update();

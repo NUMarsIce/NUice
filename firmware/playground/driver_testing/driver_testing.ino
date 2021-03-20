@@ -1,9 +1,10 @@
+#define USE_USB
+
 #include <Arduino.h>
 #include <ros.h>
-#include <NU32Hardware.h>
 #include <NU_GPIO.h>
 
-ros::NodeHandle_<NU32Hardware> nh;
+ros::NodeHandle nh;
 
 NUGPIO led(nh, "led", 13);
 
