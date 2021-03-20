@@ -9,6 +9,7 @@ ros::NodeHandle nh;
 NUGPIO led(nh, "led", 13);
 
 void setup(){
+    nh.getHardware()->setBaud(115200);
     nh.initNode();
     led.setup();
 }

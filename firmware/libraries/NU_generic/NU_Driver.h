@@ -14,7 +14,7 @@ public:
     /*
      * Basic driver constructor initializes the Node Handle and a namespce
      */
-    NUDriver(ros::NodeHandle& nh, String ns) : nh_(nh), namespace_(ns) {}
+    NUDriver(ros::NodeHandle& nh, const char* ns) : nh_(nh), namespace_(ns) {}
 
     /*
      * Setup function to be overwritten by the driver (ensuring to call the parent function). This will be called once at the beginning of the program 
@@ -29,7 +29,17 @@ public:
 
 protected:
     ros::NodeHandle& nh_;
-    String namespace_;
+    const char* namespace_;
+
+    /*
+     * Appends the current namespace to the beginning of the string
+     */
+    const char* appendNamespace(const char* cstr){
+        const char* buff = malloc(strlen(cstr)+strlen(namespace_)+1);
+        strcpy(buff, namespace_);
+        strcpy(buff+strlen(namespace_), cstr);
+        return buff;
+    }
 
 };
 
