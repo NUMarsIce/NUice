@@ -2,7 +2,7 @@
 
 import rospy
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float32
+from std_msgs.msg import Float64
 
 joint_state = JointState()
 
@@ -21,9 +21,9 @@ def main():
     rospy.init_node('model_joint_animator')
 
     pub = rospy.Publisher('joint_states', JointState, queue_size=1)
-    rospy.Subscriber("x_motor/cur_position", Float32, frame_rack_link_cb)
-    rospy.Subscriber("drill_motor/cur_position", Float32, drill_link_cb)
-    rospy.Subscriber("probe_motor/cur_position", Float32, probe_link_cb)
+    rospy.Subscriber("x_motor/cur_position", Float64, frame_rack_link_cb)
+    rospy.Subscriber("drill_motor/cur_position", Float64, drill_link_cb)
+    rospy.Subscriber("probe_motor/cur_position", Float64, probe_link_cb)
 
     joint_state.name = ["frame_rack_link","drill_link","probe_link"]
     joint_state.position = [0,0,0]

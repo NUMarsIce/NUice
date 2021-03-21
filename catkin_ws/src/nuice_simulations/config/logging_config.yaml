@@ -1,0 +1,3 @@
+data_file_name: "data.csv"
+topics_list: ["/weight_on_bit", "/drill_speed", "/drill_motor/cur_position", "/material_strength"]
+
