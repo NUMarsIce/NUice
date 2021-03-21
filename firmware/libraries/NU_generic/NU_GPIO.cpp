@@ -30,7 +30,7 @@ void NUGPIO::setup(){
 
 void NUGPIO::update(){
     //publish state
-    if(millis()-last_update_ > update_hz_){
+    if(millis()-last_update_ > 1.0f/update_hz_){
         state_pub_msg_.data = digitalRead(pin_);
         state_pub_.publish(&state_pub_msg_);
 

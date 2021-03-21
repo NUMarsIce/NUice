@@ -6,8 +6,9 @@
 #define _THERMISTOR_H_
 
 #include <Arduino.h>
+#include "temp_sense.h"
 
-class Thermistor {
+class Thermistor : public TempSensor{
   public:
     // Constructor
     Thermistor(uint8_t pin, uint16_t b_coef, uint16_t therm_res,

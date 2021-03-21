@@ -9,9 +9,9 @@
 #define _AD8495_H_
 
 #include <Arduino.h>
+#include "temp_sense.h"
 
-
-class AD8495 {
+class AD8495 : public TempSensor{
   public:
     // Constructs a AD8495
     AD8495(int pin);
