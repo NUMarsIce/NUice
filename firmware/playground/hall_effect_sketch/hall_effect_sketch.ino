@@ -33,6 +33,7 @@ Class HallEffectDriver: public NUDriver {
     float ping = millis();
     float dt = ping - last_ping;
     if(dt > time_out) {
+      last_ping = ping;
       return;
     } 
     msg.data = 1.0/dt;
