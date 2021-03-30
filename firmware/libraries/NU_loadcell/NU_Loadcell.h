@@ -8,7 +8,7 @@
 
 class NULoadcell : NUDriver {
 public:
-    NULoadcell(ros::NodeHandle& nh, const char* ns, uint8_t dout_pin, uint8_t clk_pin, float scale);
+    NULoadcell(ros::NUNodeHandle& nh, const char* ns, uint8_t dout_pin, uint8_t clk_pin, float scale);
 
     void setup();
     void update();

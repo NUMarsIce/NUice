@@ -1,7 +1,7 @@
 
 #include "NU_Loadcell.h"
 
-NULoadcell::NULoadcell(ros::NodeHandle& nh, const char* ns, uint8_t dout_pin, uint8_t clk_pin, float scale)
+NULoadcell::NULoadcell(ros::NUNodeHandle& nh, const char* ns, uint8_t dout_pin, uint8_t clk_pin, float scale)
               : NUDriver(nh, ns),
                 load_pub_(appendNamespace("/load"), &load_pub_msg_),
                 tare_sub_(appendNamespace("/tare"), &NULoadcell::tareCb, this){

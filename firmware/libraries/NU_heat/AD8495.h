@@ -21,8 +21,6 @@ class AD8495 : public TempSensor{
 
   private:
     int pin_;
-    float AREF{5.0};
-    int ADC_RESOLUTION{10};
 };
 
 #endif /* _AD8495_H_*/

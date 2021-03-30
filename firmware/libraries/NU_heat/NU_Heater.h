@@ -7,7 +7,7 @@
 
 class NUHeater : NUDriver{
 public:
-    NUHeater(ros::NodeHandle& nh, const char* ns, uint8_t heater_pin, TempSensor& temp_sensor, uint8_t update_hz = 5);
+    NUHeater(ros::NUNodeHandle& nh, const char* ns, uint8_t heater_pin, TempSensor& temp_sensor, uint8_t update_hz = 5);
 
     void setup();
     void update();

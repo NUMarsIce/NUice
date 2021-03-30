@@ -1,7 +1,7 @@
 #include "NU_Stepper.h"
 
 
-NUStepper::NUStepper(ros::NodeHandle& nh, const char* ns, uint8_t step_pin, uint8_t dir_pin, uint8_t en_pin, uint16_t max_speed, uint16_t max_accel)
+NUStepper::NUStepper(ros::NUNodeHandle& nh, const char* ns, uint8_t step_pin, uint8_t dir_pin, uint8_t en_pin, uint16_t max_speed, uint16_t max_accel)
               : NUDriver(nh, ns),
                 pos_pub_(appendNamespace("/current_position"), &pos_pub_msg_),
                 abs_pos_sub_(appendNamespace("/set_abs_pos"), &NUStepper::absolutePositionCb, this),
