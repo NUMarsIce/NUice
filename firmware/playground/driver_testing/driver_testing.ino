@@ -28,8 +28,8 @@ void setup(){
 
 void loop(){
     nh.spinOnce();
-    // led.update();
-    loadcell.update();
+    led.update();
+    // loadcell.update();
     // stepper.update();
     // heater.update();
 }

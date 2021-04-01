@@ -3,7 +3,7 @@
 #include <NU_HallEffect.h>
 
 ros::NUNodeHandle nh;
-HallEffectDriver he(nh, "hall_effect", 3);
+HallEffectDriver he(nh, "hall_effect", PA_3);
 
 
 void setup(){

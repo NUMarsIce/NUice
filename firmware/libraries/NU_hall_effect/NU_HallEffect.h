@@ -27,7 +27,7 @@ class HallEffectDriver: public NUDriver {
 
   void update() {
     bool current_state = digitalRead(pin);
-    if(current_state && !last_state) {
+    if(!current_state && last_state) {
       float ping = millis();
       float dt = ping - last_ping;
       if(dt > time_out || dt < debounce) {
