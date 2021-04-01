@@ -9,7 +9,8 @@ class HallEffectDriver: public NUDriver {
   std_msgs::Float64 msg;
   int pin;
   float last_ping;
-  float time_out;
+  const float time_out = 5000;
+  const float debounce = 10;
   bool last_state = LOW;
 
   public:
@@ -21,7 +22,6 @@ class HallEffectDriver: public NUDriver {
     nh_.initNode();
     nh_.advertise(pub);
     pinMode(pin, INPUT);
-    time_out = 5000;
     last_ping = millis();
   }
 
@@ -30,11 +30,11 @@ class HallEffectDriver: public NUDriver {
     if(current_state && !last_state) {
       float ping = millis();
       float dt = ping - last_ping;
-      if(dt > time_out) {
+      if(dt > time_out || dt < debounce) {
         last_ping = ping;
         return;
       } 
-      msg.data = 1.0/dt;
+      msg.data = 1000.0/dt;
       pub.publish(&msg);
       last_ping = ping;
     }
