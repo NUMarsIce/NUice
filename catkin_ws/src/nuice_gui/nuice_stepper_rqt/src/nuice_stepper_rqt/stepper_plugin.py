@@ -8,6 +8,8 @@ from python_qt_binding.QtWidgets import QWidget
 
 class StepperPlugin(Plugin):
 
+    steppers = []
+
     def __init__(self, context):
         super(StepperPlugin, self).__init__(context)
         # Give QObjects reasonable names
@@ -24,9 +26,40 @@ class StepperPlugin(Plugin):
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
         context.add_widget(self._widget)
 
+        ### Publishers and Subscribers
+
+        ### Name input
+        self._widget.reloadBtn.clicked[bool].connect(self.reload)
+        
+
+    ### Signal handlers ###########################
+    def reload(self, var):
+        #refreshes the list of steppers
+
+        self.steppers = []
+        for name, datatype in rospy.get_published_topics():
+            if "quick_stop" in name: #deffine steppers by having quick_stop
+                self.steppers.append(name[:-11]) #get namespace
+
+        self._widget.nameBox.clear()
+        self._widget.nameBox.addItems(self.steppers)
+
+        print("YEEET")
+
+
+
+    def pos_sub_sig_cb(self, pos):
+        pass #TODO
+
+    ### RQT callbacks
+
+    ### Helpers
+    #Unsubscribes ros stuff
+    def unsubscribe(self):
+        pass #TODO
+
     def shutdown_plugin(self):
-        # TODO unregister all publishers here
-        pass
+        self.unsubscribe()
 
     def save_settings(self, plugin_settings, instance_settings):
         # TODO save intrinsic configuration, usually using:
