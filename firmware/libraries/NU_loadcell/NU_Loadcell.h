@@ -19,8 +19,6 @@ private:
     uint8_t dout_pin_;
     uint8_t clk_pin_;
     float scale_;
-    uint8_t update_hz_;
-    unsigned long last_update_ = millis();
 
     //Load publisher
     std_msgs::Float32 load_pub_msg_;

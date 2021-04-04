@@ -23,6 +23,9 @@ private:
     uint8_t max_speed_;
     uint8_t max_accel_;
     AccelStepper stepper_;
+    
+    uint8_t update_hz_ = 10;
+    unsigned long last_update_ = millis();
 
     //Position Publisher
     std_msgs::Int32 pos_pub_msg_;

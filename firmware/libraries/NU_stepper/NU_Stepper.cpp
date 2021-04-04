@@ -18,6 +18,14 @@ NUStepper::NUStepper(ros::NUNodeHandle& nh, const char* ns, uint8_t step_pin, ui
 }
 
 void NUStepper::setup(){
+    nh_.advertise(pos_pub_);
+    nh_.subscribe(abs_pos_sub_);
+    nh_.subscribe(rel_pos_sub_);
+    nh_.subscribe(max_speed_sub_);
+    nh_.subscribe(accel_sub_);
+    nh_.subscribe(en_sub_);
+    nh_.subscribe(stop_sub_);
+
     stepper_.setMaxSpeed(max_speed_);
     stepper_.setAcceleration(max_accel_);
     stepper_.setEnablePin(en_pin_);
@@ -26,6 +34,18 @@ void NUStepper::setup(){
 
 void NUStepper::update(){
     stepper_.run();
+
+    if(millis()-last_update_ > 1.0f/update_hz_){
+        pos_pub_msg_.data = stepper_.currentPosition();
+        pos_pub_.publish(&pos_pub_msg_);
+
+        last_update_ = millis();
+    }
+
+    //failsafe
+    if(!nh_.connected() && stepper_.isRunning())
+        stepper_.stop();
+    
 }
 
 void NUStepper::enableCb(const std_msgs::Bool& en_msg){

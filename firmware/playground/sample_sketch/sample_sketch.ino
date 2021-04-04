@@ -4,7 +4,7 @@
  * To flash the led run `rostopic pub /toggle_led std_msgs/Empty -r 30` 
  **/
 
-#ifndef STMF4xx
+#if !defined(STM32F4xx)
   #define PA_9 13
 #endif
 

@@ -12,6 +12,10 @@ NULoadcell::NULoadcell(ros::NUNodeHandle& nh, const char* ns, uint8_t dout_pin, 
 }
 
 void NULoadcell::setup(){
+
+    nh_.advertise(load_pub_);
+    nh_.subscribe(tare_sub_);
+
     loadcell_.begin(dout_pin_, clk_pin_);
     loadcell_.set_scale(scale_);
     loadcell_.tare();

@@ -41,6 +41,11 @@ void NUGPIO::update(){
 
         last_update_ = millis();
     }
+
+    //failsafe
+    if(!nh_.connected() && !digitalRead(pin_)){
+        digitalWrite(pin_, LOW);
+    }
 }
 
 void NUGPIO::setStateCb(const std_msgs::Bool& state_msg){

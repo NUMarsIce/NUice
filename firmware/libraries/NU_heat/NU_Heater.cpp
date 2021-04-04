@@ -12,11 +12,16 @@ NUHeater::NUHeater(ros::NUNodeHandle& nh, const char* ns, uint8_t heater_pin, Te
 }
 
 void NUHeater::setup(){
+    nh_.advertise(temp_pub_);
+    nh_.advertise(state_pub_);
+    nh_.subscribe(setpoint_sub_);
+
     pinMode(heater_pin_, OUTPUT);
     digitalWrite(heater_pin_, LOW);
 }
 
 void NUHeater::update(){
+    //update
     if(millis()-last_update_ > 1.0f/update_hz_){
         temp_pub_msg_.data = temp_sensor_.read();
         temp_pub_.publish(&temp_pub_msg_);
@@ -29,6 +34,11 @@ void NUHeater::update(){
 
         last_update_ = millis();
     }
+
+    //failsafe
+    if(!nh_.connected() && setpoint_ != 0)
+        setpoint_ = 0;
+    
 }
 
 void NUHeater::setpointCb(const std_msgs::Float32& setpoint_msg){
