@@ -3,8 +3,6 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int8.h>
 
-
-
 class DCMotorDriver: public NUDriver {
     private:
     ros::Subscriber<std_msgs::Bool> dir_sub;
@@ -22,16 +20,13 @@ class DCMotorDriver: public NUDriver {
     }
 
     void setup() {
-        nh_.initNode();
         pinMode(dir_pin_1, OUTPUT);
         pinMode(dir_pin_2, OUTPUT);
         nh.subscribe(dir_sub);
         nh.subscribe(speed_sub);
     }
 
-    void update() {
-        nh_.spinOnce();
-    }
+    void update() {}
 
     void set_direction(const std_msgs::Bool & dir_msg) {
         if(dir_msg.data) {
