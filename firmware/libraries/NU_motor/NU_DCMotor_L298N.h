@@ -4,13 +4,13 @@
 #include <std_msgs/Int8.h>
 
 class DCMotorDriver: public NUDriver {
-    private:
+private:
     ros::Subscriber<std_msgs::Bool> dir_sub;
     ros::Subscriber<std_msgs::Int8> speed_sub;
     std_msgs::Bool direction_msg;
-    int dir_pin_1,dir_pin_2,speed_pin;
+    int dir_pin_1, dir_pin_2, speed_pin;
 
-    public:
+public:
     DCMotorDriver(ros::NUNodeHandle& nh, const char* ns, int dir_pin_1, int dir_pin_2, int speed_pin): NUDriver(nh, ns) {
         dir_sub = ros::Subscriber<std_msgs::Bool>(appendNamespace("/motor_dir"), &set_direction);
         speed_sub = ros::Subscriber<std_msgs::Int8>(appendNamespace("/motor_speed"), &set_speed);

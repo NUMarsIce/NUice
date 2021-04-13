@@ -1,11 +1,11 @@
 #include "NU_QuadratureEncoder.h"
 
 
-NUQuadratureEncoder::NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, uint8_t pin_a, uint8_t pin_b, uint8_t pin_z = 0xFF, uint8_t update_hz) 
+NUQuadratureEncoder::NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, uint32_t pin_a, uint32_t pin_b, uint32_t pin_z, uint8_t update_hz) 
               : NUDriver(nh, ns),
                 pos_pub_(appendNamespace("/position"), &pos_pub_msg_),
                 err_pub_(appendNamespace("/errors"), &err_pub_msg_),
-                zero_sub_(appendNamespace("/zero"), &NUGPIO::zeroCb, this),
+                zero_sub_(appendNamespace("/zero"), &NUQuadratureEncoder::zeroCb, this),
                 encoder_(pin_a, pin_b)
                 {
     pin_a_ = pin_a;

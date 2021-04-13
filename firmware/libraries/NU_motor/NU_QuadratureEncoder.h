@@ -4,12 +4,13 @@
 #include <NU_Driver.h>
 #include "QuadratureEncoder.h"
 #include <std_msgs/Int32.h>
+#include <std_msgs/UInt32.h>
 #include <std_msgs/Empty.h>
 
 class NUQuadratureEncoder : NUDriver{
 
 public:
-    NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, uint8_t pin_a, uint8_t pin_b, uint8_t pin_z = 0xFF, uint8_t update_hz = 2);
+    NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, uint32_t pin_a, uint32_t pin_b, uint32_t pin_z = 0xFF, uint8_t update_hz = 2);
 
     void setup();
     void update();

@@ -1,4 +1,4 @@
-#include <EnableInterrupt.h>
+// #include <attachInterrupt.h>
 #include "QuadratureEncoder.h"
 
 
@@ -14,23 +14,23 @@ Encoders::Encoders(byte pinA, byte pinB){
    _whichEncoder++;
    switch(_whichEncoder){
     case 1:
-        enableInterrupt(_encoderPINB, interruptEncoder1, CHANGE);
-        enableInterrupt(_encoderPINA,  interruptEncoder1, CHANGE);  
+        attachInterrupt(_encoderPINB, interruptEncoder1, CHANGE);
+        attachInterrupt(_encoderPINA,  interruptEncoder1, CHANGE);  
         _instances[0] = this;
         break;
      case 2:
-        enableInterrupt(_encoderPINB, interruptEncoder2, CHANGE);
-        enableInterrupt(_encoderPINA,  interruptEncoder2, CHANGE);  
+        attachInterrupt(_encoderPINB, interruptEncoder2, CHANGE);
+        attachInterrupt(_encoderPINA,  interruptEncoder2, CHANGE);  
         _instances[1] = this;
         break;
      case 3:
-        enableInterrupt(_encoderPINB, interruptEncoder3, CHANGE);
-        enableInterrupt(_encoderPINA,  interruptEncoder3, CHANGE); 
+        attachInterrupt(_encoderPINB, interruptEncoder3, CHANGE);
+        attachInterrupt(_encoderPINA,  interruptEncoder3, CHANGE); 
         _instances[2] = this; 
         break;
      case 4:
-        enableInterrupt(_encoderPINB, interruptEncoder4, CHANGE);
-        enableInterrupt(_encoderPINA,  interruptEncoder4, CHANGE);  
+        attachInterrupt(_encoderPINB, interruptEncoder4, CHANGE);
+        attachInterrupt(_encoderPINA,  interruptEncoder4, CHANGE);  
         _instances[3] = this;
         break;
    }
