@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<robot name="PARSEC">
+
+  <link name="base_link">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/frame.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="cat">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/cat.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="carosel">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/carosel.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="probe">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/probe.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+    <link name="drill">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/drill.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="drillbit">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/drillbit.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="probeshaft">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/probeshaft.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="probebottom">
+    <visual>
+      <origin rpy="0.0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://nuice_model/urdf/parsec/models/probebottom.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+  <joint name="frame_carosel_link" type="continuous">
+    <parent link="base_link"/>
+    <child link="carosel"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="carosel_cat_link" type="prismatic">
+    <parent link="carosel"/>
+    <child link="cat"/>
+    <limit effort="1000.0" lower="-1.2" upper="0" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="carosel_probe_link" type="prismatic">
+    <parent link="carosel"/>
+    <child link="probe"/>
+    <limit effort="1000.0" lower="-1.2" upper="0" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="probe_probeshaft_link" type="revolute">
+    <parent link="probe"/>
+    <child link="probeshaft"/>
+    <limit effort="1000.0" lower="0" upper="3.14159" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="probeshaft_probebottom_link" type="revolute">
+    <parent link="probeshaft"/>
+    <child link="probebottom"/>
+    <limit effort="1000.0" lower="0" upper=".7854" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="carosel_drill_link" type="prismatic">
+    <parent link="carosel"/>
+    <child link="drill"/>
+    <limit effort="1000.0" lower="-1.2" upper="0" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="drill_drillbit_link" type="continuous">
+    <parent link="drill"/>
+    <child link="drillbit"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+</robot>
