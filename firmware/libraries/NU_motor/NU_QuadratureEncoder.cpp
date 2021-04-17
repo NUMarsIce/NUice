@@ -21,7 +21,7 @@ void NUQuadratureEncoder::setup(){
 
 void NUQuadratureEncoder::update(){
     //publish position
-    if(millis()-last_update_ > 1.0f/update_hz_){
+    if(millis()-last_update_ > 1000.0f/update_hz_){
         pos_pub_msg_.data = encoder_.getEncoderCount();
         pos_pub_.publish(&pos_pub_msg_);
 

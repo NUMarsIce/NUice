@@ -35,7 +35,7 @@ void NUStepper::setup(){
 void NUStepper::update(){
     stepper_.run();
 
-    if(millis()-last_update_ > 1.0f/update_hz_){
+    if(millis()-last_update_ > 1000.0f/update_hz_){
         pos_pub_msg_.data = stepper_.currentPosition();
         pos_pub_.publish(&pos_pub_msg_);
 

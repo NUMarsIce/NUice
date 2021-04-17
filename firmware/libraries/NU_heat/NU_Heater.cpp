@@ -22,7 +22,7 @@ void NUHeater::setup(){
 
 void NUHeater::update(){
     //update
-    if(millis()-last_update_ > 1.0f/update_hz_){
+    if(millis()-last_update_ > 1000.0f/update_hz_){
         temp_pub_msg_.data = temp_sensor_.read();
         temp_pub_.publish(&temp_pub_msg_);
 

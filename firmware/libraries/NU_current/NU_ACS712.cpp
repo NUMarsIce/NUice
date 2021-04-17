@@ -20,7 +20,7 @@ void NUACS712::setup(){
 
 void NUACS712::update(){
     //publish current
-    if(millis()-last_update_ > 1.0f/update_hz_){
+    if(millis()-last_update_ > 1000.0f/update_hz_){
         current_pub_msg_.data = ac ? sensor_.readAC() : sensor_.read();
         current_pub_.publish(&current_pub_msg_);
 

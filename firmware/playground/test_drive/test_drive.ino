@@ -13,7 +13,7 @@ NUStepper stepper(nh, "stepper", PA_10, PA_9);
 
 void setup(){
     nh.getHardware()->setBaud(115200);
-    nh.setSpinTimeout(10); //Stop spinOnce from taking up too much time. Failsafe but shouldn't happen
+    nh.setSpinTimeout(100); //Stop spinOnce from taking up too much time. Failsafe but shouldn't happen
     nh.initNode();
 
     drill.setup();

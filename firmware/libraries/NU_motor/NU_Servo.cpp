@@ -25,7 +25,7 @@ void NUServo::setup(){
 
 void NUServo::update(){
     //publish state
-    if(millis()-last_update_ > 1.0f/update_hz_){
+    if(millis()-last_update_ > 1000.0f/update_hz_){
         pos_pub_msg_.data = current_pos_;
         pos_pub_.publish(&pos_pub_msg_);
 
@@ -37,7 +37,7 @@ void NUServo::update(){
         goal_pos_ = current_pos_;
 
     //update servo pos at spped_ deg/s
-    if(millis()-last_move_ > 1.0f/speed_ && current_pos_ != goal_pos_){
+    if(millis()-last_move_ > 1000.0f/speed_ && current_pos_ != goal_pos_){
         current_pos_ += (goal_pos_-current_pos_ > 0) ? 1 : -1;
         servo_.write(current_pos_);
     }
