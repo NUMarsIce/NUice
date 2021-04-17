@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="Stepper Plugin" type="nuice_stepper_rqt.stepper_plugin.StepperPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      Simple plugin to control a stepper.
+    </description>
+    <qtgui>
+      <group>
+        <label>NUIce</label>
+        <icon type="theme">applications-engineering</icon>
+      </group>
+      <label>Stepper Plugin</label>
+      <icon type="theme">applications-engineering</icon>
+      <statustip>Low-level control of a stepper</statustip>
+    </qtgui>
+  </class>
+</library>
