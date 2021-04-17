@@ -15,6 +15,7 @@ class StepperPlugin(Plugin):
     target_pos = 0
     last_pos = 0
     current_pos = 0
+    jog_mode = True
 
     stepper_set_speed_pub = None
     stepper_set_accel_pub = None
@@ -65,17 +66,21 @@ class StepperPlugin(Plugin):
         if self.stepper_rel_pos_pub is not None:
             self.stepper_rel_pos_pub.publish(Int32(pos))
 
+        self.jog_mode = True
+
 
     def quick_stop(self):
         if self.stepper_stop_pub is not None:
             self.stepper_stop_pub.publish(Empty())
+        self.jog_mode = True
 
     def set_position(self):
         self.update_speed_accel()
-        if self.stepper_abs_pub is not None:
+        if self.stepper_abs_pos_pub is not None:
             self.last_pos = self.current_pos
             self.target_pos = self._widget.positionInput.value()
-            self.stepper_abs_pub.publish(Int32(self.target_pos))
+            self.stepper_abs_pos_pub.publish(Int32(self.target_pos))
+        self.jog_mode = False
 
     def set_enable(self, state):
         if self.stepper_enable_pub is not None:
@@ -83,11 +88,11 @@ class StepperPlugin(Plugin):
 
     def reload(self):
         #refreshes the list of steppers
-
+        
         self.steppers = []
         for name, _ in rospy.get_published_topics():
-            if "quick_stop" in name: #define steppers by them having quick_stop
-                self.steppers.append(name[:-11]) #get namespace
+            if "current_position" in name: #define steppers by them having quick_stop
+                self.steppers.append(name[:-17]) #get namespace
 
         self._widget.nameBox.clear()
         self._widget.nameBox.addItems(self.steppers)
@@ -115,22 +120,39 @@ class StepperPlugin(Plugin):
         self.current_pos = 0
         self._widget.accelInput.setValue(200)
         self._widget.speedInput.setValue(400)
+        self.jog_mode = True
 
     ### ROS callbacks
     def position_cb(self, msg):
         self.current_pos = msg.data
+        # hide bar if jogging or data is invald
+        if self.jog_mode or not (self.target_pos > self.current_pos > self.last_pos or self.target_pos < self.current_pos < self.last_pos):
+            if not self._widget.positionBar.isHidden():
+                self._widget.positionBar.hide()
+            return
+        elif self._widget.positionBar.isHidden():
+           self._widget.positionBar.show()
 
-        self._widget.positionBar.setMaximum(self.target_pos)
-        self._widget.positionBar.setMinimum(self.last_pos)
-        self._widget.positionBar.setValue(self.target_pos)
-
-        self._widget.positionBar
+        # set bar
+        if self.target_pos > self.last_pos:
+            self._widget.positionBar.setMaximum(self.target_pos)
+            self._widget.positionBar.setMinimum(self.last_pos)
+            self._widget.positionBar.setValue(self.current_pos)
+        elif self.target_pos < self.last_pos:
+            self._widget.positionBar.setMaximum(self.last_pos)
+            self._widget.positionBar.setMinimum(self.target_pos)
+            self._widget.positionBar.setValue(self.current_pos)
+        else:
+            self._widget.positionBar.setMaximum(0)
+            self._widget.positionBar.setMinimum(0)
+            self._widget.positionBar.setValue(0)
+    
 
     ### Helpers
     def update_speed_accel(self, speed_scale=1.0):
         if None not in {self.stepper_set_speed_pub, self.stepper_set_accel_pub}:
-            self.stepper_set_speed_pub.publish(UInt16(int(self._widget.speedInput.value()*speed_scale)))
-            self.stepper_set_accel_pub.publish(UInt16(self._widget.accelInput.value()))
+            self.stepper_set_speed_pub.publish(UInt16(int(abs(self._widget.speedInput.value()*speed_scale))))
+            self.stepper_set_accel_pub.publish(UInt16(int(abs(self._widget.accelInput.value()))))
 
     def unsubscribe(self):
         if self.stepper_set_speed_pub is not None:
