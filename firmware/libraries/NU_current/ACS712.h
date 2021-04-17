@@ -9,6 +9,7 @@
  */
 
 //mV per Amp for different varients
+static const int ACS712_5A = 185;
 static const int ACS712_20A = 100;
 static const int ACS712_30A = 66;
 
@@ -18,7 +19,7 @@ class ACS712 {
     /**
      * 
      */
-    ACS712(int pin, int mVperAmp = ACS712_20A, int );
+    ACS712(int pin, int mVperAmp = ACS712_20A);
     ~ACS712();
     
     /**

@@ -1,7 +1,7 @@
 #include "NU_GPIO.h"
 
 
-NUGPIO::NUGPIO(ros::NUNodeHandle& nh, const char* ns, uint8_t pin, uint8_t mode, bool analog, uint8_t update_hz) 
+NUGPIO::NUGPIO(ros::NUNodeHandle& nh, const char* ns, uint32_t pin, uint32_t mode, bool analog, uint8_t update_hz) 
               : NUDriver(nh, ns),
                 state_pub_(appendNamespace("/current_state"), &state_pub_msg_),
                 state_sub_(appendNamespace("/set_state"), &NUGPIO::setStateCb, this),
