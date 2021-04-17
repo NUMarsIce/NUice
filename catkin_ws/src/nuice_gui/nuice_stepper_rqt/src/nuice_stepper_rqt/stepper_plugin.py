@@ -5,9 +5,11 @@ import rospkg
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget
+from python_qt_binding.QtCore import QObject, Signal, Slot
 
 from std_msgs.msg import Empty, Float32, Bool, Int32, UInt16
 
+#Plugin
 class StepperPlugin(Plugin):
 
     steppers = []
@@ -15,7 +17,9 @@ class StepperPlugin(Plugin):
     target_pos = 0
     last_pos = 0
     current_pos = 0
-    jog_mode = True
+    reverse_jog = False
+
+    pos_signal = Signal()
 
     stepper_set_speed_pub = None
     stepper_set_accel_pub = None
@@ -42,7 +46,7 @@ class StepperPlugin(Plugin):
         context.add_widget(self._widget)
 
         ### RQT signals   
-
+        self.pos_signal.connect(self.pos_sig_handler)
         # Name input
         self._widget.reloadBtn.pressed.connect(self.reload)
         self._widget.nameBox.currentIndexChanged.connect(self.stepper_selection_changed)
@@ -57,22 +61,24 @@ class StepperPlugin(Plugin):
         self._widget.upBtn.pressed.connect(lambda: self.nudge_relative(-0.25))
         self._widget.downBtn.pressed.connect(lambda: self.nudge_relative(0.25))
         self._widget.downDownBtn.pressed.connect(lambda: self.nudge_relative(1.0))
+        self._widget.reverseBox.stateChanged.connect(self.set_reverse)
 
     ### Signal handlers ###########################
     def nudge_relative(self, scale=1.0):
         self.update_speed_accel(scale)
+        if self.reverse_jog:
+            scale *= -1
 
         pos = int(self._widget.speedInput.value()*scale/5) #go for 5th of a second
         if self.stepper_rel_pos_pub is not None:
             self.stepper_rel_pos_pub.publish(Int32(pos))
 
-        self.jog_mode = True
-
+        self.set_jog()
 
     def quick_stop(self):
         if self.stepper_stop_pub is not None:
             self.stepper_stop_pub.publish(Empty())
-        self.jog_mode = True
+        self.set_jog()
 
     def set_position(self):
         self.update_speed_accel()
@@ -80,11 +86,13 @@ class StepperPlugin(Plugin):
             self.last_pos = self.current_pos
             self.target_pos = self._widget.positionInput.value()
             self.stepper_abs_pos_pub.publish(Int32(self.target_pos))
-        self.jog_mode = False
 
     def set_enable(self, state):
         if self.stepper_enable_pub is not None:
             self.stepper_enable_pub.publish(Bool(state == 2)) 
+
+    def set_reverse(self, state):
+        self.reverse_jog = (state == 2) 
 
     def reload(self):
         #refreshes the list of steppers
@@ -120,35 +128,31 @@ class StepperPlugin(Plugin):
         self.current_pos = 0
         self._widget.accelInput.setValue(200)
         self._widget.speedInput.setValue(400)
-        self.jog_mode = True
+        self.set_jog()
+
+    def pos_sig_handler(self):
+        # set bar
+        if self.last_pos < self.target_pos:
+            self._widget.positionBar.setMinimum(self.last_pos)
+            self._widget.positionBar.setMaximum(self.target_pos)
+            self._widget.positionBar.setValue(self.current_pos)
+        else:
+            self._widget.positionBar.setMinimum(self.target_pos)
+            self._widget.positionBar.setMaximum(self.last_pos)
+            self._widget.positionBar.setValue(self.current_pos)
+        self._widget.positionBar.setFormat(str(self.current_pos))
 
     ### ROS callbacks
     def position_cb(self, msg):
         self.current_pos = msg.data
-        # hide bar if jogging or data is invald
-        if self.jog_mode or not (self.target_pos > self.current_pos > self.last_pos or self.target_pos < self.current_pos < self.last_pos):
-            if not self._widget.positionBar.isHidden():
-                self._widget.positionBar.hide()
-            return
-        elif self._widget.positionBar.isHidden():
-           self._widget.positionBar.show()
-
-        # set bar
-        if self.target_pos > self.last_pos:
-            self._widget.positionBar.setMaximum(self.target_pos)
-            self._widget.positionBar.setMinimum(self.last_pos)
-            self._widget.positionBar.setValue(self.current_pos)
-        elif self.target_pos < self.last_pos:
-            self._widget.positionBar.setMaximum(self.last_pos)
-            self._widget.positionBar.setMinimum(self.target_pos)
-            self._widget.positionBar.setValue(self.current_pos)
-        else:
-            self._widget.positionBar.setMaximum(0)
-            self._widget.positionBar.setMinimum(0)
-            self._widget.positionBar.setValue(0)
-    
+        self.pos_signal.emit()
 
     ### Helpers
+    def set_jog(self):
+        self.target_pos = self.current_pos
+        self.last_pos = self.current_pos
+        self.pos_signal.emit()
+
     def update_speed_accel(self, speed_scale=1.0):
         if None not in {self.stepper_set_speed_pub, self.stepper_set_accel_pub}:
             self.stepper_set_speed_pub.publish(UInt16(int(abs(self._widget.speedInput.value()*speed_scale))))

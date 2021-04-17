@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>692</width>
-    <height>336</height>
+    <height>373</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset theme="reload"/>
+          <iconset theme="reload">
+           <normaloff>.</normaloff>.</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -350,6 +351,13 @@
         </property>
         <property name="autoRepeatDelay">
          <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="reverseBox">
+        <property name="text">
+         <string>Reverse</string>
         </property>
        </widget>
       </item>

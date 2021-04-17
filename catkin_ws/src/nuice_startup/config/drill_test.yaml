@@ -1,2 +1,2 @@
-data_file_name: "data_layers4.5.csv"
-topics_list: ["/stepper_position", "/load_cell"]
+data_file_name: "jogdrilltest_4-17-21"
+topics_list: ["/stepper/current_position", "/loadcell/load"]

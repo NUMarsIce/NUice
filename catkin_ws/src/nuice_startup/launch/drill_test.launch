@@ -1,6 +1,8 @@
 <launch>
 	<rosparam command="load" file="$(find nuice_startup)/config/drill_test.yaml"/>
 
-	<node pkg="rosserial_arduino" args="/dev/ttyACM0" type="serial_node.py" name="drill_test_bridge"/>
+	<node pkg="rosserial_arduino" args="/dev/ttyACM0" type="serial_node.py" name="drill_test_bridge">
+		<param name="baud" value="115200"/>
+	</node>
 	<node pkg="nuice_startup" type="logging_node.py" name="logging_node"/>
 </launch>

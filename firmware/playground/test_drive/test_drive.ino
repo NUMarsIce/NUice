@@ -8,7 +8,7 @@
 ros::NUNodeHandle nh;
 
 NUGPIO drill(nh, "drill", PA_5, OUTPUT);
-NULoadcell loadcell(nh, "loadcell", PA_6, PA_7, 6900.0f);
+NULoadcell loadcell(nh, "loadcell", PA_6, PA_7, 2915.0f);
 NUStepper stepper(nh, "stepper", PA_10, PA_9);
 
 void setup(){
