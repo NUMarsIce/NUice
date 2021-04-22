@@ -86,10 +86,10 @@
             <item>
              <widget class="QSpinBox" name="speedInput">
               <property name="maximum">
-               <number>4000</number>
+               <number>10000</number>
               </property>
               <property name="singleStep">
-               <number>50</number>
+               <number>200</number>
               </property>
               <property name="value">
                <number>400</number>

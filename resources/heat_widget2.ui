@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>604</height>
+    <height>222</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QFrame" name="frame">
+           <widget class="QFrame" name="heat1Frame">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -84,7 +84,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="heat1Spin"/>
+           <widget class="QDoubleSpinBox" name="heat1Spin">
+            <property name="suffix">
+             <string> ℃</string>
+            </property>
+            <property name="maximum">
+             <double>200.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="heat1SetBtn">
@@ -120,7 +130,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QFrame" name="frame_2">
+           <widget class="QFrame" name="heat2Frame">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -166,7 +176,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="heat2Spin"/>
+           <widget class="QDoubleSpinBox" name="heat2Spin">
+            <property name="suffix">
+             <string> ℃</string>
+            </property>
+            <property name="maximum">
+             <double>200.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="heat2SetBtn">
@@ -183,16 +203,21 @@
     </layout>
    </item>
    <item>
-    <widget class="QwtPlot" name="tempPlot"/>
+    <widget class="QPushButton" name="stopBtn">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-  </customwidget>
   <customwidget>
    <class>QwtThermo</class>
    <extends>QWidget</extends>

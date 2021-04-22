@@ -1,2 +1,2 @@
-data_file_name: "jogdrilltest_4-17-21"
+data_file_name: "drilltest"
 topics_list: ["/stepper/current_position", "/loadcell/load"]
