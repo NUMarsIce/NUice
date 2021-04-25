@@ -57,3 +57,9 @@ A good place to start exploring is `NUice/catkin_ws/src/nuice_simulations/src/es
 
 # Firmware
 If you want to develop firmware, go to the `firmware` folder and view the README.
+
+# Other
+
+## Setup ros communication over the network (for jetson and ground station)
+On slave computers: `export ROS_MASTER_URI=http://[rpi_master_hostname].local:11311`
+On master Pi: `export ROS_IP=127.0.0.1`
