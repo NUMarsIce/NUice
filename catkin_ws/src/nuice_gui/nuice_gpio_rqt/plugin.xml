@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="GPIO Plugin" type="nuice_gpio_rqt.gpio_plugin.GPIOPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      Simple plugin to control a GPIO.
+    </description>
+    <qtgui>
+      <group>
+        <label>NUIce</label>
+        <icon type="theme">applications-engineering</icon>
+      </group>
+      <label>GPIO Plugin</label>
+      <icon type="theme">applications-engineering</icon>
+      <statustip>Low-level control of a GPIO</statustip>
+    </qtgui>
+  </class>
+</library>
