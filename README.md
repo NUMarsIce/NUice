@@ -22,7 +22,7 @@ sudo rosdep init
 rosdep update
 
 #Install some ros packages
-sudo apt install ros-melodic-rosserial-arduino ros-melodic-rosserial
+sudo apt install ros-melodic-rosserial-arduino ros-melodic-rosserial ros-melodic-usb-cam
 ```
 
 Congrats! ROS Melodic should be installed. To test, run roscore:
