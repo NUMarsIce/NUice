@@ -7,8 +7,8 @@
 #include <NU_Heater.h>
 #include <AD8495.h>
 #include <NU_Servo.h>
-#include <NU_UART.h>
-#include <NU_UART_Temp.h>
+#include <NU_Serial.h>
+#include <NU_Serial_Temp.h>
 
 ros::NUNodeHandle nh;
 
@@ -18,13 +18,13 @@ NULoadcell loadcell2(nh, "loadcell2", PA_6, PA_7, 6900.0f);
 NUStepper rot_stp(nh, "rot_stp", PA_2, PA_3);
 NUStepper pitch_stp(nh, "pitch_stp", PA_2, PA_3);
 
-NUUART uart();
-NUUARTTemp therm1(uart, 0);
-NUUARTTemp therm2(uart, 1);
-NUUARTTemp pot(uart, 3);
+NUSerial ser;
+NUSerialTemp therm1(ser, 0);
+NUSerialTemp therm2(ser, 1);
+NUSerialTemp pot(ser, 3);
 
 NUHeater heater1(nh, "heater1", PB_1, therm1);
-NUHeater heater2(nh, "heater2", PB_1, therm1);
+NUHeater heater2(nh, "heater2", PB_1, therm2);
 
 void setup(){
     nh.getHardware()->setBaud(115200);
