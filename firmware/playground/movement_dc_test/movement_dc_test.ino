@@ -1,37 +1,39 @@
 #include <Arduino.h>
 
-//PA_6, PB_10, PB_13, PC_7, PA_8
-//PA_7, PB_15, PB_14, PC_6, PC_9
-//PC_4, PB_0, PB_1, PC_8, PA_10
+//PA6, PB10, PB13, PC7, PA8
+//PA7, PB15, PB14, PC6, PC9
+//PC4, PB0, PB1, PC8, PA10
 
-#define CUR_PIN  PA_6
-#define IN1_PIN  PB_10
-#define IN2_PIN  PB_13
-#define NSLP_PIN PC_7
-#define NFLT_PIN PA_8
+#define CUR_PIN  PA6
+#define PH_PIN  PB10
+#define EN_PIN  PB13
+#define NSLP_PIN PC7
+#define NFLT_PIN PA8
 
 void setup(){
-    pinMode(PA_9, OUTPUT);
+    pinMode(PA9, OUTPUT);
     pinMode(CUR_PIN, INPUT);
-    pinMode(IN1_PIN, OUTPUT);
-    pinMode(IN2_PIN, OUTPUT);
+    pinMode(PH_PIN, OUTPUT);
+    pinMode(EN_PIN, OUTPUT);
     pinMode(NSLP_PIN, OUTPUT);
     pinMode(NFLT_PIN, INPUT);
 
+    digitalWrite(PA9, HIGH);
     digitalWrite(NSLP_PIN, HIGH); //Enable
-    digitalWrite(IN1_PIN, LOW); 
-    digitalWrite(IN2_PIN, HIGH); 
+    digitalWrite(PH_PIN, HIGH); //Direction
+    digitalWrite(EN_PIN, HIGH); //En/speed
 
 }
 
 
 void loop(){
-    // digitalWrite(PA_9, HIGH);
-    // digitalWrite(IN1_PIN, LOW); //Direction 1
-    // analogWrite(IN2_PIN, 128);
-    // delay(1000);
-    // digitalWrite(PA_9, LOW);
-    // digitalWrite(IN2_PIN, LOW); //Direction 2
-    // analogWrite(IN1_PIN, 128);
-    // delay(1000);
+    digitalWrite(PA9, HIGH);
+    digitalWrite(PH_PIN, LOW); //Direction 1
+    analogWrite(EN_PIN, 128);//speed
+    delay(2000);
+
+    digitalWrite(PA9, LOW);
+    digitalWrite(PH_PIN, HIGH); //Direction 2
+    analogWrite(EN_PIN, 128);//speed
+    delay(2000);
 }
