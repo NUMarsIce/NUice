@@ -4,16 +4,16 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/UInt8.h>
 
-class DCMotorDriver : NUDriver {
+class L298NDriver : NUDriver {
 private:
-    ros::Subscriber<std_msgs::Bool, DCMotorDriver> dir_sub;
-    ros::Subscriber<std_msgs::UInt8, DCMotorDriver> speed_sub;
+    ros::Subscriber<std_msgs::Bool, L298NDriver> dir_sub;
+    ros::Subscriber<std_msgs::UInt8, L298NDriver> speed_sub;
     int dir_pin_1, dir_pin_2, speed_pin;
 
 public:
-    DCMotorDriver(ros::NUNodeHandle& nh, const char* ns, int dir_pin_1, int dir_pin_2, int speed_pin) : 
-                dir_sub(appendNamespace("/motor_dir"), &DCMotorDriver::set_direction, this),
-                speed_sub(appendNamespace("/motor_speed"), &DCMotorDriver::set_speed, this),
+    L298NDriver(ros::NUNodeHandle& nh, const char* ns, int dir_pin_1, int dir_pin_2, int speed_pin) : 
+                dir_sub(appendNamespace("/motor_dir"), &L298NDriver::set_direction, this),
+                speed_sub(appendNamespace("/motor_speed"), &L298NDriver::set_speed, this),
                 NUDriver(nh, ns){
 
         this->dir_pin_1 = dir_pin_1;

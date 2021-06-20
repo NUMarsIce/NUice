@@ -1,4 +1,3 @@
-#define USE_USB
 
 #include <Arduino.h>
 #include <ros.h>
@@ -6,7 +5,7 @@
 
 ros::NodeHandle nh;
 
-NUGPIO led(nh, "led", PA_9);
+NUGPIO led(nh, "led", PA9);
 
 void setup(){
     nh.getHardware()->setBaud(115200);

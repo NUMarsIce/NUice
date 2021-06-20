@@ -1,6 +1,6 @@
 /**
  * 
- * Digitizes two AD8495 themocouple amplifiers
+ * Digitizes two AD8495 themocouple amplifiers and a potentiometer
  * 
  * */
 #include <Arduino.h>
@@ -10,7 +10,7 @@ AD8495 heat1_therm(A0);
 AD8495 heat2_therm(A1);
 
 void sendData(int data, uint8_t idx){
-    Serial.println(data*10+idx%10)
+    Serial.println(data*10+idx%10);
 }
 
 void setup(){
@@ -19,7 +19,9 @@ void setup(){
 
 void loop(){
     delay(50); //20 Hz
-    sendData(heat1_therm.read());
-    sendData(heat2_therm.read());
-    sendData(analogRead(A3));
+    sendData(heat1_therm.read(), 0);
+    sendData(heat2_therm.read(), 1);
+    sendData(analogRead(A2), 2);
 }
+
+
