@@ -22,7 +22,7 @@ void NUGPIO::setup(){
     if(mode_ == OUTPUT && !analog_)
         nh_.subscribe(state_sub_);
     
-    if(mode_ == INPUT && analog_)
+    if(mode_ == OUTPUT && analog_)
         nh_.subscribe(analog_sub_);
     
     
@@ -34,7 +34,7 @@ void NUGPIO::update(){
         state_pub_msg_.data = digitalRead(pin_);
         state_pub_.publish(&state_pub_msg_);
 
-        if(mode_ == INPUT && analog_){
+        if(mode_ != OUTPUT && analog_){
             analog_pub_msg_.data = analogRead(pin_);
             analog_pub_.publish(&analog_pub_msg_);
         }
