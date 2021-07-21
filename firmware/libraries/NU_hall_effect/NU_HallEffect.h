@@ -3,8 +3,8 @@
 #include <std_msgs/Float64.h>
 #include <NU_Driver.h>
 
-class HallEffectDriver: public NUDriver {
-  private:
+class NUHallEffect: public NUDriver {
+private:
   ros::Publisher pub;
   std_msgs::Float64 msg;
   int pin;
@@ -13,8 +13,8 @@ class HallEffectDriver: public NUDriver {
   const float debounce = 10;
   bool last_state = LOW;
 
-  public:
-  HallEffectDriver(ros::NUNodeHandle& nh, const char* ns, int pin): NUDriver(nh, ns), pub(appendNamespace("/rate"), &msg) {
+public:
+  NUHallEffect(ros::NUNodeHandle& nh, const char* ns, int pin): NUDriver(nh, ns), pub(appendNamespace("/rate"), &msg) {
     this->pin = pin;
   }
 
