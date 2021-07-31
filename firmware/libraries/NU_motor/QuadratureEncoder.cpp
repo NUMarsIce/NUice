@@ -6,7 +6,7 @@
 
 Encoders *Encoders::_instances[MAX_NUM_ENCODERS] = {NULL, NULL,NULL, NULL};
 uint8_t Encoders::_whichEncoder = 0;
-Encoders::Encoders(byte pinA, byte pinB){
+Encoders::Encoders(uint32_t pinA, uint32_t pinB){
    _encoderPINA = pinA;
    _encoderPINB = pinB;
    pinMode(_encoderPINA, INPUT_PULLUP);  
@@ -14,29 +14,27 @@ Encoders::Encoders(byte pinA, byte pinB){
    _whichEncoder++;
    switch(_whichEncoder){
     case 1:
-        attachInterrupt(_encoderPINB, interruptEncoder1, CHANGE);
-        attachInterrupt(_encoderPINA,  interruptEncoder1, CHANGE);  
+        attachInterrupt(digitalPinToInterrupt(_encoderPINB), interruptEncoder1, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(_encoderPINA),  interruptEncoder1, CHANGE);  
         _instances[0] = this;
         break;
      case 2:
-        attachInterrupt(_encoderPINB, interruptEncoder2, CHANGE);
-        attachInterrupt(_encoderPINA,  interruptEncoder2, CHANGE);  
+        attachInterrupt(digitalPinToInterrupt(_encoderPINB), interruptEncoder2, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(_encoderPINA),  interruptEncoder2, CHANGE);  
         _instances[1] = this;
         break;
      case 3:
-        attachInterrupt(_encoderPINB, interruptEncoder3, CHANGE);
-        attachInterrupt(_encoderPINA,  interruptEncoder3, CHANGE); 
+        attachInterrupt(digitalPinToInterrupt(_encoderPINB), interruptEncoder3, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(_encoderPINA),  interruptEncoder3, CHANGE);  
         _instances[2] = this; 
         break;
      case 4:
-        attachInterrupt(_encoderPINB, interruptEncoder4, CHANGE);
-        attachInterrupt(_encoderPINA,  interruptEncoder4, CHANGE);  
+        attachInterrupt(digitalPinToInterrupt(_encoderPINB), interruptEncoder4, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(_encoderPINA),  interruptEncoder4, CHANGE);  
         _instances[3] = this;
         break;
    }
 }
-
-
 
 
 void Encoders::encoderCount(){
