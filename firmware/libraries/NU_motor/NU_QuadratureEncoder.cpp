@@ -13,7 +13,7 @@ NUQuadratureEncoder::NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, 
 }
 
 void NUQuadratureEncoder::setup(){
-    encoder_ = new Encoders(pin_a_, pin_b_);//apparently we cant do this in the constructor rip
+    encoder_ = new Encoders(pin_a_, pin_b_);//apparently we cant do this in teh constructor ri
 
     nh_.advertise(err_pub_);
     nh_.advertise(pos_pub_);
