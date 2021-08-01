@@ -7,9 +7,11 @@
 class NUSerialDriver : public NUDriver {
     
 public:
-    NUSerialDriver(ros::NUNodeHandle& nh, const char* name, NUSerial& ser, uint8_t idx, uint8_t update_hz = 4) : NUDriver(nh, ""), 
-    ser_(ser), name_(name), update_hz_(update_hz), idx_(idx),
-    pub_(name_), &pub_msg_) {}
+    NUSerialDriver(ros::NUNodeHandle& nh, const char* name, NUSerial& ser, uint8_t idx, uint8_t update_hz = 4) : 
+        NUDriver(nh, ""), 
+        ser_(ser), name_(name), update_hz_(update_hz), idx_(idx),
+        pub_(name_, &pub_msg_) 
+    {}
 
     virtual void setup() {}
 

@@ -9,25 +9,31 @@
 
 class NUSerial {
     public:
-        NUSerial(){
-            baud_ = 9600;
-            Serial.begin(baud_);
+        NUSerial() : serial(Serial){
+            serial.begin(baud_);
         }
 
-        NUSerial(int baud){
+        NUSerial(uint8_t rx, uint8_t tx):serial(rx,tx){
+            serial.begin(baud_);
+        }
+
+        void setBaud(int baud){
             baud_ = baud;
-            Serial.begin(baud_);
+            Serial.flush();
+            serial.begin(baud_);
         }
 
         int parse(int idx){
-            while(Serial.available()){
-                int tmp = Serial.parseInt();
+            while(serial.available()){
+                int tmp = serial.parseInt();
                 data_[tmp%10] = tmp/10;
             }
             return data_[idx];
         }
         
     private:
-        int baud_;
+        HardwareSerial serial;
+
+        int baud_ = 9600;
         int data_[10];      
 };
