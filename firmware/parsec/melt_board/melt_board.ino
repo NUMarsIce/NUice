@@ -19,7 +19,7 @@ NULoadcell loadcell2(nh, "loadcell2", PB8, PB9, 6900.0f);
 NUStepper rot_stp(nh, "rot_stp", PC8, PC9, PA8); //J6: G, PA8,  PC9,  PC8,  PC7
 NUStepper pitch_stp(nh, "pitch_stp", PD2, PB4, PB5); //J9: G, PB5,  PB4,  PD2,  PC12
 
-NUSerial ser(PA10, PA9); //USART1
+NUSerial ser(PA10, PA9); //USART1, J8
 NUSerialDriver therm1(nh, "probe_therm1", ser, 0);
 NUSerialDriver therm2(nh, "probe_therm2", ser, 1);
 NUSerialDriver pitch_pot(nh, "pitch_pot", ser, 2);

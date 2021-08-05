@@ -11,10 +11,12 @@ class NUSerial {
     public:
         NUSerial() : serial(Serial){
             serial.begin(baud_);
+            serial.setTimeout(1);//1ms timeout
         }
 
         NUSerial(uint8_t rx, uint8_t tx):serial(rx,tx){
             serial.begin(baud_);
+            serial.setTimeout(1);//1ms timeout
         }
 
         void setBaud(int baud){
@@ -34,6 +36,6 @@ class NUSerial {
     private:
         HardwareSerial serial;
 
-        int baud_ = 9600;
+        int baud_ = 115200;
         int data_[10];      
 };

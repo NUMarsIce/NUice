@@ -14,11 +14,11 @@ void sendData(int data, uint8_t idx){
 }
 
 void setup(){
-    Serial.begin(9600);
+    Serial.begin(115200);
 }
 
 void loop(){
-    delay(50); //20 Hz
+    delay(10); //10 Hz
     sendData(heat1_therm.read(), 0);
     sendData(heat2_therm.read(), 1);
     sendData(analogRead(A2), 2);

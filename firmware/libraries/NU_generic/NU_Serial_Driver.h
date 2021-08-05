@@ -13,11 +13,16 @@ public:
         pub_(name_, &pub_msg_) 
     {}
 
-    virtual void setup() {}
+    virtual void setup() {
+       nh_.advertise(pub_); 
+    }
 
     virtual void update() {
-        if(millis()-last_update_ > update_hz_){
-            pub_msg_.data = ser_.parse(idx_);
+        pub_msg_.data = ser_.parse(idx_);
+
+        if(millis()-last_update_ > 1000.0f/update_hz_){
+            pub_.publish(&pub_msg_);
+
             last_update_ = millis();
         }
     }
