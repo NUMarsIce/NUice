@@ -5,23 +5,26 @@
  * */
 #include <Arduino.h>
 #include <AD8495.h>
+#include <NU_Serial.h>
+
+#define RATE 10 //Hz
 
 AD8495 heat1_therm(A0);
 AD8495 heat2_therm(A1);
 
-void sendData(int data, uint8_t idx){
-    Serial.println(data*10+idx%10);
-}
+NUSerial ser;
 
 void setup(){
-    Serial.begin(115200);
+    ser.begin();
 }
 
 void loop(){
-    delay(10); //10 Hz
-    sendData(heat1_therm.read(), 0);
-    sendData(heat2_therm.read(), 1);
-    sendData(analogRead(A2), 2);
+    delay(1000/RATE-2);
+    ser.send(0, (int)heat1_therm.read());
+    delay(1);
+    ser.send(1, (int)heat2_therm.read());
+    delay(1);
+    ser.send(2, analogRead(A2));
 }
 
 
