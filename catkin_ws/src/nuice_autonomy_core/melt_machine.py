@@ -61,6 +61,23 @@ class Melt(StateMachine):
         
         worker_thread.start()
 
+    def idleOnEnter(self, state, event):
+
+    def stoppedOnEnter(self, state, event):
+
+    def descendUpdateSpeed(self, state, event):
+
+    def retractUpdateSpeed(self, state, event):
+
+    def bowlOnEnter(self, state, event):
+
+    def bowlOnExit(self, state, event):
+
+    def rockwellOnEnter(self, state, event):
+
+    def rockwellOnExit(self, state, event):
+        
+
     def run(self): #TODO
         while True:
             pass

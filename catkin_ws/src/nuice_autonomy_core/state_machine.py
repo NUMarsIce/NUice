@@ -52,6 +52,14 @@ class Carosel(StateMachine):
 
         worker_thread.start()
 
+    def turn(self, state, event):
+
+    def reposExit(self, state, event):
+
+    def exitSteady(self, state, event):
+        
+
+
     def run(self): #TODO
         while True:
             pass
