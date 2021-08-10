@@ -7,6 +7,9 @@
 #ifndef STM32_HARDWARE_H_
 #define STM32_HARDWARE_H_
 
+#define USB_MANUFACTURER_STRING "NUMarsIce"
+#define USB_PRODUCT_STRING "NUBoard"
+
 #include <Arduino.h>
 
 class STM32Hardware
