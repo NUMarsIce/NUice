@@ -26,7 +26,7 @@ float ACS712::readAC() {
 
 void ACS712::updateAC(){
   if(millis()-last_sample_time_ < 1/1800)//force the update to happen at ~1800Hz (30*60 aka 30 samples per 60Hz AC period)
-    break;
+    return;
 
   float raw_value = analogRead(analog_pin_);
   float voltage = (raw_value / 1024.0) * 5000;  // Gets you mV
@@ -43,5 +43,5 @@ void ACS712::updateAC(){
   }
 
   //update sample time
-  last_sample_time_ = millis()
+  last_sample_time_ = millis();
 }
