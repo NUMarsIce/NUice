@@ -25,4 +25,6 @@ void NUACS712::update(){
 
         last_update_ = millis();
     }
+
+    sensor_.updateAC();
 }

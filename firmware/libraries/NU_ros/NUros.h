@@ -12,6 +12,6 @@ namespace ros
 namespace ros
 {
     //NodeHandle for limmited space of arduino
-    typedef NodeHandle_<ArduinoHardware, 6, 6, 150, 150> NUNodeHandle;
+    typedef NodeHandle_<ArduinoHardware, 1, 5, 128, 128> NUNodeHandle;
 }
 #endif
