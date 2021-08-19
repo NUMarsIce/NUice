@@ -17,7 +17,7 @@ echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
 #Install build tools
-sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential ros-melodic-theora-image-transport
+sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential ros-melodic-compressed-image-transport ros-melodic-theora-image-transport
 sudo rosdep init
 rosdep update
 
@@ -61,5 +61,5 @@ If you want to develop firmware, go to the `firmware` folder and view the README
 # Other
 
 ## Setup ros communication over the network (for jetson and ground station)
-On slave computers: `export ROS_MASTER_URI=http://[rpi_master_hostname].local:11311`
+On slave computers: `export ROS_MASTER_URI=http://[rpi_master_hostname].local:11311` and `export ROS_HOSTNAME=[pc_hostname].local`
 On master Pi: `export ROS_HOSTNAME=[rpi_master_hostname].local`

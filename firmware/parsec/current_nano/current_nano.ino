@@ -1,3 +1,5 @@
+#define ADC_3V3
+
 #include <Arduino.h>
 #include <NUros.h>
 
@@ -5,10 +7,10 @@
 
 ros::NUNodeHandle nh;
 
-NUACS712 power_5v(nh, "5v_supply", A4, false, ACS712_5A);
-NUACS712 power_24v(nh, "24v_supply", A7, false, ACS712_20A);
-NUACS712 total(nh, "mains", A6, true, ACS712_20A);
-NUACS712 drill(nh, "drill", A5, true, ACS712_20A);
+NUACS712 power_5v(nh, "logic_supply", PA4, false, ACS712_5A);
+NUACS712 power_24v(nh, "motor_supply", PA7, false, ACS712_20A);
+NUACS712 total(nh, "mains", PA6, true, ACS712_20A);
+NUACS712 drill(nh, "drill", PA5, true, ACS712_20A);
 
 void setup(){
     nh.getHardware()->setBaud(115200);

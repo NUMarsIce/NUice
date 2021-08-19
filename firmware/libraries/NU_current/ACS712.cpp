@@ -9,8 +9,8 @@ ACS712::~ACS712(){}
 
 float ACS712::read() {
   float raw_value = analogRead(analog_pin_);
-  float voltage = (raw_value / 1024.0) * 5000;  // Gets you mV
-  return ((voltage - 2500) / mVperAmp_);
+  float voltage = (raw_value / 1024.0) * ADC_VOLTAGE*1000;  // Gets you mV
+  return ((voltage - ADC_VOLTAGE*500) / mVperAmp_);
 }
 
 float ACS712::readAC() {
