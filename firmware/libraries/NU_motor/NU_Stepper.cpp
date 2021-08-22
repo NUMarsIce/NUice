@@ -13,6 +13,7 @@ NUStepper::NUStepper(ros::NUNodeHandle& nh, const char* ns, uint8_t step_pin, ui
                 stepper_(AccelStepper::DRIVER, step_pin, dir_pin){
     step_pin_ = step_pin;
     dir_pin_ = dir_pin;
+    en_pin_ = en_pin;
     max_speed_ = max_speed;
     max_accel_ = max_accel_;
 }
@@ -38,6 +39,7 @@ void NUStepper::update(){
     if(millis()-last_update_ > 1000.0f/update_hz_){
         pos_pub_msg_.data = stepper_.currentPosition();
         pos_pub_.publish(&pos_pub_msg_);
+
 
         last_update_ = millis();
     }

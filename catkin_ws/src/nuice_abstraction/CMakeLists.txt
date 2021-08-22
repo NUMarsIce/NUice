@@ -159,8 +159,9 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-  scripts/basic_stepper.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+nodes/basic_stepper.py
+nodes/probe_control.py
+DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 ## Mark executables for installation

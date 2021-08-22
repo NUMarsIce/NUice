@@ -56,11 +56,11 @@ class NUSerial {
             }
         }
 
-        int read(uint8_t idx){
+        int32_t read(uint8_t idx){
             return data_[idx];
         }
 
-        int send(uint8_t idx, int32_t data){
+        void send(uint8_t idx, int32_t data){
             uint8_t* data_bytes = (uint8_t*)&data;
             uint8_t payload_buff_[5]; //idx,len,int
 
@@ -76,7 +76,7 @@ class NUSerial {
 
             //send data
             serial->write(2);                //start byte STX
-            serial->write(payload_buff_, 5);//payload
+            serial->write(payload_buff_, 5); //payload
             serial->write(crc);              //crc
             serial->write('\n');             //stop byte
         }

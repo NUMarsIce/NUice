@@ -6,7 +6,7 @@
 #include "STM32Hardware.h"
 namespace ros
 {
-    typedef NodeHandle_<STM32Hardware> NUNodeHandle;
+    typedef NodeHandle_<STM32Hardware, 32, 32> NUNodeHandle;
 }
 #else
 namespace ros

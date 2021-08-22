@@ -22,15 +22,15 @@ NUGPIO heater2_relay(nh, "heater2_relay", PC6, OUTPUT);
 NUGPIO drill_relay(nh, "drill_relay", PB13, OUTPUT);
 NUGPIO power_relay(nh, "power_relay", PB14, OUTPUT);
 
-// Filtration relays TODO
-// NUGPIO relay1(nh, "relay1", PA9, OUTPUT);
-// NUGPIO relay2(nh, "relay2", PA9, OUTPUT);
-// NUGPIO relay3(nh, "relay3", PA9, OUTPUT);
-// NUGPIO relay4(nh, "relay4", PA9, OUTPUT);
+// Filtration relays J4: 3v3, PB0, PB1, PB10, PB12
+NUGPIO backwash_relay(nh, "backwash_relay", PB0, OUTPUT);
+NUGPIO stage1_relay(nh, "stage1_relay", PB1, OUTPUT);
+NUGPIO bypass_relay(nh, "bypass_relay", PB10, OUTPUT);
+NUGPIO air_relay(nh, "air_relay", PB12, OUTPUT);
 
-// Filtration pumps
-// L298NDriver pump1(nh, "pump1", PA1, PA2, PA3);
-// L298NDriver pump2(nh, "pump2", PA1, PA2, PA3);
+// Filtration pumps J3: 3v3, PA6, PA7, PC4, PC5
+NUGPIO ropump_relay(nh, "ropump_relay", PC4, OUTPUT);
+NUGPIO mainpump_relay(nh, "mainpump_relay", PC5, OUTPUT);
 
 void setup(){
     nh.getHardware()->setBaud(115200);
@@ -46,12 +46,13 @@ void setup(){
     heater2_relay.setup();
     drill_relay.setup();
     power_relay.setup();
-    // relay1.setup();
-    // relay2.setup();
-    // relay3.setup();
-    // relay4.setup();
-    // pump1.setup();
-    // pump2.setup();
+    
+    backwash_relay.setup();
+    stage1_relay.setup();
+    bypass_relay.setup();
+    air_relay.setup();
+    ropump_relay.setup();
+    mainpump_relay.setup();
 }
 
 
@@ -68,10 +69,11 @@ void loop(){
     heater2_relay.update();
     drill_relay.update();
     power_relay.update();
-    // relay1.update();
-    // relay2.update();
-    // relay3.update();
-    // relay4.update();
-    // pump1.update();
-    // pump2.update();
+
+    backwash_relay.update();
+    stage1_relay.update();
+    bypass_relay.update();
+    air_relay.update();
+    ropump_relay.update();
+    mainpump_relay.update();
 }

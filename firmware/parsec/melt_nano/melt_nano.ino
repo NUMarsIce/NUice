@@ -21,8 +21,10 @@ void setup(){
 void loop(){
     delay(1000/RATE-2);
     ser.send(0, (int)heat1_therm.read());
+
     delay(1);
     ser.send(1, (int)heat2_therm.read());
+
     delay(1);
     ser.send(2, analogRead(A2));
 }

@@ -44,7 +44,7 @@ private:
     bool debug_;
 
     //Publisher
-    std_msgs::UInt32 pub_msg_;
+    std_msgs::Int32 pub_msg_;
     ros::Publisher pub_;
 
     std_msgs::UInt32 err_pub_msg_;
