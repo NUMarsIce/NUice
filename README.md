@@ -63,3 +63,4 @@ If you want to develop firmware, go to the `firmware` folder and view the README
 ## Setup ros communication over the network (for jetson and ground station)
 On slave computers: `export ROS_MASTER_URI=http://[rpi_master_hostname].local:11311` and `export ROS_HOSTNAME=[pc_hostname].local`
 On master Pi: `export ROS_HOSTNAME=[rpi_master_hostname].local`
+For better node logging: `export ROSCONSOLE_FORMAT='[${severity}] [${node}] [${time}]: ${message}'`
