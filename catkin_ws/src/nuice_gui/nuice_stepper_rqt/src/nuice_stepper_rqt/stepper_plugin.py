@@ -63,6 +63,9 @@ class StepperPlugin(Plugin):
         self._widget.downDownBtn.pressed.connect(lambda: self.nudge_relative(1.0))
         self._widget.reverseBox.stateChanged.connect(self.set_reverse)
 
+        ### Setup
+        self._widget.nameBox.sizeAdjustPolicy = 0 #Make it adjust to size
+
     ### Signal handlers ###########################
     def nudge_relative(self, scale=1.0):
         self.update_speed_accel(scale)

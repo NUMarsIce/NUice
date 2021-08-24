@@ -19,6 +19,7 @@ class Stepper():
     info.homed = False
 
     home_position = 0
+    abs_position_base = 0
 
     def __init__(self):
         rospy.init_node('stepper', anonymous=True)
@@ -36,7 +37,7 @@ class Stepper():
 
         ### Wait on the driver to start publishing
         rospy.loginfo("Waiting on %s stepper..." % (self.stepper_name))
-        home_position = self.info.abs_position = rospy.wait_for_message(self.stepper_name+"/current_position", Int32).data
+        # abs_position_base = rospy.wait_for_message(self.stepper_name+"/current_position", Int32).data
         rospy.loginfo("%s connected!"  % (self.stepper_name))
 
         # DRIVERS
@@ -50,18 +51,57 @@ class Stepper():
         self.stop_pub = rospy.Publisher('quick_stop', Empty, queue_size=10)
 
         # Actions 
-        self.goto_as = actionlib.SimpleActionServer("GoToPosition", GoToCommandAction, execute_cb=self.goto_execute_cb, auto_start = False)
-
+        self._goto_as = actionlib.SimpleActionServer("goto_position", GoToCommandAction, self.goto_execute_cb, False)
+        self._goto_as.start()
+        self._goto_feedback = GoToCommandFeedback()
+        self._goto_result = GoToCommandResult()
 
         # Services
 
 
         # Publish config parameters a few time as we dont know if they actually arrive
         for _ in range(4):
-            self.speed_pub(self.info.speed)
-            self.accel_pub(self.info.accel)
-            self.en_pub(self.info.enabled)
+            self.speed_pub.publish(self.info.speed)
+            self.accel_pub.publish(self.info.accel)
+            self.en_pub.publish(self.info.enabled)
             rospy.sleep(0.01)
+
+    def goto_execute_cb(self, goal):
+        # Check position range
+        if not (self.min_units <= goal.position <= self.max_units):
+            rospy.logwarn("Position %d not in a valid range (%.3f to %.3f)." % (goal.position, self.min_units, self.max_units))
+            self._goto_result.success = False
+            self._goto_as.set_succeeded(self._goto_result)    
+            return
+                    
+        # Setup 
+        self._goto_feedback.distance = abs(self.info.abs_position-self.info.abs_setpoint)
+        rospy.loginfo("Going to %.4f." % goal.position)    
+
+        # Request new position
+        self.abs_pub.publish(int(goal.position*self.steps_per_unit))
+
+        while(True):
+            # Handle Preemption (canceling)
+            if self._goto_as.is_preempt_requested():
+                rospy.loginfo("Goto action canceld.")
+                self._goto_result.success = False
+                self._goto_as.set_preempted()
+                for _ in range(4): # Stop moving
+                    self.stop_pub.publish(Empty())
+                    rospy.sleep(0.01)
+                return
+
+            # Break when we are at the requested position
+            if(self.info.abs_position == int(goal.position*self.steps_per_unit)):
+                break
+
+            # Update Feedback
+            self._goto_feedback.distance = abs(self.info.abs_position-self.info.abs_setpoint)
+            self._goto_as.publish_feedback(self._goto_feedback)
+        
+        self._goto_result.success = True
+        self._goto_as.set_succeeded(self._goto_result)
 
 
 
@@ -69,7 +109,8 @@ class Stepper():
         self.info_pub.publish(self.info)
 
     def pos_cb(self, msg):
-        self.info.abs_position = float(msg.data)/self.steps_per_unit
+        abs_position_base = float(msg.data)/self.steps_per_unit
+        self.info.abs_position = abs_position_base - self.home_position
 
 
 
