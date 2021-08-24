@@ -16,6 +16,7 @@ NUStepper::NUStepper(ros::NUNodeHandle& nh, const char* ns, uint8_t step_pin, ui
     en_pin_ = en_pin;
     max_speed_ = max_speed;
     max_accel_ = max_accel_;
+    stepper_.setPinsInverted(false,false,true);
 }
 
 void NUStepper::setup(){

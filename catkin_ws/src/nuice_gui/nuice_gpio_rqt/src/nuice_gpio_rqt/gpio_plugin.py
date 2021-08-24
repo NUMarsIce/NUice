@@ -35,7 +35,7 @@ class GPIOPlugin(Plugin):
         
         # Number if multiple instancess
         if context.serial_number() > 1:
-            self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
+            self._widget.setWindowTitle('GPIO (%d)' % context.serial_number())
         context.add_widget(self._widget)
 
         ### RQT signals  
@@ -88,6 +88,10 @@ class GPIOPlugin(Plugin):
         self.gpio_state_sub = rospy.Subscriber("{}/current_state".format(self.selection), Bool, self.state_sub_cb)
 
         self.state = False
+
+        # Set name of widget
+        self._widget.setWindowTitle("GPIO: " + self.selection.split('/')[-1])
+
     
     ### ROS callbacks
     def state_sub_cb(self, msg):
@@ -108,7 +112,6 @@ class GPIOPlugin(Plugin):
     def save_settings(self, plugin_settings, instance_settings):
         # Save current selection
         instance_settings.set_value('_selection', self.selection)
-        # self._widget.save_settings(plugin_settings, instance_settings)
 
     def restore_settings(self, plugin_settings, instance_settings):
         # Load curent selection
@@ -121,10 +124,6 @@ class GPIOPlugin(Plugin):
             else:
                 self.gpios.insert(0, self.selection)
                 self._widget.nameBox.setCurrentIndex(0)
-
-
-        # self._widget.restore_settings(plugin_settings,
-                                            #  instance_settings)
 
     #def trigger_configuration(self):
         # Comment in to signal that the plugin has a way to configure
