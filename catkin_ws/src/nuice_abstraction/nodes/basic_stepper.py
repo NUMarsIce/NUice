@@ -4,7 +4,8 @@ import rospy
 import actionlib
 from std_msgs.msg import Int32, UInt16, Bool, Empty
 from nuice_msgs.msg import *
-
+from nuice_msgs.srv import *
+from std_srvs.srv import * 
 
 
 class Stepper():
@@ -20,6 +21,8 @@ class Stepper():
 
     home_position = 0
     abs_position_base = 0
+    max_speed = 0
+
 
     def __init__(self):
         rospy.init_node('stepper', anonymous=True)
@@ -28,7 +31,7 @@ class Stepper():
         self.max_units = rospy.get_param('~max', 10000)
         self.min_units = rospy.get_param('~min', 0)
         self.reversed = rospy.get_param('~reverse', False)
-        self.info.speed = rospy.get_param('~max_speed', False)
+        self.info.speed = max_speed = rospy.get_param('~max_speed', False)
         self.info.accel = rospy.get_param('~accel', False)
 
         # Publish info at 10Hz
@@ -57,14 +60,17 @@ class Stepper():
         self._goto_result = GoToCommandResult()
 
         # Services
-
+        self.en_srv = rospy.Service('enable', SetBool, self.en_cb)
+        self.stop_srv = rospy.Service('stop', Trigger, self.stop_cb)
+        self.speed_srv = rospy.Service('set_speed', FloatCommand, self.speed_cb)
 
         # Publish config parameters a few time as we dont know if they actually arrive
         for _ in range(4):
-            self.speed_pub.publish(self.info.speed)
-            self.accel_pub.publish(self.info.accel)
+            self.speed_pub.publish(self.info.speed*self.steps_per_unit)
+            self.accel_pub.publish(self.info.accel*self.steps_per_unit)
             self.en_pub.publish(self.info.enabled)
             rospy.sleep(0.01)
+
 
     def goto_execute_cb(self, goal):
         # Check position range
@@ -104,14 +110,33 @@ class Stepper():
         self._goto_as.set_succeeded(self._goto_result)
 
 
-
     def publish_info(self, event):
         self.info_pub.publish(self.info)
+
 
     def pos_cb(self, msg):
         abs_position_base = float(msg.data)/self.steps_per_unit
         self.info.abs_position = abs_position_base - self.home_position
 
+
+    def en_cb(self, req):
+        self.info.enabled = req.data
+        self.en_pub.publish(Bool(req.data))
+        return SetBoolResponse(True, "")
+
+
+    def stop_cb(self, req):
+        self._goto_as.preempt_request = True
+        for _ in range(4):
+            self.stop_pub.publish(Empty())
+            rospy.sleep(0.01)
+        return TriggerResponse(True, "")
+        
+
+    def speed_cb(self, req):
+        self.info.speed = req.data
+        self.speed_pub.publish(req.data*self.steps_per_unit)
+        return FloatCommandResponse(True)
 
 
 if __name__ == '__main__':
