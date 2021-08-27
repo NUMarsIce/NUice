@@ -9,20 +9,17 @@ from python_qt_binding.QtCore import QObject, Signal, Slot
 from python_qt_binding.QtGui import QBrush, QGradient
 
 from std_msgs.msg import Empty, Float32, Bool, Int32, UInt16
+from nuice_msgs.srv import *
 
 #Plugin
 class HeaterPlugin(Plugin):
 
-    heaters = []
-    temp = 0.0
-    setpoint = 0.0
-    heating = False
-
+    temp1 = 0.0
+    temp2 = 0.0
+    setpoint1 = 0.0
+    setpoint2 = 0.0
+    
     update_signal = Signal()
-
-    heater_set_temp_pub = None
-    heater_temp_sub = None
-
 
     def __init__(self, context):
         super(HeaterPlugin, self).__init__(context)
@@ -47,83 +44,85 @@ class HeaterPlugin(Plugin):
 
         ### RQT signals  
         self.update_signal.connect(self.update_handler) 
-        # Name input
-        self._widget.reloadBtn.pressed.connect(self.reload)
-        self._widget.nameBox.currentIndexChanged.connect(self.heater_selection_changed)
         # Buttons
-        self._widget.heat1SetBtn.pressed.connect(lambda: self.set_temp(self._widget.heat1Spin.value()))
-        self._widget.stopBtn.pressed.connect(lambda: self.set_temp(0.0))
+        self._widget.heat1SetBtn.pressed.connect(lambda: self.set_temp1(self._widget.heat1Spin.value()))
+        self._widget.stop1Btn.pressed.connect(lambda: self.set_temp1(0.0))
+        self._widget.heat2SetBtn.pressed.connect(lambda: self.set_temp1(self._widget.heat1Spin.value()))
+        self._widget.stop2Btn.pressed.connect(lambda: self.set_temp1(0.0))
+
+        ### ROS
+        self.heat1_srv = rospy.ServiceProxy('set_probe1', FloatCommand)
+        self.heat1_sub = rospy.Subscriber("/melt_board/probe_therm1/value", Int32, self.temp1_sub_cb)
+        self.heat2_srv = rospy.ServiceProxy('set_probe2', FloatCommand)
+        self.heat2_sub = rospy.Subscriber("/melt_board/probe_therm2/value", Int32, self.temp2_sub_cb)
+
+
 
     ### Signal handlers ###########################
-    def set_temp(self, temp_setpoint):
-        if self.heater_set_temp_pub is not None:
-            self.setpoint = temp_setpoint
-            self.heater_set_temp_pub.publish(Float32(temp_setpoint))
+    def set_temp1(self, temp_setpoint):
+        self.setpoint1 = temp_setpoint
+        self.heat1_srv(float(temp_setpoint))
+        self.update_signal.emit()
 
-    def update_handler(self):#TODO
-        self._widget.heat1Temp.setText("%d / %d" % (self.temp, self.setpoint))
-        color = int(min(255, max(0, self.temp/100*255)))
+
+    def set_temp2(self, temp_setpoint):
+        self.setpoint2 = temp_setpoint
+        self.heat2_srv(float(temp_setpoint))
+        self.update_signal.emit()
+
+
+    def update_handler(self):
+        ## Heat1 colors
+        self._widget.heat1Temp.setText("%d / %d" % (self.temp1, self.setpoint1))
+        color = int(min(255, max(0, self.temp1/100*255)))
         self._widget.heat1Temp.setStyleSheet("background-color: rgb(%d, %d, %d);" % (color,0,255-color))
 
-        if(self.heating):
-            self._widget.heatBox.setTitle("Heat - Heating")
-            self._widget.heatBox.setStyleSheet("QGroupBox {color: rgb(200, 0, 0); font-weight: bold}")
+        if(self.temp1 > self.setpoint1):
+            self._widget.heat1Box.setTitle("Heat1 - Heating")
+            self._widget.heat1Box.setStyleSheet("QGroupBox {color: rgb(200, 0, 0); font-weight: bold}")
         else:
-            self._widget.heatBox.setTitle("Heat - Not Heating")
-            self._widget.heatBox.setStyleSheet("QGroupBox {color: rgb(0, 0, 0); font-weight: normal}")
+            self._widget.heat1Box.setTitle("Heat1 - Not Heating")
+            self._widget.heat1Box.setStyleSheet("QGroupBox {color: rgb(0, 0, 0); font-weight: normal}")
+
+        ## Heat2 colors
+        self._widget.heat2Temp.setText("%d / %d" % (self.temp2, self.setpoint2))
+        color = int(min(255, max(0, self.temp2/100*255)))
+        self._widget.heat2Temp.setStyleSheet("background-color: rgb(%d, %d, %d);" % (color,0,255-color))
+
+        if(self.temp2 > self.setpoint2):
+            self._widget.heat2Box.setTitle("Heat2 - Heating")
+            self._widget.heat2Box.setStyleSheet("QGroupBox {color: rgb(200, 0, 0); font-weight: bold}")
+        else:
+            self._widget.heat2Box.setTitle("Heat2 - Not Heating")
+            self._widget.heat2Box.setStyleSheet("QGroupBox {color: rgb(0, 0, 0); font-weight: normal}")
 
 
-    def reload(self):
-        #refreshes the list of heaters
-        
-        self.heaters = []
-        for name, _ in rospy.get_published_topics():
-            if "heating" in name: #define heaters by them having heating
-                self.heaters.append(name[:-8]) #get namespace
-
-        self._widget.nameBox.clear()
-        self._widget.nameBox.addItems(self.heaters)
-
-    def heater_selection_changed(self, idx):
-        if len(self.heaters) == 0:
-            return
-        
-        self.selection = self.heaters[idx]
-        self.unsubscribe()
-
-        self.heater_set_temp_pub = rospy.Publisher("{}/set_setpoint".format(self.selection), Float32, queue_size=10)
-        self.heater_temp_sub = rospy.Subscriber("{}/current_temp".format(self.selection), Float32, self.temp_sub_cb)
-        self.heater_heating_sub = rospy.Subscriber("{}/heating".format(self.selection), Bool, self.heating_sub_cb)
-
-        self.temp = 0.0
-    
     ### ROS callbacks
-    def temp_sub_cb(self, msg):
-        self.temp = msg.data
-        self.update_signal.emit()
-        
-    def heating_sub_cb(self, msg): 
-        self.heating = msg.data
+    def temp1_sub_cb(self, msg):
+        self.temp1 = msg.data
         self.update_signal.emit()
 
-    ### Helpers
-    def unsubscribe(self):
-        if self.heater_set_temp_pub is not None:
-            self.heater_set_temp_pub.unregister()
-            self.heater_temp_sub.unregister()
-        
+
+    def temp2_sub_cb(self, msg):
+        self.temp2 = msg.data
+        self.update_signal.emit()
+
+
     def shutdown_plugin(self):
-        self.unsubscribe()
+        pass
+
 
     def save_settings(self, plugin_settings, instance_settings):
         # TODO save intrinsic configuration, usually using:
         # instance_settings.set_value(k, v)
         pass
 
+
     def restore_settings(self, plugin_settings, instance_settings):
         # TODO restore intrinsic configuration, usually using:
         # v = instance_settings.value(k)
         pass
+
 
     #def trigger_configuration(self):
         # Comment in to signal that the plugin has a way to configure

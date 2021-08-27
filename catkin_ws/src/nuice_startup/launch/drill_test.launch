@@ -2,8 +2,7 @@
 	<rosparam command="load" file="$(find nuice_startup)/config/drill_test.yaml"/>
 	<node pkg="nuice_startup" type="logging_node.py" name="logging_node"/>
 
-	<node pkg="rosbag" type="record" name="rosbag_recorder"
-		args="record -a -O testbag"/>
+	<node pkg="rosbag" type="record" name="rosbag_recorder" args="record -a -O testbag"/>
 
 	<include file="$(find nuice_startup)/launch/driver_init.launch" />
 

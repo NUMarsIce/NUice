@@ -66,22 +66,25 @@ class StepperPlugin(Plugin):
         ### Setup
         self._widget.nameBox.sizeAdjustPolicy = 0 #Make it adjust to size
 
+
     ### Signal handlers ###########################
     def nudge_relative(self, scale=1.0):
         self.update_speed_accel(scale)
         if self.reverse_jog:
             scale *= -1
 
-        pos = int(self._widget.speedInput.value()*scale/5) #go for 5th of a second
+        pos = int(self._widget.speedInput.value()*scale/3) #go for 3rd of a second
         if self.stepper_rel_pos_pub is not None:
             self.stepper_rel_pos_pub.publish(Int32(pos))
 
         self.set_jog()
 
+
     def quick_stop(self):
         if self.stepper_stop_pub is not None:
             self.stepper_stop_pub.publish(Empty())
         self.set_jog()
+
 
     def set_position(self):
         self.update_speed_accel()
@@ -90,12 +93,15 @@ class StepperPlugin(Plugin):
             self.target_pos = self._widget.positionInput.value()
             self.stepper_abs_pos_pub.publish(Int32(self.target_pos))
 
+
     def set_enable(self, state):
         if self.stepper_enable_pub is not None:
             self.stepper_enable_pub.publish(Bool(state == 2)) 
 
+
     def set_reverse(self, state):
         self.reverse_jog = (state == 2) 
+
 
     def reload(self):
         #refreshes the list of steppers
@@ -107,6 +113,7 @@ class StepperPlugin(Plugin):
 
         self._widget.nameBox.clear()
         self._widget.nameBox.addItems(self.steppers)
+
 
     def stepper_selection_changed(self, idx):
         if len(self.steppers) == 0:
@@ -149,10 +156,12 @@ class StepperPlugin(Plugin):
             self._widget.positionBar.setValue(self.current_pos)
         self._widget.positionBar.setFormat(str(self.current_pos))
 
+
     ### ROS callbacks
     def position_cb(self, msg):
         self.current_pos = msg.data
         self.pos_signal.emit()
+
 
     ### Helpers
     def set_jog(self):
@@ -160,11 +169,13 @@ class StepperPlugin(Plugin):
         self.last_pos = self.current_pos
         self.pos_signal.emit()
 
+    
     def update_speed_accel(self, speed_scale=1.0):
         if None not in {self.stepper_set_speed_pub, self.stepper_set_accel_pub}:
             self.stepper_set_speed_pub.publish(UInt16(int(abs(self._widget.speedInput.value()*speed_scale))))
             self.stepper_set_accel_pub.publish(UInt16(int(abs(self._widget.accelInput.value()))))
 
+    
     def unsubscribe(self):
         if self.stepper_set_speed_pub is not None:
             #Stop current motor
@@ -179,14 +190,17 @@ class StepperPlugin(Plugin):
             self.stepper_stop_pub.unregister()
             self.stepper_pos_sub.unregister()
 
+
     def shutdown_plugin(self):
         self.unsubscribe()
+
 
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('_selection', self.selection)
         instance_settings.set_value('_reverse', str(self.reverse_jog))
         instance_settings.set_value('_speed', str(self._widget.speedInput.value()))
         instance_settings.set_value('_accel', str(self._widget.accelInput.value()))
+
 
     def restore_settings(self, plugin_settings, instance_settings):
         # Load curent selection

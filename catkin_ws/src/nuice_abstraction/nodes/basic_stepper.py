@@ -22,7 +22,7 @@ class Stepper():
     home_position = 0
     abs_position_base = 0
     max_speed = 0
-
+    home_speed = 0
 
     def __init__(self):
         rospy.init_node('stepper', anonymous=True)
@@ -31,8 +31,9 @@ class Stepper():
         self.max_units = rospy.get_param('~max', 10000)
         self.min_units = rospy.get_param('~min', 0)
         self.reversed = rospy.get_param('~reverse', False)
-        self.info.speed = max_speed = rospy.get_param('~max_speed', False)
-        self.info.accel = rospy.get_param('~accel', False)
+        self.info.speed = max_speed = rospy.get_param('~max_speed', 1)
+        self.info.accel = rospy.get_param('~accel', 1)
+        home_speed = rospy.get_param('~home_speed', 1)
 
         # Publish info at 10Hz
         self.info_pub = rospy.Publisher('info', StepperInfo, queue_size=10)
@@ -59,6 +60,11 @@ class Stepper():
         self._goto_feedback = GoToCommandFeedback()
         self._goto_result = GoToCommandResult()
 
+        self._home_as = actionlib.SimpleActionServer("home", HomeCommandAction, self.home_execute_cb, False)
+        self._home_as.start()
+        self._home_feedback = HomeCommandFeedback()
+        self._home_result = HomeCommandResult()
+
         # Services
         self.en_srv = rospy.Service('enable', SetBool, self.en_cb)
         self.stop_srv = rospy.Service('stop', Trigger, self.stop_cb)
@@ -72,6 +78,16 @@ class Stepper():
             rospy.sleep(0.01)
 
 
+    def home_execute_cb(self, goal):
+
+
+        # Setup 
+        r = rospy.Rate(20)
+
+
+        
+
+
     def goto_execute_cb(self, goal):
         # Check position range
         if not (self.min_units <= goal.position <= self.max_units):
@@ -81,9 +97,11 @@ class Stepper():
             return
                     
         # Setup 
-        self._goto_feedback.distance = abs(self.info.abs_position-self.info.abs_setpoint)
+        self.info.abs_setpoint = goal.position
+        self._goto_feedback.distance = abs(self.info.abs_position-goal.position)
         rospy.loginfo("Going to %.4f." % goal.position)    
-
+        self.info.moving = True
+        
         # Request new position
         self.abs_pub.publish(int(goal.position*self.steps_per_unit))
 
@@ -91,11 +109,10 @@ class Stepper():
             # Handle Preemption (canceling)
             if self._goto_as.is_preempt_requested():
                 rospy.loginfo("Goto action canceld.")
+                self.info.moving = False
                 self._goto_result.success = False
                 self._goto_as.set_preempted()
-                for _ in range(4): # Stop moving
-                    self.stop_pub.publish(Empty())
-                    rospy.sleep(0.01)
+                self.stop_cb()
                 return
 
             # Break when we are at the requested position
@@ -103,9 +120,10 @@ class Stepper():
                 break
 
             # Update Feedback
-            self._goto_feedback.distance = abs(self.info.abs_position-self.info.abs_setpoint)
+            self._goto_feedback.distance = abs(self.info.abs_position-goal.position)
             self._goto_as.publish_feedback(self._goto_feedback)
         
+        self.info.moving = False
         self._goto_result.success = True
         self._goto_as.set_succeeded(self._goto_result)
 
