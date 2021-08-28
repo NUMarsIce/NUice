@@ -52,7 +52,7 @@ def probability_list_to_probability_vector(probability_list, states):
     
 def feature_dict_to_vector():
     # TODO: update this to work for values other than wob
-    return [feature_vector[WOB_STRING]]
+    return [feature_vector[POSITION_STRING], feature_vector[WOB_STRING]]
 
 
 def bite():
@@ -66,19 +66,20 @@ def bite():
 
     # step up feature vector subsciping information
     rospy.Subscriber("drill_loadcell/load", Float32, read_wob)
+    rospy.Subscriber("drill_stp/current_position", Int32, read_position)
 
-    # currently commented out because initial model used for testing only has wob data
+    # currently commented out because initial model used for testing only has wob and position data
     # rospy.Subscriber("drill_hall/rate", Float64, read_drill_hall)
-    # rospy.Subscriber("drill_stp/current_position", Int32, read_position)
+
     # rospy.Subscriber("drill_current", Float32, read_wob)
 
 
     rate = rospy.Rate(1) # 1hz
     while not rospy.is_shutdown():
-        feature_list = feature_vector_to_list(feature_vector)
+        feature_list = feature_dict_to_vector()
         # current model requires a list of feature vectors
-        probability_list = model.predict_proba([feature_vector])[0]
-        prediction = model.predict(feature_vector)[0]
+        probability_list = model.predict_proba([feature_list])[0]
+        prediction = model.predict(probability_list)[0]
 
         # WILL BE USED FOR CUSTOM MESSAGING
         # probability_vector = probability_list_to_probability_vector(probability_list, states)
