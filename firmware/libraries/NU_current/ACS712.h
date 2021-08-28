@@ -1,6 +1,12 @@
 #ifndef _ACS712_H_
 #define _ACS712_H_
 
+#ifdef ADC_3V3
+  #define ADC_VOLTAGE 3.3
+#else
+  #define ADC_VOLTAGE 5
+#endif
+
 #include <Arduino.h>
 
 /**

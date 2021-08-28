@@ -56,7 +56,7 @@ def run():
 
         #Log data
         start = rospy.Time.now()
-        rate = rospy.Rate(2)
+        rate = rospy.Rate(10)  #Log at 10Hz
         while not rospy.is_shutdown():
             data_file.write(str((rospy.Time.now() - start).to_sec()) + ',')
             for i in range(len(values_list) - 1):

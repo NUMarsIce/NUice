@@ -6,11 +6,13 @@
 #include "STM32Hardware.h"
 namespace ros
 {
-typedef NodeHandle_<STM32Hardware> NUNodeHandle;
+    //NodeHandle for STM32s with tons of space
+    typedef NodeHandle_<STM32Hardware, 40, 40> NUNodeHandle;
 }
 #else
 namespace ros
 {
-typedef NodeHandle_<ArduinoHardware> NUNodeHandle;
+    //NodeHandle for limmited space of arduino
+    typedef NodeHandle_<ArduinoHardware, 5, 5, 128, 128> NUNodeHandle;
 }
 #endif

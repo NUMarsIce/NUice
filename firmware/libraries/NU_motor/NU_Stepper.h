@@ -11,7 +11,7 @@
 class NUStepper : NUDriver{
 
 public:
-    NUStepper(ros::NUNodeHandle& nh, const char* ns, uint8_t step_pin, uint8_t dir_pin, uint8_t en_pin_ = 0xFF, uint16_t max_speed = 400, uint16_t max_accel = 400);
+    NUStepper(ros::NUNodeHandle& nh, const char* ns, uint8_t step_pin, uint8_t dir_pin, uint8_t en_pin = 0xFF, uint16_t max_speed = 400, uint16_t max_accel = 400);
 
     void setup();
     void update();

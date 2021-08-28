@@ -63,22 +63,28 @@ class StepperPlugin(Plugin):
         self._widget.downDownBtn.pressed.connect(lambda: self.nudge_relative(1.0))
         self._widget.reverseBox.stateChanged.connect(self.set_reverse)
 
+        ### Setup
+        self._widget.nameBox.sizeAdjustPolicy = 0 #Make it adjust to size
+
+
     ### Signal handlers ###########################
     def nudge_relative(self, scale=1.0):
         self.update_speed_accel(scale)
         if self.reverse_jog:
             scale *= -1
 
-        pos = int(self._widget.speedInput.value()*scale/5) #go for 5th of a second
+        pos = int(self._widget.speedInput.value()*scale/3) #go for 3rd of a second
         if self.stepper_rel_pos_pub is not None:
             self.stepper_rel_pos_pub.publish(Int32(pos))
 
         self.set_jog()
 
+
     def quick_stop(self):
         if self.stepper_stop_pub is not None:
             self.stepper_stop_pub.publish(Empty())
         self.set_jog()
+
 
     def set_position(self):
         self.update_speed_accel()
@@ -87,29 +93,33 @@ class StepperPlugin(Plugin):
             self.target_pos = self._widget.positionInput.value()
             self.stepper_abs_pos_pub.publish(Int32(self.target_pos))
 
+
     def set_enable(self, state):
         if self.stepper_enable_pub is not None:
             self.stepper_enable_pub.publish(Bool(state == 2)) 
 
+
     def set_reverse(self, state):
         self.reverse_jog = (state == 2) 
+
 
     def reload(self):
         #refreshes the list of steppers
         
         self.steppers = []
         for name, _ in rospy.get_published_topics():
-            if "current_position" in name: #define steppers by them having quick_stop
-                self.steppers.append(name[:-17]) #get namespace
+            if ("quick_stop" in name): #define steppers by them having quick_stop
+                self.steppers.append(name[:-11]) #get namespace
 
         self._widget.nameBox.clear()
         self._widget.nameBox.addItems(self.steppers)
+
 
     def stepper_selection_changed(self, idx):
         if len(self.steppers) == 0:
             return
         
-        self.selection = self.steppers[idx]
+        if(idx >= 0): self.selection = self.steppers[idx]
         self.unsubscribe()
 
         self.stepper_set_speed_pub = rospy.Publisher("{}/set_max_speed".format(self.selection), UInt16, queue_size=10)
@@ -120,15 +130,19 @@ class StepperPlugin(Plugin):
         self.stepper_stop_pub = rospy.Publisher("{}/quick_stop".format(self.selection), Empty, queue_size=10)
         self.stepper_pos_sub = rospy.Subscriber("{}/current_position".format(self.selection), Int32, self.position_cb)
 
-        self.set_enable(True)
-        self._widget.enableBox.setChecked(True)
+        self.set_enable(False)
+        self._widget.enableBox.setChecked(False)
 
         self.target_pos = 0
         self.last_pos = 0
         self.current_pos = 0
-        self._widget.accelInput.setValue(200)
+        self._widget.accelInput.setValue(400)
         self._widget.speedInput.setValue(400)
         self.set_jog()
+
+        # Set name of widget
+        self._widget.setWindowTitle("Stepper: " + self.selection.split('/')[-1])
+
 
     def pos_sig_handler(self):
         # set bar
@@ -142,10 +156,12 @@ class StepperPlugin(Plugin):
             self._widget.positionBar.setValue(self.current_pos)
         self._widget.positionBar.setFormat(str(self.current_pos))
 
+
     ### ROS callbacks
     def position_cb(self, msg):
         self.current_pos = msg.data
         self.pos_signal.emit()
+
 
     ### Helpers
     def set_jog(self):
@@ -153,11 +169,13 @@ class StepperPlugin(Plugin):
         self.last_pos = self.current_pos
         self.pos_signal.emit()
 
+    
     def update_speed_accel(self, speed_scale=1.0):
         if None not in {self.stepper_set_speed_pub, self.stepper_set_accel_pub}:
             self.stepper_set_speed_pub.publish(UInt16(int(abs(self._widget.speedInput.value()*speed_scale))))
             self.stepper_set_accel_pub.publish(UInt16(int(abs(self._widget.accelInput.value()))))
 
+    
     def unsubscribe(self):
         if self.stepper_set_speed_pub is not None:
             #Stop current motor
@@ -172,18 +190,35 @@ class StepperPlugin(Plugin):
             self.stepper_stop_pub.unregister()
             self.stepper_pos_sub.unregister()
 
+
     def shutdown_plugin(self):
         self.unsubscribe()
 
+
     def save_settings(self, plugin_settings, instance_settings):
-        # TODO save intrinsic configuration, usually using:
-        # instance_settings.set_value(k, v)
-        pass
+        instance_settings.set_value('_selection', self.selection)
+        instance_settings.set_value('_reverse', str(self.reverse_jog))
+        instance_settings.set_value('_speed', str(self._widget.speedInput.value()))
+        instance_settings.set_value('_accel', str(self._widget.accelInput.value()))
+
 
     def restore_settings(self, plugin_settings, instance_settings):
-        # TODO restore intrinsic configuration, usually using:
-        # v = instance_settings.value(k)
-        pass
+        # Load curent selection
+        self.reload()
+        if instance_settings.contains('_selection'):
+            self.selection = instance_settings.value('_selection')
+            self.stepper_selection_changed(-1) #setup pub/subs
+            if(self.selection in self.steppers):
+               self._widget.nameBox.setCurrentIndex(self.steppers.index(self.selection))
+            else:
+                self.steppers.insert(0, self.selection)
+                self._widget.nameBox.setCurrentIndex(0)
+
+            # Load other
+            self._widget.accelInput.setValue(int(instance_settings.value('_accel')))
+            self._widget.speedInput.setValue(int(instance_settings.value('_speed')))
+            self._widget.reverseBox.setChecked(instance_settings.value('_reverse')=='True')
+            self.reverse_jog = instance_settings.value('_reverse')=='True'
 
     #def trigger_configuration(self):
         # Comment in to signal that the plugin has a way to configure
