@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="DC Motor Plugin" type="nuice_dc_motor_rqt.dc_motor_plugin.DcMotorPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      Simple plugin to control a Dc Motor.
+    </description>
+    <qtgui>
+      <group>
+        <label>NUIce</label>
+        <icon type="theme">applications-engineering</icon>
+      </group>
+      <label>Dc Motor Plugin</label>
+      <icon type="theme">applications-engineering</icon>
+      <statustip>Low-level control of a DC Motor</statustip>
+    </qtgui>
+  </class>
+</library>
