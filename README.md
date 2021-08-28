@@ -42,7 +42,7 @@ If you feel comfortable with ROS, go ahead and get this repo set up on your loca
 ```bash
 #Clone the Repo
 cd ~/
-git clone https://github.com/SpyGuyIan/NUice.git
+git clone https://github.com/NUMarsIce/NUice.git
 
 #Build the workspace
 cd NUice/catkin_ws/
