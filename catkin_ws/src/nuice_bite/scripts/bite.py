@@ -9,6 +9,7 @@ from std_msgs.msg import Float64
 from std_msgs.msg import Int32
 #from ProbabilityVector.msg import ProbabilityVector
 
+
 POSITION_STRING = 'position'
 WOB_STRING = 'wob'
 SPIN_SPEED_STRING = 'drill_hall'
@@ -67,6 +68,8 @@ def bite():
     # step up feature vector subsciping information
     rospy.Subscriber("dril/loadcell/load", Float32, read_wob)
     rospy.Subscriber("drill_stp/current_position", Int32, read_position)
+    rospy.Subscriber("drill_loadcell/load", Float32, read_wob)
+    rospy.Subscriber("central_board/drill_stp/current_position", Int32, read_position)
 
     # currently commented out because initial model used for testing only has wob and position data
     # rospy.Subscriber("drill_hall/rate", Float64, read_drill_hall)
