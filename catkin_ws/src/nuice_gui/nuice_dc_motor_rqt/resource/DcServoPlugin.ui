@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>573</width>
-    <height>284</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>200</height>
+    <height>250</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>600</width>
+    <height>400</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -47,7 +53,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>GPIO Name</string>
+         <string>DC Servo Name</string>
         </property>
        </widget>
       </item>
@@ -61,7 +67,7 @@
         </property>
         <property name="icon">
          <iconset theme="reload">
-          <normaloff>../catkin_ws/src/nuice_gui/nuice_gpio_rqt/resource</normaloff>../catkin_ws/src/nuice_gui/nuice_gpio_rqt/resource</iconset>
+          <normaloff>../catkin_ws/src/nuice_gui/nuice_dc_motor_rqt/resource</normaloff>../catkin_ws/src/nuice_gui/nuice_dc_motor_rqt/resource</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -88,7 +94,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QGroupBox" name="stateBox">
+       <widget class="QGroupBox" name="currentBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
           <horstretch>0</horstretch>
@@ -102,13 +108,13 @@
          </size>
         </property>
         <property name="title">
-         <string>State</string>
+         <string>Current</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="stateLbl">
+          <widget class="QLabel" name="currentLbl">
            <property name="text">
-            <string>State</string>
+            <string>N/A</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -122,9 +128,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="verticalFrame">
+    <widget class="QSlider" name="posSlider">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -132,69 +138,62 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>60</height>
+       <height>0</height>
       </size>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="toggleBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>TOGGLE</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="lowBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>LOW</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="highBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>HIGH</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="maximum">
+      <number>255</number>
+     </property>
+     <property name="singleStep">
+      <number>10</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBelow</enum>
+     </property>
+     <property name="tickInterval">
+      <number>25</number>
+     </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="haltBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>150</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>HALT</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="dialBox">
+       <property name="maximumSize">
+        <size>
+         <width>175</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2"/>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
