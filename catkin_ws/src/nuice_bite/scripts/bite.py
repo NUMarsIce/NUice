@@ -7,7 +7,7 @@ from std_msgs.msg import String
 from std_msgs.msg import Float32
 from std_msgs.msg import Float64
 from std_msgs.msg import Int32
-from ProbabilityVector.msg import ProbabilityVector
+#from ProbabilityVector.msg import ProbabilityVector
 
 POSITION_STRING = 'position'
 WOB_STRING = 'wob'
@@ -65,7 +65,7 @@ def bite():
     rospy.init_node('bite', anonymous=True)
 
     # step up feature vector subsciping information
-    rospy.Subscriber("drill_loadcell/load", Float32, read_wob)
+    rospy.Subscriber("dril/loadcell/load", Float32, read_wob)
     rospy.Subscriber("drill_stp/current_position", Int32, read_position)
 
     # currently commented out because initial model used for testing only has wob and position data
@@ -91,7 +91,7 @@ def bite():
 
 if __name__ == '__main__':
     try:
-        talker()
+        bite()
     except rospy.ROSInterruptException:
         pass
 
