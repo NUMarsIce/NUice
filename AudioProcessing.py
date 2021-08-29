@@ -1,4 +1,6 @@
+import atexit
 import pyaudio
+import time
 import wave
 
 # You need to have all of the dependencies installed on your machine for this to work
@@ -13,7 +15,7 @@ RATE = 44100
 
 def save_audio_files(streams, frames):
     for i in range(len(streams)):
-        wave_output_filename = "{}_audio_output.wav".format(i)
+        wave_output_filename = "{}_audio_output_{}.wav".format(i, int(time.time()))
         wf = wave.open(wave_output_filename, 'wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -27,6 +29,11 @@ def stop_streams(streams):
         stream.close()
     p.terminate()
 
+def onexit(streams, frames):
+    print("Saving audio output. DO NOT INTERRUPT!")
+    save_audio_files(streams, frames)
+    stop_streams(streams)
+    
 if __name__ == "__main__":
     p = pyaudio.PyAudio()
 
@@ -64,16 +71,10 @@ if __name__ == "__main__":
     print("started recording")
     print(f'number microphones {len(mics)}')
     print(f'number streams {len(streams)}')
+    
+    atexit.register(lambda: onexit(streams, frames))
     while True:
-        try:
-            for i in range(num_used_mics):
-                stream = streams[i]
-                data = stream.read(CHUNK, exception_on_overflow=False)
-                frames[i].append(data)
-
-        except KeyboardInterrupt:
-        # except (KeyboardInterrupt, GeneratorExit, SystemExit, InterruptedError) as e:
-            # save audio files
-            save_audio_files(streams, frames)
-            stop_streams(streams)
-            break
+        for i in range(num_used_mics):
+            stream = streams[i]
+            data = stream.read(CHUNK, exception_on_overflow=False)
+            frames[i].append(data)
