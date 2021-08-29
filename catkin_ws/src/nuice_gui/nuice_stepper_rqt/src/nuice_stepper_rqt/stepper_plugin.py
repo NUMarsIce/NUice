@@ -108,8 +108,8 @@ class StepperPlugin(Plugin):
         
         self.steppers = []
         for name, _ in rospy.get_published_topics():
-            if ("quick_stop" in name): #define steppers by them having quick_stop
-                self.steppers.append(name[:-11]) #get namespace
+            if "current_position" in name: #define steppers by them having quick_stop
+                self.steppers.append(name[:-17]) #get namespace
 
         self._widget.nameBox.clear()
         self._widget.nameBox.addItems(self.steppers)
@@ -204,8 +204,8 @@ class StepperPlugin(Plugin):
 
     def restore_settings(self, plugin_settings, instance_settings):
         # Load curent selection
-        self.reload()
         if instance_settings.contains('_selection'):
+            self.reload()
             self.selection = instance_settings.value('_selection')
             self.stepper_selection_changed(-1) #setup pub/subs
             if(self.selection in self.steppers):
