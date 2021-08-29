@@ -50,14 +50,15 @@ if __name__ == "__main__":
         print(device_info)
         device_max_channels = device_info['maxInputChannels']
         device_host_api = device_info['hostApi']
-        if device_max_channels > 0 and device_host_api == 0:
+        if 'USB' in  device_info['name'] and device_max_channels == 1:
             stream = p.open(format=FORMAT,
-                            channels=device_max_channels,
+                            channels=1,
                             rate=RATE,
                             input=True,
                             input_device_index=i)
             streams.append(stream)
-    
+            mics.append(i)
+
     num_used_mics = len(mics)
     frames = [[] for i in range(num_used_mics)]
     print("started recording")
@@ -67,7 +68,7 @@ if __name__ == "__main__":
         try:
             for i in range(num_used_mics):
                 stream = streams[i]
-                data = stream.read(CHUNK)
+                data = stream.read(CHUNK, exception_on_overflow=False)
                 frames[i].append(data)
 
         except KeyboardInterrupt:
