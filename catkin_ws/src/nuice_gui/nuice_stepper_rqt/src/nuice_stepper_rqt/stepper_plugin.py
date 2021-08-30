@@ -111,6 +111,8 @@ class StepperPlugin(Plugin):
             if "current_position" in name: #define steppers by them having quick_stop
                 self.steppers.append(name[:-17]) #get namespace
 
+        self.steppers.sort()
+
         self._widget.nameBox.clear()
         self._widget.nameBox.addItems(self.steppers)
 
@@ -141,7 +143,8 @@ class StepperPlugin(Plugin):
         self.set_jog()
 
         # Set name of widget
-        self._widget.setWindowTitle("Stepper: " + self.selection.split('/')[-1])
+        if self.selection is not None:    
+            self._widget.setWindowTitle("Stepper: " + self.selection.split('/')[-1])
 
 
     def pos_sig_handler(self):
@@ -196,7 +199,8 @@ class StepperPlugin(Plugin):
 
 
     def save_settings(self, plugin_settings, instance_settings):
-        instance_settings.set_value('_selection', self.selection)
+        if self.selection is not None:
+            instance_settings.set_value('_selection', self.selection)
         instance_settings.set_value('_reverse', str(self.reverse_jog))
         instance_settings.set_value('_speed', str(self._widget.speedInput.value()))
         instance_settings.set_value('_accel', str(self._widget.accelInput.value()))

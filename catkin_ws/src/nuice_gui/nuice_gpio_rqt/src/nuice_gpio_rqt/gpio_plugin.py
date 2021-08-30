@@ -13,6 +13,7 @@ from std_msgs.msg import Empty, Float32, Bool, Int32, UInt16
 class GPIOPlugin(Plugin):
 
     gpios = []
+    selection = None
     state = False
 
     update_signal = Signal()
@@ -90,7 +91,8 @@ class GPIOPlugin(Plugin):
         self.state = False
 
         # Set name of widget
-        self._widget.setWindowTitle("GPIO: " + self.selection.split('/')[-1])
+        if self.selection is not None:
+            self._widget.setWindowTitle("GPIO: " + self.selection.split('/')[-1])
 
     
     ### ROS callbacks
@@ -111,7 +113,8 @@ class GPIOPlugin(Plugin):
 
     def save_settings(self, plugin_settings, instance_settings):
         # Save current selection
-        instance_settings.set_value('_selection', self.selection)
+        if self.selection is not None:
+            instance_settings.set_value('_selection', self.selection)
 
     def restore_settings(self, plugin_settings, instance_settings):
         # Load curent selection

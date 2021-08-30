@@ -65,6 +65,7 @@ void NUDRV8701Servo::setup(){
         nh_.subscribe(pos_sub);
         nh_.subscribe(speed_sub);
         nh_.subscribe(en_sub);
+        nh_.subscribe(zero_sub);
 
         nh_.advertise(current_pub);
         nh_.advertise(fault_pub);

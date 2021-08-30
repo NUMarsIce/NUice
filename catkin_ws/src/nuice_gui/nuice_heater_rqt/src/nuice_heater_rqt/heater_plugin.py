@@ -32,6 +32,7 @@ class HeaterPlugin(Plugin):
         loadUi(ui_file, self._widget)
 
         self._widget.setObjectName('HeaterPluginUi')
+        self._widget.setWindowTitle("Probe Heaters")
         # Number if multiple instancess
         if context.serial_number() > 1:
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
