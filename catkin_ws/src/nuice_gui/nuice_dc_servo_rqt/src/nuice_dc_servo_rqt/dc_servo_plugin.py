@@ -96,9 +96,10 @@ class DcServoPlugin(Plugin):
         #refreshes the list of motors
         
         self.motors = []
-        for name, typ in rospy.get_published_topics():
-            if ("current_position" in name) and (typ == "std_msgs/Int32"): #define motors by them having set_pos
-                self.motors.append(name[:-17]) #get namespace
+        _, _, topic_type = rospy.get_master().getTopicTypes()        
+        for name, typ in topic_type:
+            if "set_pos" in name: #define motors by them having set_pos
+                self.motors.append(name[:-8]) #get namespace
 
         self.motors.sort()
 

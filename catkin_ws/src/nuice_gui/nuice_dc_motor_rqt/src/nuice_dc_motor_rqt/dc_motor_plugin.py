@@ -82,8 +82,9 @@ class DcMotorPlugin(Plugin):
         #refreshes the list of motors
 
         self.motors = []
-        for name, typ in rospy.get_published_topics(): 
-            if ("current" in name) and (typ == "std_msgs/Float32"): #define motors by them having current_state
+        _, _, topic_type = rospy.get_master().getTopicTypes()        
+        for name, typ in topic_type: 
+            if "current" in name: #define motors by them having current
                 self.motors.append(name[:-8]) #get namespace
 
         self.motors.sort() #sort

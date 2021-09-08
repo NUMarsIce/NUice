@@ -69,8 +69,9 @@ class GPIOPlugin(Plugin):
         #refreshes the list of gpios
         
         self.gpios = []
-        for name, typ in rospy.get_published_topics():
-            if ("current_state" in name) and (typ == "std_msgs/Bool"): #define gpios by them having current_state
+        _, _, topic_type = rospy.get_master().getTopicTypes()
+        for name, typ in topic_type:
+            if "current_state" in name: #define gpios by them having current_state
                 self.gpios.append(name[:-14]) #get namespace
 
         self.gpios.sort() #sort

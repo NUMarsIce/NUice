@@ -107,9 +107,11 @@ class StepperPlugin(Plugin):
         #refreshes the list of steppers
         
         self.steppers = []
-        for name, _ in rospy.get_published_topics():
-            if "current_position" in name: #define steppers by them having quick_stop
-                self.steppers.append(name[:-17]) #get namespace
+        _, _, topic_type = rospy.get_master().getTopicTypes()
+        for name, _ in topic_type:
+            if "quick_stop" in name: #define steppers by them having quick_stop
+                self.steppers.append(name[:-11]) #get namespace
+
 
         self.steppers.sort()
 
