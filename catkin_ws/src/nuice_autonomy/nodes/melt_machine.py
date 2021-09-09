@@ -1,8 +1,12 @@
 from pysm import StateMachine, State, Event
+import Queue
+import rospy
+from std_msgs.msg import Int32
+from std_msgs.msg import Bool
+from std_msgs.msg import Empty
 
-
-global melt_limit = False
-global current_melt_position = 0
+melt_limit = False
+current_melt_position = 0
 
 class Melt(StateMachine):
 
@@ -69,7 +73,7 @@ class Melt(StateMachine):
                                  'exit' : self.stopOnExit}
         self.melting.handlers = {'enter' : self.meltingOnEnter,
                                  'exit' : self.meltingOnExit,
-                                 'melt' : self.meltingUpdate
+                                 'melt' : self.meltingUpdate,
                                  'heater_1' : self.heater1Update,
                                  'heater_2' : self.heater2Update,
                                  'power' : self.powerUpdate,

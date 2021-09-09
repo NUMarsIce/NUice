@@ -1,12 +1,12 @@
 from pysm import StateMachine, State, Event
-from queue import Queue
+import Queue
 import rospy
-from std_msgs import Int32
-from std_msgs import Bool
-from std_msgs import Empty
+from std_msgs.msg import Int32
+from std_msgs.msg import Bool
+from std_msgs.msg import Empty
 
-global drill_limit = False
-global current_drill_position = 0
+drill_limit = False
+current_drill_position = 0
 
 class Drill(StateMachine):
 
@@ -50,8 +50,8 @@ class Drill(StateMachine):
         self.idle.handlers = {'enter' : self.idleOnEnter,
                               'exit' : self.idleOnExit}
         self.drilling.handlers = {'enter': self.drillingOnEnter,
-                                  'drill' : self.drillingUpdate}
-        self.drilling.handlers = {'bounce' : self.bounce,
+                                  'drill' : self.drillingUpdate,
+                                  'bounce' : self.bounce,
                                   'exit' : self.drillingOnExit}
         self.stopped.handlers = {'enter' : self.stopOnEnter,
                                  'exit' : self.stopOnExit}

@@ -1,10 +1,11 @@
+#!/usr/bin/env python
+
 from pysm import StateMachine, State, Event
 import drill_machine
 import melt_machine
 import threading
 
-global goal = 0
-
+goal = 0
 
 class Carosel(StateMachine):
 
@@ -116,10 +117,10 @@ if __name__ == '__main__':
     rospy.Subscriber('drill_limit/current_state', std_msgs.msg.Bool, drill_limit_callback)
     rospy.Subscriber('melt_stp/current_position', std_msgs.msg.Int32, melt_position_callback)
     rospy.Subscriber('melt_limit/current_state', std_msgs.msg.Bool, melt_limit_callback)
-    rospy.Subscriber('ac/goal', std_msgs.msg.Int32, goal_callback)
     state_machine = Carosel("carosel", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub,
-     melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
-     backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
+        melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
+        backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
+    rospy.Subscriber('ac/goal', std_msgs.msg.Int32, goal_callback)
     rospy.Subscriber('ac/events', std_msgs.msg.String, lambda event_data: state_machine.dispatch(Event(event_data.data, goal)))
     rospy.spin()    
 
