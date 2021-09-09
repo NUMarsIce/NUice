@@ -5,7 +5,7 @@ import actionlib
 from std_msgs.msg import Int32, UInt16, Bool, Empty
 from nuice_msgs.msg import *
 from nuice_msgs.srv import *
-from std_srvs.srv import * 
+from std_srvs.srv import SetBool, SetBoolResponse, Trigger, TriggerResponse
 
 
 class Stepper():
@@ -49,12 +49,12 @@ class Stepper():
         rospy.Subscriber(self.stepper_name+"/current_position", Int32, self.pos_cb)
         rospy.Subscriber(self.stepper_name+"/current_state", Bool, self.limmit_cb)
 
-        self.abs_pub = rospy.Publisher('set_abs_pos', Int32, queue_size=10)
-        self.rel_pub = rospy.Publisher('set_rel_pos', Int32, queue_size=10)
-        self.speed_pub = rospy.Publisher('set_max_speed', UInt16, queue_size=10)
-        self.accel_pub = rospy.Publisher('set_accel', UInt16, queue_size=10)
-        self.en_pub = rospy.Publisher('set_enabled', Bool, queue_size=10)
-        self.stop_pub = rospy.Publisher('quick_stop', Empty, queue_size=10)
+        self.abs_pub = rospy.Publisher(self.stepper_name+'/set_abs_pos', Int32, queue_size=10)
+        self.rel_pub = rospy.Publisher(self.stepper_name+'/set_rel_pos', Int32, queue_size=10)
+        self.speed_pub = rospy.Publisher(self.stepper_name+'/set_max_speed', UInt16, queue_size=10)
+        self.accel_pub = rospy.Publisher(self.stepper_name+'/set_accel', UInt16, queue_size=10)
+        self.en_pub = rospy.Publisher(self.stepper_name+'/set_enabled', Bool, queue_size=10)
+        self.stop_pub = rospy.Publisher(self.stepper_name+'/quick_stop', Empty, queue_size=10)
 
         # Actions 
         self._goto_as = actionlib.SimpleActionServer("goto_position", GoToCommandAction, self.goto_execute_cb, False)
@@ -138,8 +138,11 @@ class Stepper():
         self.info.moving = True
         
         # Request new position
-        self.abs_pub.publish(int(goal.position*self.steps_per_unit))
+        for _ in range(4):
+            self.abs_pub.publish(int(goal.position*self.steps_per_unit))
+            rospy.sleep(10)
 
+        # Wait for move    
         while(True):
             # Handle Preemption (canceling)
             if self._goto_as.is_preempt_requested():
@@ -182,7 +185,7 @@ class Stepper():
         return SetBoolResponse(True, "")
 
 
-    def stop_cb(self, req):
+    def stop_cb(self, req=None):
         self._goto_as.preempt_request = True
         for _ in range(4):
             self.stop_pub.publish(Empty())
