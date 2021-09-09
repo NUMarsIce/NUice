@@ -1,8 +1,8 @@
 <launch>
 
-    <node pkg="nuice_abstraction" type="probe_control.py" name="probe_control"/>
+    <node pkg="nuice_abstraction" type="probe_control.py" name="probe_control"/> -->
 
-    <!-- <node pkg="nuice_abstraction" type="basic_stepper.py" name="stepper">
+    <node pkg="nuice_abstraction" type="basic_stepper.py" name="stepper">
 		<param name="stepper_name" value="stepper"/>
 		<param name="steps_per_unit" value="400"/>
 		<param name="max" value="800"/>
@@ -11,5 +11,5 @@
 		<param name="max_speed" value="800"/>
 		<param name="accel" value="800"/>
 		<param name="home_speed" value="400"/>
-    </node> -->
+    </node>
 </launch>
