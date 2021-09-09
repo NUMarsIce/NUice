@@ -94,7 +94,7 @@ class HeaterPlugin(Plugin):
         color = int(min(255, max(0, self.temp2/150.0*255)))
         self._widget.heat2Temp.setStyleSheet("background-color: rgb(%d, %d, %d);" % (color,0,255-color))
 
-        if(self.temp2 > self.setpoint2):
+        if(self.temp2 < self.setpoint2):
             self._widget.heat2Box.setTitle("Heat2 - ON ")
             self._widget.heat2Box.setStyleSheet("QGroupBox {color: rgb(200, 0, 0); font-weight: bold}")
         else:
