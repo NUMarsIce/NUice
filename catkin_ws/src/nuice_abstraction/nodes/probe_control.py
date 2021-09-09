@@ -33,7 +33,7 @@ def t2_cb(msg):
 def main():
     global setpoint1, setpoint2, temperature1, temperature2
 
-    rospy.init_node("probe_control", anonymous=True)
+    rospy.init_node("probe_control")
 
     srv1 = rospy.Service('set_probe1', FloatCommand, handle_command1)
     srv2 = rospy.Service('set_probe2', FloatCommand, handle_command2)

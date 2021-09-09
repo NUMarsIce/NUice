@@ -32,6 +32,7 @@ class HeaterPlugin(Plugin):
         loadUi(ui_file, self._widget)
 
         self._widget.setObjectName('HeaterPluginUi')
+        self._widget.setWindowTitle("Probe Heaters")
         # Number if multiple instancess
         if context.serial_number() > 1:
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
@@ -47,8 +48,8 @@ class HeaterPlugin(Plugin):
         # Buttons
         self._widget.heat1SetBtn.pressed.connect(lambda: self.set_temp1(self._widget.heat1Spin.value()))
         self._widget.stop1Btn.pressed.connect(lambda: self.set_temp1(0.0))
-        self._widget.heat2SetBtn.pressed.connect(lambda: self.set_temp1(self._widget.heat1Spin.value()))
-        self._widget.stop2Btn.pressed.connect(lambda: self.set_temp1(0.0))
+        self._widget.heat2SetBtn.pressed.connect(lambda: self.set_temp2(self._widget.heat2Spin.value()))
+        self._widget.stop2Btn.pressed.connect(lambda: self.set_temp2(0.0))
 
         ### ROS
         self.heat1_srv = rospy.ServiceProxy('set_probe1', FloatCommand)
@@ -60,40 +61,44 @@ class HeaterPlugin(Plugin):
 
     ### Signal handlers ###########################
     def set_temp1(self, temp_setpoint):
-        self.setpoint1 = temp_setpoint
-        self.heat1_srv(float(temp_setpoint))
-        self.update_signal.emit()
-
+        try:
+            self.setpoint1 = temp_setpoint
+            self.heat1_srv(float(temp_setpoint))
+            self.update_signal.emit()
+        except rospy.ServiceException:
+            return
 
     def set_temp2(self, temp_setpoint):
-        self.setpoint2 = temp_setpoint
-        self.heat2_srv(float(temp_setpoint))
-        self.update_signal.emit()
-
+        try:
+            self.setpoint2 = temp_setpoint
+            self.heat2_srv(float(temp_setpoint))
+            self.update_signal.emit()
+        except rospy.ServiceException:
+            return
 
     def update_handler(self):
         ## Heat1 colors
         self._widget.heat1Temp.setText("%d / %d" % (self.temp1, self.setpoint1))
-        color = int(min(255, max(0, self.temp1/100*255)))
+        color = int(min(255, max(0, self.temp1/150.0*255)))
         self._widget.heat1Temp.setStyleSheet("background-color: rgb(%d, %d, %d);" % (color,0,255-color))
 
-        if(self.temp1 > self.setpoint1):
-            self._widget.heat1Box.setTitle("Heat1 - Heating")
+        if(self.temp1 < self.setpoint1):
+            self._widget.heat1Box.setTitle("Heat1 - ON ")
             self._widget.heat1Box.setStyleSheet("QGroupBox {color: rgb(200, 0, 0); font-weight: bold}")
         else:
-            self._widget.heat1Box.setTitle("Heat1 - Not Heating")
+            self._widget.heat1Box.setTitle("Heat1 - OFF")
             self._widget.heat1Box.setStyleSheet("QGroupBox {color: rgb(0, 0, 0); font-weight: normal}")
 
         ## Heat2 colors
         self._widget.heat2Temp.setText("%d / %d" % (self.temp2, self.setpoint2))
-        color = int(min(255, max(0, self.temp2/100*255)))
+        color = int(min(255, max(0, self.temp2/150.0*255)))
         self._widget.heat2Temp.setStyleSheet("background-color: rgb(%d, %d, %d);" % (color,0,255-color))
 
         if(self.temp2 > self.setpoint2):
-            self._widget.heat2Box.setTitle("Heat2 - Heating")
+            self._widget.heat2Box.setTitle("Heat2 - ON ")
             self._widget.heat2Box.setStyleSheet("QGroupBox {color: rgb(200, 0, 0); font-weight: bold}")
         else:
-            self._widget.heat2Box.setTitle("Heat2 - Not Heating")
+            self._widget.heat2Box.setTitle("Heat2 - OFF")
             self._widget.heat2Box.setStyleSheet("QGroupBox {color: rgb(0, 0, 0); font-weight: normal}")
 
 

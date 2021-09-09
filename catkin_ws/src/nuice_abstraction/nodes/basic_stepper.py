@@ -5,7 +5,7 @@ import actionlib
 from std_msgs.msg import Int32, UInt16, Bool, Empty
 from nuice_msgs.msg import *
 from nuice_msgs.srv import *
-from std_srvs.srv import * 
+from std_srvs.srv import SetBool, SetBoolResponse, Trigger, TriggerResponse
 
 
 class Stepper():
@@ -23,6 +23,7 @@ class Stepper():
     abs_position_base = 0
     max_speed = 0
     home_speed = 0
+    limit_state = False
 
     def __init__(self):
         rospy.init_node('stepper', anonymous=True)
@@ -33,7 +34,7 @@ class Stepper():
         self.reversed = rospy.get_param('~reverse', False)
         self.info.speed = max_speed = rospy.get_param('~max_speed', 1)
         self.info.accel = rospy.get_param('~accel', 1)
-        home_speed = rospy.get_param('~home_speed', 1)
+        self.home_speed = rospy.get_param('~home_speed', 1)
 
         # Publish info at 10Hz
         self.info_pub = rospy.Publisher('info', StepperInfo, queue_size=10)
@@ -46,13 +47,14 @@ class Stepper():
 
         # DRIVERS
         rospy.Subscriber(self.stepper_name+"/current_position", Int32, self.pos_cb)
+        rospy.Subscriber(self.stepper_name+"/current_state", Bool, self.limmit_cb)
 
-        self.abs_pub = rospy.Publisher('set_abs_pos', Int32, queue_size=10)
-        self.rel_pub = rospy.Publisher('set_rel_pos', Int32, queue_size=10)
-        self.speed_pub = rospy.Publisher('set_max_speed', UInt16, queue_size=10)
-        self.accel_pub = rospy.Publisher('set_accel', UInt16, queue_size=10)
-        self.en_pub = rospy.Publisher('set_enabled', Bool, queue_size=10)
-        self.stop_pub = rospy.Publisher('quick_stop', Empty, queue_size=10)
+        self.abs_pub = rospy.Publisher(self.stepper_name+'/set_abs_pos', Int32, queue_size=10)
+        self.rel_pub = rospy.Publisher(self.stepper_name+'/set_rel_pos', Int32, queue_size=10)
+        self.speed_pub = rospy.Publisher(self.stepper_name+'/set_max_speed', UInt16, queue_size=10)
+        self.accel_pub = rospy.Publisher(self.stepper_name+'/set_accel', UInt16, queue_size=10)
+        self.en_pub = rospy.Publisher(self.stepper_name+'/set_enabled', Bool, queue_size=10)
+        self.stop_pub = rospy.Publisher(self.stepper_name+'/quick_stop', Empty, queue_size=10)
 
         # Actions 
         self._goto_as = actionlib.SimpleActionServer("goto_position", GoToCommandAction, self.goto_execute_cb, False)
@@ -80,12 +82,45 @@ class Stepper():
 
     def home_execute_cb(self, goal):
 
-
         # Setup 
+        rospy.loginfo("Homing...")    
         r = rospy.Rate(20)
+        self._home_feedback.position = self.info.abs_position
+        self.info.moving = True
 
+        for _ in range(4):
+            self.speed_pub.publish(UInt16(self.home_speed*self.steps_per_unit))
 
+        # Home
+        while(not self.limit_state):
+            if self._goto_as.is_preempt_requested():
+                rospy.loginfo("Home action canceld.")
+                self.info.moving = False
+                self._home_result.success = False
+                self._home_as.set_preempted()
+                self.stop_cb()
+                return
+
+            self.rel_pub.publish(Int32(-self.home_speed*self.steps_per_unit)) # 1 second of relative movement
+            self._home_feedback.position = self.info.abs_position
+            self._home_as.publish_feedback(self._home_feedback)
+            r.sleep()
+
+        # Stop
+        self.stop_cb()
+        rospy.sleep(1)
+
+        # Set home
+        rospy.loginfo("Homed at %f" % self.abs_position_base)    
+        self.home_position = self.abs_position_base 
+
+        # End and reset speed
+        self.info.moving = False
+        for _ in range(4):
+            self.speed_pub.publish(UInt16(self.max_speed*self.steps_per_unit))
         
+        self._home_result.success = True
+        self._home_as.set_succeeded(self._home_result)
 
 
     def goto_execute_cb(self, goal):
@@ -103,8 +138,11 @@ class Stepper():
         self.info.moving = True
         
         # Request new position
-        self.abs_pub.publish(int(goal.position*self.steps_per_unit))
+        for _ in range(4):
+            self.abs_pub.publish(int(goal.position*self.steps_per_unit))
+            rospy.sleep(10)
 
+        # Wait for move    
         while(True):
             # Handle Preemption (canceling)
             if self._goto_as.is_preempt_requested():
@@ -133,8 +171,12 @@ class Stepper():
 
 
     def pos_cb(self, msg):
-        abs_position_base = float(msg.data)/self.steps_per_unit
-        self.info.abs_position = abs_position_base - self.home_position
+        self.abs_position_base = float(msg.data)/self.steps_per_unit
+        self.info.abs_position = self.abs_position_base - self.home_position
+
+
+    def limmit_cb(self, msg):
+        self.limit_state = msg.data
 
 
     def en_cb(self, req):
@@ -143,7 +185,7 @@ class Stepper():
         return SetBoolResponse(True, "")
 
 
-    def stop_cb(self, req):
+    def stop_cb(self, req=None):
         self._goto_as.preempt_request = True
         for _ in range(4):
             self.stop_pub.publish(Empty())
