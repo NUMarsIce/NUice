@@ -140,17 +140,17 @@ class Stepper():
         # Request new position
         for _ in range(4):
             self.abs_pub.publish(int(goal.position*self.steps_per_unit))
-            rospy.sleep(10)
+            rospy.sleep(0.01)
 
         # Wait for move    
         while(True):
             # Handle Preemption (canceling)
             if self._goto_as.is_preempt_requested():
-                rospy.loginfo("Goto action canceld.")
+                rospy.loginfo("Goto action canceled.")
                 self.info.moving = False
                 self._goto_result.success = False
-                self._goto_as.set_preempted()
                 self.stop_cb()
+                self._goto_as.set_preempted()
                 return
 
             # Break when we are at the requested position
