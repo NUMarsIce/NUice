@@ -84,8 +84,8 @@ class DcMotorPlugin(Plugin):
         self.motors = []
         _, _, topic_type = rospy.get_master().getTopicTypes()        
         for name, typ in topic_type: 
-            if "current" in name: #define motors by them having current
-                self.motors.append(name[:-8]) #get namespace
+            if "fault" in name: #define motors by them having fault
+                self.motors.append(name[:-6]) #get namespace
 
         self.motors.sort() #sort
 

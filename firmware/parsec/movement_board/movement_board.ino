@@ -30,5 +30,5 @@ void loop(){
     led.update();
     carosel_mot.update();
     brake1.update();
-    brake2.setup();
+    brake2.update();
 }
