@@ -1,5 +1,5 @@
 from pysm import StateMachine, State, Event
-import Queue
+from Queue import Queue
 import rospy
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
@@ -14,7 +14,7 @@ class Drill(StateMachine):
 
 
     def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub):
-        super().__init__(name)
+        super(StateMachine,self).__init__(name)
         #rospy.init_node("drill_machine")
         #rospy.Subscriber("drill_limit/current_state", std_msgs.msg.Bool, self.drill_limit_callback)
         #rospy.Subscriber("drill_stp/current_position", std_msgs.msg.Int32, self.drill_position_callback)

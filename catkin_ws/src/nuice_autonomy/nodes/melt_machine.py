@@ -1,5 +1,5 @@
 from pysm import StateMachine, State, Event
-import Queue
+from Queue import Queue
 import rospy
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
@@ -14,7 +14,7 @@ class Melt(StateMachine):
 
     def __init__(self, name, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
     backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub):
-        super().__init__(name)
+        super(StateMachine,self).__init__(name)
         self.idle = True
         self.stopped = False
         self.melt_motion_queue = Queue(maxsize = 0)

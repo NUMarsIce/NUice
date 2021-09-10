@@ -16,12 +16,12 @@ class Carosel(StateMachine):
 
     def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
         backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub):
-        super().__init__(name)
+        super(StateMachine,self).__init__(name)
         #self.worker_thread = threading.Thread(target=self.run)
         
         # Children state machines
-        self.drill = Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub)
-        self.melt = Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
+        self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub)
+        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
         backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
         
         # Main states
