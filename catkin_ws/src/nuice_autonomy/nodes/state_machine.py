@@ -4,6 +4,11 @@ from pysm import StateMachine, State, Event
 import drill_machine
 import melt_machine
 import threading
+import rospy
+from std_msgs.msg import Int32
+from std_msgs.msg import Bool
+from std_msgs.msg import Empty
+
 
 goal = 0
 
@@ -96,32 +101,32 @@ def goal_callback(goal_data):
 
 
 if __name__ == '__main__':
-    drill_motion_pub = rospy.Publisher("drill_stp/set_abs_pos", std_msgs.msg.Int32)
-    drill_rel_motion_pub = rospy.Publisher("drill_stp/set_rel_pos", std_msgs.msg.Int32)
-    drill_stop_pub = rospy.Publisher("drill_stp/quick_stop", std_msgs.msg.Empty)
-    drill_pub = rospy.Publisher("drill_relay/set_state", std_msgs.msg.Bool)
-    melt_motion_pub = rospy.Publisher("melt_stp/set_abs_pos", std_msgs.msg.Int32)
-    melt_rel_motion_pub = rospy.Publisher("melt_stp/set_rel_pos", std_msgs.msg.Int32)
-    melt_stop_pub = rospy.Publisher("drill_stp/quick_stop", std_msgs.msg.Empty)
-    heater_1_pub = rospy.Publisher("heater1_relay/set_state", std_msgs.msg.Bool)
-    heater_2_pub = rospy.Publisher("heater2_relay/set_state", std_msgs.msg.Bool) 
-    power_pub = rospy.Publisher("power_relay/set_state", std_msgs.msg.Bool)
-    backwash_pub = rospy.Publisher("backwash_relay/set_state", std_msgs.msg.Bool)
-    stage_1_pub = rospy.Publisher("stage1_relay/set_state", std_msgs.msg.Bool)
-    bypass_pub = rospy.Publisher("bypass_relay/set_state", std_msgs.msg.Bool)
-    air_pub = rospy.Publisher("air_relay/set_state", std_msgs.msg.Bool)
-    ropump_pub = rospy.Publisher("ropump_relay/set_state", std_msgs.msg.Bool)
-    mainpump_pub = rospy.Publisher("mainpump_relay/set_state", std_msgs.msg.Bool)
+    drill_motion_pub = rospy.Publisher("drill_stp/set_abs_pos", Int32, queue_size = 10)
+    drill_rel_motion_pub = rospy.Publisher("drill_stp/set_rel_pos", Int32, queue_size = 10)
+    drill_stop_pub = rospy.Publisher("drill_stp/quick_stop", Empty, queue_size = 10)
+    drill_pub = rospy.Publisher("drill_relay/set_state", Bool, queue_size = 10)
+    melt_motion_pub = rospy.Publisher("melt_stp/set_abs_pos", Int32, queue_size = 10)
+    melt_rel_motion_pub = rospy.Publisher("melt_stp/set_rel_pos", Int32, queue_size = 10)
+    melt_stop_pub = rospy.Publisher("drill_stp/quick_stop", Empty, queue_size = 10)
+    heater_1_pub = rospy.Publisher("heater1_relay/set_state", Bool, queue_size = 10)
+    heater_2_pub = rospy.Publisher("heater2_relay/set_state", Bool, queue_size = 10) 
+    power_pub = rospy.Publisher("power_relay/set_state", Bool, queue_size = 10)
+    backwash_pub = rospy.Publisher("backwash_relay/set_state", Bool, queue_size = 10)
+    stage_1_pub = rospy.Publisher("stage1_relay/set_state", Bool, queue_size = 10)
+    bypass_pub = rospy.Publisher("bypass_relay/set_state", Bool, queue_size = 10)
+    air_pub = rospy.Publisher("air_relay/set_state", Bool, queue_size = 10)
+    ropump_pub = rospy.Publisher("ropump_relay/set_state", Bool, queue_size = 10)
+    mainpump_pub = rospy.Publisher("mainpump_relay/set_state", Bool, queue_size = 10)
     rospy.init_node('autonomy_core')
-    rospy.Subscriber('drill_stp/current_position', std_msgs.msg.Int32, drill_position_callback)
-    rospy.Subscriber('drill_limit/current_state', std_msgs.msg.Bool, drill_limit_callback)
-    rospy.Subscriber('melt_stp/current_position', std_msgs.msg.Int32, melt_position_callback)
-    rospy.Subscriber('melt_limit/current_state', std_msgs.msg.Bool, melt_limit_callback)
+    rospy.Subscriber('drill_stp/current_position', Int32, drill_position_callback)
+    rospy.Subscriber('drill_limit/current_state', Bool, drill_limit_callback)
+    rospy.Subscriber('melt_stp/current_position', Int32, melt_position_callback)
+    rospy.Subscriber('melt_limit/current_state', Bool, melt_limit_callback)
     state_machine = Carosel("carosel", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub,
         melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
         backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
-    rospy.Subscriber('ac/goal', std_msgs.msg.Int32, goal_callback)
-    rospy.Subscriber('ac/events', std_msgs.msg.String, lambda event_data: state_machine.dispatch(Event(event_data.data, goal)))
+    rospy.Subscriber('ac/goal', Int32, goal_callback)
+    rospy.Subscriber('ac/events', String, lambda event_data: state_machine.dispatch(Event(event_data.data, goal)))
     rospy.spin()    
 
 
