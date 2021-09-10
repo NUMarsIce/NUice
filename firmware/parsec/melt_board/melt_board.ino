@@ -14,8 +14,8 @@
 ros::NUNodeHandle nh;
 
 // NUGPIO led(nh, "led", PA10, OUTPUT);
-NULoadcell loadcell1(nh, "loadcell1", PB6, PB7, 6900.0f);//J10: 5v, PB6, PB7, PB8, PB9
-NULoadcell loadcell2(nh, "loadcell2", PB8, PB9, 6900.0f);
+NULoadcell loadcell1(nh, "loadcell1", PB6, PB7, -6900.0f);//J10: 5v, PB6, PB7, PB8, PB9
+NULoadcell loadcell2(nh, "loadcell2", PB8, PB9, -6900.0f);// Uncalibrated, but 150 is a good upper maximum
 NUStepper rot_stp(nh, "rot_stp", PC8, PC9, PA8); //J6: G, PA8,  PC9,  PC8,  PC7
 NUStepper pitch_stp(nh, "pitch_stp", PD2, PB4, PB5); //J9: G, PB5,  PB4,  PD2,  PC12
 

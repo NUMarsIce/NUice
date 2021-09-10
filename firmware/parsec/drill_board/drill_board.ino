@@ -11,15 +11,15 @@ ros::NUNodeHandle nh;
 
 NUGPIO led(nh, "led", PA9, OUTPUT);
 
-NULoadcell lc(nh, "drill_loadcell", PB15, PC6, 2915.0f); //J5, Newtons
+NULoadcell lc(nh, "drill_loadcell", PB15, PC6, 2915.0f); //J5, Newtons (old was 2915, newer might be 2821)
 NUHallEffect he(nh, "drill_hall", PB8);//J10
 
 void setup(){
     nh.getHardware()->setBaud(115200);
     nh.initNode();
     led.setup();
-    lc.setup();
     he.setup();
+    lc.setup();
 }
 
 
