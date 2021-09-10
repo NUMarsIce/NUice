@@ -13,6 +13,7 @@ from std_msgs.msg import Empty, Float32, Bool, Int32, UInt16
 class GPIOPlugin(Plugin):
 
     gpios = []
+    selection = None
     state = False
 
     update_signal = Signal()
@@ -32,9 +33,10 @@ class GPIOPlugin(Plugin):
         loadUi(ui_file, self._widget)
 
         self._widget.setObjectName('GPIOPluginUi')
+        
         # Number if multiple instancess
         if context.serial_number() > 1:
-            self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
+            self._widget.setWindowTitle('GPIO (%d)' % context.serial_number())
         context.add_widget(self._widget)
 
         ### RQT signals  
@@ -46,6 +48,9 @@ class GPIOPlugin(Plugin):
         self._widget.toggleBtn.pressed.connect(lambda: self.set_state(not self.state))
         self._widget.lowBtn.pressed.connect(lambda: self.set_state(False))
         self._widget.highBtn.pressed.connect(lambda: self.set_state(True))
+
+        ### Setup
+        self._widget.nameBox.sizeAdjustPolicy = 0 #Make it adjust to size
 
     ### Signal handlers ###########################
     def set_state(self, state):
@@ -64,9 +69,12 @@ class GPIOPlugin(Plugin):
         #refreshes the list of gpios
         
         self.gpios = []
-        for name, _ in rospy.get_published_topics():
+        _, _, topic_type = rospy.get_master().getTopicTypes()
+        for name, typ in topic_type:
             if "current_state" in name: #define gpios by them having current_state
                 self.gpios.append(name[:-14]) #get namespace
+
+        self.gpios.sort() #sort
 
         self._widget.nameBox.clear()
         self._widget.nameBox.addItems(self.gpios)
@@ -75,13 +83,18 @@ class GPIOPlugin(Plugin):
         if len(self.gpios) == 0:
             return
         
-        self.selection = self.gpios[idx]
+        if(idx >= 0): self.selection = self.gpios[idx]
         self.unsubscribe()
 
         self.gpio_set_state_pub = rospy.Publisher("{}/set_state".format(self.selection), Bool, queue_size=10)
         self.gpio_state_sub = rospy.Subscriber("{}/current_state".format(self.selection), Bool, self.state_sub_cb)
 
         self.state = False
+
+        # Set name of widget
+        if self.selection is not None:
+            self._widget.setWindowTitle("GPIO: " + self.selection.split('/')[-1])
+
     
     ### ROS callbacks
     def state_sub_cb(self, msg):
@@ -94,19 +107,27 @@ class GPIOPlugin(Plugin):
         if self.gpio_set_state_pub is not None:
             self.gpio_set_state_pub.unregister()
             self.gpio_state_sub.unregister()
-        
+
+    ### RQT functions    
     def shutdown_plugin(self):
         self.unsubscribe()
 
     def save_settings(self, plugin_settings, instance_settings):
-        # TODO save intrinsic configuration, usually using:
-        # instance_settings.set_value(k, v)
-        pass
+        # Save current selection
+        if self.selection is not None:
+            instance_settings.set_value('_selection', self.selection)
 
     def restore_settings(self, plugin_settings, instance_settings):
-        # TODO restore intrinsic configuration, usually using:
-        # v = instance_settings.value(k)
-        pass
+        # Load curent selection
+        self.reload()
+        if instance_settings.contains('_selection'):
+            self.selection = instance_settings.value('_selection')
+            self.gpio_selection_changed(-1) #setup pub/subs
+            if(self.selection in self.gpios):
+               self._widget.nameBox.setCurrentIndex(self.gpios.index(self.selection))
+            else:
+                self.gpios.insert(0, self.selection)
+                self._widget.nameBox.setCurrentIndex(0)
 
     #def trigger_configuration(self):
         # Comment in to signal that the plugin has a way to configure

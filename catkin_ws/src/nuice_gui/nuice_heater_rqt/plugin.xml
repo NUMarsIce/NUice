@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="Heater Plugin" type="nuice_heater_rqt.heater_plugin.HeaterPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      Simple plugin to control a Heater.
+    </description>
+    <qtgui>
+      <group>
+        <label>NUIce</label>
+        <icon type="theme">applications-engineering</icon>
+      </group>
+      <label>Heater Plugin</label>
+      <icon type="theme">applications-engineering</icon>
+      <statustip>Low-level control of a Heater</statustip>
+    </qtgui>
+  </class>
+</library>

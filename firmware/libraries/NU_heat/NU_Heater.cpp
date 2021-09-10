@@ -4,7 +4,7 @@
 NUHeater::NUHeater(ros::NUNodeHandle& nh, const char* ns, uint8_t heater_pin, TempSensor& temp_sensor, uint8_t update_hz)
               : NUDriver(nh, ns),
                 temp_pub_(appendNamespace("/current_temp"), &temp_pub_msg_),
-                state_pub_(appendNamespace("/current_state"), &state_pub_msg_),
+                state_pub_(appendNamespace("/heating"), &state_pub_msg_),
                 setpoint_sub_(appendNamespace("/set_setpoint"), &NUHeater::setpointCb, this),
                 temp_sensor_(temp_sensor){
     update_hz_ = update_hz;

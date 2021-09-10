@@ -1,12 +1,11 @@
-#define USE_USB
-
 #include <Arduino.h>
-#include <ros.h>
+#include <NUros.h>
+
 #include <NU_GPIO.h>
 
-ros::NodeHandle nh;
+ros::NUNodeHandle nh;
 
-NUGPIO led(nh, "led", PA_9);
+NUGPIO led(nh, "led", PA9, OUTPUT);
 
 void setup(){
     nh.getHardware()->setBaud(115200);

@@ -10,7 +10,7 @@
 class NUQuadratureEncoder : NUDriver{
 
 public:
-    NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, uint32_t pin_a, uint32_t pin_b, uint32_t pin_z = 0xFF, uint8_t update_hz = 2);
+    NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, uint32_t pin_a, uint32_t pin_b, uint32_t pin_z = 0xFF, uint8_t update_hz = 10);
 
     void setup();
     void update();
@@ -22,7 +22,7 @@ private:
     uint8_t update_hz_;
     long last_update_ = millis();
 
-    Encoders encoder_;
+    Encoders* encoder_;
 
     //Position Publisher
     std_msgs::Int32 pos_pub_msg_;

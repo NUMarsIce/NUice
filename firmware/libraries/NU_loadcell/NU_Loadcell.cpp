@@ -18,7 +18,8 @@ void NULoadcell::setup(){
 
     loadcell_.begin(dout_pin_, clk_pin_);
     loadcell_.set_scale(scale_);
-    loadcell_.tare();
+    delay(100);
+    loadcell_.tare(5);
 }
 
 void NULoadcell::update(){
@@ -30,6 +31,6 @@ void NULoadcell::update(){
 }
 
 void NULoadcell::tareCb(const std_msgs::Empty& tare_msg){
-    loadcell_.tare();
+    loadcell_.tare(5);
 }
 

@@ -5,8 +5,7 @@ NUQuadratureEncoder::NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, 
               : NUDriver(nh, ns),
                 pos_pub_(appendNamespace("/position"), &pos_pub_msg_),
                 err_pub_(appendNamespace("/errors"), &err_pub_msg_),
-                zero_sub_(appendNamespace("/zero"), &NUQuadratureEncoder::zeroCb, this),
-                encoder_(pin_a, pin_b)
+                zero_sub_(appendNamespace("/zero"), &NUQuadratureEncoder::zeroCb, this)
                 {
     pin_a_ = pin_a;
     pin_b_ = pin_b;
@@ -14,6 +13,8 @@ NUQuadratureEncoder::NUQuadratureEncoder(ros::NUNodeHandle& nh, const char* ns, 
 }
 
 void NUQuadratureEncoder::setup(){
+    encoder_ = new Encoders(pin_a_, pin_b_);//apparently we cant do this in teh constructor ri
+
     nh_.advertise(err_pub_);
     nh_.advertise(pos_pub_);
     nh_.subscribe(zero_sub_);    
@@ -22,10 +23,10 @@ void NUQuadratureEncoder::setup(){
 void NUQuadratureEncoder::update(){
     //publish position
     if(millis()-last_update_ > 1000.0f/update_hz_){
-        pos_pub_msg_.data = encoder_.getEncoderCount();
+        pos_pub_msg_.data = encoder_->getEncoderCount();
         pos_pub_.publish(&pos_pub_msg_);
 
-        err_pub_msg_.data = encoder_.getEncoderErrorCount();
+        err_pub_msg_.data = encoder_->getEncoderErrorCount();
         err_pub_.publish(&pos_pub_msg_);
 
         last_update_ = millis();
@@ -33,6 +34,6 @@ void NUQuadratureEncoder::update(){
 }
 
 void NUQuadratureEncoder::zeroCb(const std_msgs::Empty& state_msg){
-    encoder_.setEncoderCount(0);
+    encoder_->setEncoderCount(0);
 }
 

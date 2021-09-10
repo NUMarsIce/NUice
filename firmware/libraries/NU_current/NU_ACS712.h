@@ -8,7 +8,7 @@
 class NUACS712 : NUDriver{
 
 public:
-    NUACS712(ros::NUNodeHandle& nh, const char* ns, uint32_t pin, bool ac, uint16_t mV_per_amp = ACS712_5A, uint8_t update_hz = 2);
+    NUACS712(ros::NUNodeHandle& nh, const char* ns, uint32_t pin, bool ac, uint16_t mV_per_amp = ACS712_5A, uint8_t update_hz = 10);
 
     void setup();
     void update();
@@ -16,7 +16,7 @@ public:
 private:
     bool ac_;
     uint32_t pin_;
-    int mV_per_amp_;
+    uint16_t mV_per_amp_;
     uint8_t update_hz_;
     long last_update_ = millis();
 

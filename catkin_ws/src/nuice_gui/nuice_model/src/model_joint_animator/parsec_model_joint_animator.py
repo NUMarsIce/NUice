@@ -2,28 +2,34 @@
 
 import rospy
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Int32
 
 joint_state = JointState()
 
 def frame_carosel_link_cb(data):
     global joint_state
-    joint_state.position[0] = data.data
+    joint_state.position[0] = data.data/2000.0*-2*3.1415
+
 def carosel_cat_link_cb(data):
     global joint_state
     joint_state.position[1] = data.data
+
 def carosel_probe_link_cb(data):
     global joint_state
     joint_state.position[2] = data.data
+
 def carosel_drill_link_cb(data):
     global joint_state
     joint_state.position[3] = data.data
+
 def drill_drillbit_link_cb(data):
     global joint_state
     joint_state.position[4] = data.data
+
 def probeshaft_probebottom_link_cb(data):
     global joint_state
     joint_state.position[5] = data.data
+
 def probe_probeshaft_link_cb(data):
     global joint_state
     joint_state.position[6] = data.data
@@ -34,13 +40,13 @@ def main():
     rospy.init_node('parsec_model_joint_animator')
 
     pub = rospy.Publisher('joint_states', JointState, queue_size=1)
-    rospy.Subscriber("carosel_motor/cur_position", Float32, frame_carosel_link_cb)
-    rospy.Subscriber("cat_axis_motor/cur_position", Float32, carosel_cat_link_cb)
-    rospy.Subscriber("probe_axis_motor/cur_position", Float32, carosel_probe_link_cb)
-    rospy.Subscriber("drill_axis_motor/cur_position", Float32, carosel_drill_link_cb)
-    rospy.Subscriber("drill_motor/cur_position", Float32, drill_drillbit_link_cb)
-    rospy.Subscriber("probe_shaft_motor/cur_position", Float32, probe_probeshaft_link_cb)
-    rospy.Subscriber("probe_tilt_motor/cur_position", Float32, probeshaft_probebottom_link_cb)
+    rospy.Subscriber("/movement_board/carosel/current_position", Int32, frame_carosel_link_cb)
+    # rospy.Subscriber("cat_axis_motor/cur_position", Float32, carosel_cat_link_cb)
+    # rospy.Subscriber("probe_axis_motor/cur_position", Float32, carosel_probe_link_cb)
+    # rospy.Subscriber("drill_axis_motor/cur_position", Float32, carosel_drill_link_cb)
+    # rospy.Subscriber("drill_motor/cur_position", Float32, drill_drillbit_link_cb)
+    # rospy.Subscriber("probe_shaft_motor/cur_position", Float32, probe_probeshaft_link_cb)
+    # rospy.Subscriber("probe_tilt_motor/cur_position", Float32, probeshaft_probebottom_link_cb)
 
     joint_state.name = ["frame_carosel_link","carosel_cat_link","carosel_probe_link","carosel_drill_link","drill_drillbit_link","probeshaft_probebottom_link","probe_probeshaft_link"]
     joint_state.position = [0]*len(joint_state.name)

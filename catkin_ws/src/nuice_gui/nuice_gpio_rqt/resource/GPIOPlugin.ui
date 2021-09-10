@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
-    <height>200</height>
+    <width>573</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,7 +61,7 @@
         </property>
         <property name="icon">
          <iconset theme="reload">
-          <normaloff>../catkin_ws/src/nuice_gui/nuice_stepper_rqt/resource</normaloff>../catkin_ws/src/nuice_gui/nuice_stepper_rqt/resource</iconset>
+          <normaloff>../catkin_ws/src/nuice_gui/nuice_gpio_rqt/resource</normaloff>../catkin_ws/src/nuice_gui/nuice_gpio_rqt/resource</iconset>
         </property>
         <property name="iconSize">
          <size>
