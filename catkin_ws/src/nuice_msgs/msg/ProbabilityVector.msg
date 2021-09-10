@@ -1,0 +1,1 @@
+nuice_msgs/LayerStatus[] probability_vector

@@ -51,6 +51,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   StepperInfo.msg
+  LayerStatus.msg
+  ProbabilityVector.msg
 )
 
 # Generate services in the 'srv' folder

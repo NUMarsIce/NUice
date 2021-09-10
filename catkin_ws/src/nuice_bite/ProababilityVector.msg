@@ -1,1 +1,0 @@
-LayerStatus[] probability_vector
