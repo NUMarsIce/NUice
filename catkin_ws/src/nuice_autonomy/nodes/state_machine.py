@@ -8,6 +8,7 @@ import rospy
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
+from std_msgs.msg import String
 
 
 goal = 0
@@ -16,7 +17,7 @@ class Carosel(StateMachine):
 
     def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
         backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub):
-        super(StateMachine,self).__init__(name)
+        super(Carosel,self).__init__(name)
         #self.worker_thread = threading.Thread(target=self.run)
         
         # Children state machines
@@ -48,7 +49,7 @@ class Carosel(StateMachine):
         #self.init.handlers = {'enter': self.initOnEnter}
         #self.repos.handlers = {'turn': self.turn,
          #                      'exit': self.reposExit}
-        self.steady.handlers = {#'exit': self.exitSteady,
+        steady.handlers = {#'exit': self.exitSteady,
                                 'drill_idle': lambda state, event: self.drill.dispatch(Event('idle')),
                                 'drill_drill': lambda state, event: self.drill.dispatch(Event('drill', event.input)),
                                 'drill_stop': lambda state, event: self.drill.dispatch(Event('stop')),
