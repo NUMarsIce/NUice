@@ -23,6 +23,7 @@ class Stepper():
     abs_position_base = 0
     max_speed = 0
     home_speed = 0
+    home_reverse = False
     limit_state = False
 
     def __init__(self):
@@ -31,10 +32,10 @@ class Stepper():
         self.steps_per_unit = rospy.get_param('~steps_per_unit', 1)
         self.max_units = rospy.get_param('~max', 10000)
         self.min_units = rospy.get_param('~min', 0)
-        self.reversed = rospy.get_param('~reverse', False)
         self.info.speed = max_speed = rospy.get_param('~max_speed', 1)
         self.info.accel = rospy.get_param('~accel', 1)
         self.home_speed = rospy.get_param('~home_speed', 1)
+        self.home_reverse = rospy.get_param('~home_reverse', False)
 
         # Publish info at 10Hz
         self.info_pub = rospy.Publisher('info', StepperInfo, queue_size=10)
@@ -84,6 +85,7 @@ class Stepper():
 
         # Setup 
         rospy.loginfo("Homing...")    
+        dir = -1 if self.home_reverse else 1
         r = rospy.Rate(20)
         self._home_feedback.position = self.info.abs_position
         self.info.moving = True
@@ -101,7 +103,7 @@ class Stepper():
                 self.stop_cb()
                 return
 
-            self.rel_pub.publish(Int32(-self.home_speed*self.steps_per_unit)) # 1 second of relative movement
+            self.rel_pub.publish(Int32(dir*self.home_speed*self.steps_per_unit)) # 1 second of relative movement
             self._home_feedback.position = self.info.abs_position
             self._home_as.publish_feedback(self._home_feedback)
             r.sleep()

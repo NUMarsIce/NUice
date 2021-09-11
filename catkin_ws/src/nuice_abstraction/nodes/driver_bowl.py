@@ -26,10 +26,10 @@ def main():
 
     rospy.init_node("driver_bowl")
 
-    pitch_pos_pub = rospy.Publisher("/melt_board/pitch_stp/set_abs_pos", Int32)
-    pitch_speed_pub = rospy.Publisher("/melt_board/pitch_stp/set_max_speed", UInt16)
-    rot_pos_pub = rospy.Publisher("/melt_board/rot_stp/set_abs_pos", Int32)
-    rot_speed_pub = rospy.Publisher("/melt_board/rot_stp/set_max_speed", UInt16)
+    pitch_pos_pub = rospy.Publisher("/melt_board/pitch_stp/set_abs_pos", Int32, queue_size=10)
+    pitch_speed_pub = rospy.Publisher("/melt_board/pitch_stp/set_max_speed", UInt16, queue_size=10)
+    rot_pos_pub = rospy.Publisher("/melt_board/rot_stp/set_abs_pos", Int32, queue_size=10)
+    rot_speed_pub = rospy.Publisher("/melt_board/rot_stp/set_max_speed", UInt16, queue_size=10)
 
     rospy.Subscriber("/melt_board/pitch_stp/current_position", Int32, pitch_cb)
     rospy.Subscriber("/melt_board/rot_stp/current_position", Int32, rot_cb)
