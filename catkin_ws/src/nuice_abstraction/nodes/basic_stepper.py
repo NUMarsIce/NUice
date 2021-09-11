@@ -29,6 +29,7 @@ class Stepper():
     def __init__(self):
         rospy.init_node('stepper', anonymous=True)
         self.stepper_name = rospy.get_param('~stepper_name', "")
+        self.limit_name = rospy.get_param('~limit_name', "")
         self.steps_per_unit = rospy.get_param('~steps_per_unit', 1)
         self.max_units = rospy.get_param('~max', 10000)
         self.min_units = rospy.get_param('~min', 0)
@@ -48,7 +49,7 @@ class Stepper():
 
         # DRIVERS
         rospy.Subscriber(self.stepper_name+"/current_position", Int32, self.pos_cb)
-        rospy.Subscriber(self.stepper_name+"/current_state", Bool, self.limmit_cb)
+        rospy.Subscriber(self.limit_name+"/current_state", Bool, self.limit_cb)
 
         self.abs_pub = rospy.Publisher(self.stepper_name+'/set_abs_pos', Int32, queue_size=10)
         self.rel_pub = rospy.Publisher(self.stepper_name+'/set_rel_pos', Int32, queue_size=10)
@@ -92,10 +93,11 @@ class Stepper():
 
         for _ in range(4):
             self.speed_pub.publish(UInt16(self.home_speed*self.steps_per_unit))
+            rospy.sleep(0.01)
 
         # Home
         while(not self.limit_state):
-            if self._goto_as.is_preempt_requested():
+            if self._home_as.is_preempt_requested():
                 rospy.loginfo("Home action canceld.")
                 self.info.moving = False
                 self._home_result.success = False
@@ -120,6 +122,7 @@ class Stepper():
         self.info.moving = False
         for _ in range(4):
             self.speed_pub.publish(UInt16(self.max_speed*self.steps_per_unit))
+            rospy.sleep(0.01)
         
         self._home_result.success = True
         self._home_as.set_succeeded(self._home_result)
@@ -177,7 +180,7 @@ class Stepper():
         self.info.abs_position = self.abs_position_base - self.home_position
 
 
-    def limmit_cb(self, msg):
+    def limit_cb(self, msg):
         self.limit_state = msg.data
 
 
