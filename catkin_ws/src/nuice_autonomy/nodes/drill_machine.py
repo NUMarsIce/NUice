@@ -1,12 +1,14 @@
 from pysm import StateMachine, State, Event
 from Queue import Queue
 import rospy
+import threading
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 
-drill_limit = False
+drill_limit = True
 current_drill_position = 0
+cdp_correction = 0
 
 class Drill(StateMachine):
 
@@ -14,7 +16,7 @@ class Drill(StateMachine):
 
 
     def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub):
-        super(StateMachine,self).__init__(name)
+        super(Drill, self).__init__(name)
         #rospy.init_node("drill_machine")
         #rospy.Subscriber("drill_limit/current_state", std_msgs.msg.Bool, self.drill_limit_callback)
         #rospy.Subscriber("drill_stp/current_position", std_msgs.msg.Int32, self.drill_position_callback)
@@ -38,22 +40,22 @@ class Drill(StateMachine):
         self.add_state(drilling)
         self.add_state(stopped)
 
-        self.add_transition(self.drilling, self.idle, event='idle')
-        self.add_transition(self.stopped, self.idle, event='idle')
+        self.add_transition(drilling, idle, events=['idle'])
+        self.add_transition(stopped, idle, events=['idle'])
 
-        self.add_transition(self.idle, self.drilling, event='drill')
-        self.add_transition(self.stopped, self.drilling, event='drill')
+        self.add_transition(idle, drilling, events=['drill'])
+        self.add_transition(stopped, drilling, events=['drill'])
         
-        self.add_transition(self.idle, self.stopped, event='stop')
-        self.add_transition(self.drilling, self.stopped, event='stop')
+        self.add_transition(idle, stopped, events=['stop'])
+        self.add_transition(drilling, stopped, events=['stop'])
 
-        self.idle.handlers = {'enter' : self.idleOnEnter,
+        idle.handlers = {'enter' : self.idleOnEnter,
                               'exit' : self.idleOnExit}
-        self.drilling.handlers = {'enter': self.drillingOnEnter,
+        drilling.handlers = {'enter': self.drillingOnEnter,
                                   'drill' : self.drillingUpdate,
                                   'bounce' : self.bounce,
                                   'exit' : self.drillingOnExit}
-        self.stopped.handlers = {'enter' : self.stopOnEnter,
+        stopped.handlers = {'enter' : self.stopOnEnter,
                                  'exit' : self.stopOnExit}
 
         self.worker_thread.start()
@@ -93,14 +95,14 @@ class Drill(StateMachine):
 
 
     def run(self):
-        while True:
+        while not rospy.is_shutdown():
             if self.stopped:
                 continue
             if self.idle:
-                if drill_limit:
+                if not drill_limit:
+                    self.drill_stop_pub.publish(std_msgs.msg.Empty())
                     if current_drill_position != 0:
-                        self.drill_stop_pub.publish(std_msgs.msg.Empty())
-                        #set current position to 0.
+                        cdp_correction = current_drill_position
                 else:
                     self.drill_rel_motion_pub.publish(-10)
             else:

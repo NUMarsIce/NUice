@@ -85,13 +85,13 @@ def drill_limit_callback(limit_data):
     drill_limit = limit_data.data
     
 def drill_position_callback(position_data):
-    current_drill_position = position_data.data
+    current_drill_position = position_data.data - cdp_correction
 
 def melt_limit_callback(limit_data):
     melt_limit = limit_data.data
 
 def melt_position_callback(position_data):
-    current_melt_position = position_data.data
+    current_melt_position = position_data.data - mcp_correction
 
 def goal_callback(goal_data):
     goal = goal_data.data
@@ -127,7 +127,8 @@ if __name__ == '__main__':
         backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
     rospy.Subscriber('ac/goal', Int32, goal_callback)
     rospy.Subscriber('ac/events', String, lambda event_data: state_machine.dispatch(Event(event_data.data, goal)))
-    rospy.spin()    
+    while not rospy.is_shutdown():
+        rospy.spin()    
 
 
 
