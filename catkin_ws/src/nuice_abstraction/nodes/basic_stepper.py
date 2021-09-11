@@ -96,7 +96,7 @@ class Stepper():
             rospy.sleep(0.01)
 
         # Home
-        while(not self.limit_state):
+        while(self.limit_state):
             if self._home_as.is_preempt_requested():
                 rospy.loginfo("Home action canceld.")
                 self.info.moving = False
@@ -132,6 +132,12 @@ class Stepper():
         # Check position range
         if not (self.min_units <= goal.position <= self.max_units):
             rospy.logwarn("Position %d not in a valid range (%.3f to %.3f)." % (goal.position, self.min_units, self.max_units))
+            self._goto_result.success = False
+            self._goto_as.set_succeeded(self._goto_result)    
+            return
+
+        if not (0 < goal.speed <= self.max_speed):
+            rospy.logwarn("Speed %d not in a valid range (0 to %.3f)." % (goal.speed, self.max_speed))
             self._goto_result.success = False
             self._goto_as.set_succeeded(self._goto_result)    
             return

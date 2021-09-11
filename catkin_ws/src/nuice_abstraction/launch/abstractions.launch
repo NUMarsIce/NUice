@@ -1,14 +1,30 @@
 <launch>
     <node pkg="nuice_abstraction" type="probe_control.py" name="probe_control"/>
 
-    <node pkg="nuice_abstraction" type="basic_stepper.py" name="cat_stepper_abstract">
-		<param name="stepper_name" value="/central_board/cat_stp"/>
-		<param name="steps_per_unit" value="1"/>
-		<param name="max" value="800"/>
+    <!-- Drill Stepper -->
+	<node pkg="nuice_abstraction" type="basic_stepper.py" ns="drill_stepper" name="drill_stepper_abstract">
+		<param name="stepper_name" value="/central_board/drill_stp"/>
+		<param name="limit_name" value="/central_board/drill_limit"/>
+		<param name="steps_per_unit" value="118110"/>
+		<param name="max" value="0.8"/>
 		<param name="min" value="0"/>
-		<param name="reverse" value="False"/>
-		<param name="max_speed" value="400"/>
+		<param name="max_speed" value="0.05"/>
 		<param name="accel" value="800"/>
-		<param name="home_speed" value="200"/>
+		<param name="home_speed" value="0.005"/>
+		<param name="home_reverse" value="False"/>
     </node>
+
+	<!-- Melt Stepper -->
+	<node pkg="nuice_abstraction" type="basic_stepper.py" ns="melt_stepper" name="melt_stepper_abstract">
+		<param name="stepper_name" value="/central_board/probe_stp"/>
+		<param name="limit_name" value="/central_board/probe_limit"/>
+		<param name="steps_per_unit" value="157480"/>
+		<param name="max" value="0.8"/>
+		<param name="min" value="0"/>
+		<param name="max_speed" value="0.05"/>
+		<param name="accel" value="800"/>
+		<param name="home_speed" value="0.005"/>
+		<param name="home_reverse" value="True"/>
+    </node>
+
 </launch>
