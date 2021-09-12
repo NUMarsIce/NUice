@@ -59,12 +59,12 @@ class Stepper():
         self.stop_pub = rospy.Publisher(self.stepper_name+'/quick_stop', Empty, queue_size=10)
 
         # Actions 
-        self._goto_as = actionlib.SimpleActionServer("goto_position", GoToCommandAction, self.goto_execute_cb, False)
+        self._goto_as = actionlib.SimpleActionServer(rospy.get_namespace() +"goto_position", GoToCommandAction, self.goto_execute_cb, False)
         self._goto_as.start()
         self._goto_feedback = GoToCommandFeedback()
         self._goto_result = GoToCommandResult()
 
-        self._home_as = actionlib.SimpleActionServer("home", HomeCommandAction, self.home_execute_cb, False)
+        self._home_as = actionlib.SimpleActionServer(rospy.get_namespace()+"home", HomeCommandAction, self.home_execute_cb, False)
         self._home_as.start()
         self._home_feedback = HomeCommandFeedback()
         self._home_result = HomeCommandResult()
@@ -141,8 +141,10 @@ class Stepper():
             self._goto_result.success = False
             self._goto_as.set_succeeded(self._goto_result)    
             return
+
                     
         # Setup 
+        self.info.speed = goal.speed
         self.info.abs_setpoint = goal.position
         self._goto_feedback.distance = abs(self.info.abs_position-goal.position)
         rospy.loginfo("Going to %.4f." % goal.position)    

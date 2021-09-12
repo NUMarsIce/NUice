@@ -24,7 +24,7 @@ feature_vector = {
 
 def load_model():
     # TODO: get a correct filename
-    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logistic0910.sav') #logistic_model
+    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'gradient0912.sav') #logistic_model
     infile = open(filepath,'rb')
     model = pickle.load(infile)
     infile.close() 
@@ -54,8 +54,7 @@ def probability_list_to_probability_vector(probability_list, states):
     
 def feature_dict_to_vector():
     # TODO: update this to work for values other than wob
-    return [feature_vector[POSITION_STRING], feature_vector[WOB_STRING]]
-
+    return [feature_vector[CURRENT_STRING], feature_vector[SPIN_SPEED_STRING], feature_vector[WOB_STRING]]
 
 
 
