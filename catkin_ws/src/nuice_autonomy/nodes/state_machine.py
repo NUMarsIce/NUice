@@ -9,21 +9,21 @@ from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 from std_msgs.msg import String
+from nuice_msgs.srv import FloatCommand, FloatCommandResponse
 
 
 goal = 0
 
 class Carosel(StateMachine):
 
-    def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
-        backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub):
+    def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub,
+    probe_1_service, probe_2_service):
         super(Carosel,self).__init__(name)
         #self.worker_thread = threading.Thread(target=self.run)
         
         # Children state machines
         self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub)
-        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
-        backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
+        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, probe_1_service, probe_2_service)
         
         # Main states
         #init = State("init")
@@ -55,18 +55,21 @@ class Carosel(StateMachine):
                                 'drill_stop': lambda state, event: self.drill.dispatch(Event('stop')),
                                 'melt_idle': lambda state, event: self.melt.dispatch(Event('idle')),
                                 'melt_melt': lambda state, event: self.melt.dispatch(Event('melt', event.input)),
-                                'melt_heater_1': lambda state, event: self.melt.dispatch(Event('heater_1')),
-                                'melt_heater_2': lambda state, event: self.melt.dispatch(Event('heater_2')),
-                                'melt_power': lambda state, event: self.melt.dispatch(Event('power')),
-                                'melt_backwash': lambda state, event: self.melt.dispatch(Event('backwash')),
-                                'melt_stage_1': lambda state, event: self.melt.dispatch(Event('stage_1')),
-                                'melt_bypass': lambda state, event: self.melt.dispatch(Event('bypass')),
-                                'melt_air': lambda state, event: self.melt.dispatch(Event('air')),
-                                'melt_ropump': lambda state, event: self.melt.dispatch(Event('ropump')),
-                                'melt_mainpump': lambda state, event: self.melt.dispatch(Event('mainpump')),
+                                'melt_stop': lambda state, event: self.melt.dispatch(Event('stop')),
+                                'melt_probe_1' : lambda state, event: self.melt.dispatch(Event('probe1', event.input)),
+                                'melt_probe_2' : lambda state, event: self.melt.dispatch(Event('probe2', event.input))
+                                # 'melt_heater_1': lambda state, event: self.melt.dispatch(Event('heater_1')),
+                                # 'melt_heater_2': lambda state, event: self.melt.dispatch(Event('heater_2')),
+                                # 'melt_power': lambda state, event: self.melt.dispatch(Event('power')),
+                                # 'melt_backwash': lambda state, event: self.melt.dispatch(Event('backwash')),
+                                # 'melt_stage_1': lambda state, event: self.melt.dispatch(Event('stage_1')),
+                                # 'melt_bypass': lambda state, event: self.melt.dispatch(Event('bypass')),
+                                # 'melt_air': lambda state, event: self.melt.dispatch(Event('air')),
+                                # 'melt_ropump': lambda state, event: self.melt.dispatch(Event('ropump')),
+                                # 'melt_mainpump': lambda state, event: self.melt.dispatch(Event('mainpump')),
                                 #'melt_bowl': lambda state, event: self.melt.dispatch(Event('bowl')),
                                 #'melt_rockwell': lambda state, event: self.melt.dispatch(Event('rockwell')),
-                                'melt_stop': lambda state, event: self.melt.dispatch(Event('stop'))}
+                                }
 
         #worker_thread.start()
 
@@ -109,23 +112,26 @@ if __name__ == '__main__':
     melt_motion_pub = rospy.Publisher("melt_stp/set_abs_pos", Int32, queue_size = 10)
     melt_rel_motion_pub = rospy.Publisher("melt_stp/set_rel_pos", Int32, queue_size = 10)
     melt_stop_pub = rospy.Publisher("drill_stp/quick_stop", Empty, queue_size = 10)
-    heater_1_pub = rospy.Publisher("heater1_relay/set_state", Bool, queue_size = 10)
-    heater_2_pub = rospy.Publisher("heater2_relay/set_state", Bool, queue_size = 10) 
-    power_pub = rospy.Publisher("power_relay/set_state", Bool, queue_size = 10)
-    backwash_pub = rospy.Publisher("backwash_relay/set_state", Bool, queue_size = 10)
-    stage_1_pub = rospy.Publisher("stage1_relay/set_state", Bool, queue_size = 10)
-    bypass_pub = rospy.Publisher("bypass_relay/set_state", Bool, queue_size = 10)
-    air_pub = rospy.Publisher("air_relay/set_state", Bool, queue_size = 10)
-    ropump_pub = rospy.Publisher("ropump_relay/set_state", Bool, queue_size = 10)
-    mainpump_pub = rospy.Publisher("mainpump_relay/set_state", Bool, queue_size = 10)
+    # heater_1_pub = rospy.Publisher("heater1_relay/set_state", Bool, queue_size = 10)
+    # heater_2_pub = rospy.Publisher("heater2_relay/set_state", Bool, queue_size = 10) 
+    # power_pub = rospy.Publisher("power_relay/set_state", Bool, queue_size = 10)
+    # backwash_pub = rospy.Publisher("backwash_relay/set_state", Bool, queue_size = 10)
+    # stage_1_pub = rospy.Publisher("stage1_relay/set_state", Bool, queue_size = 10)
+    # bypass_pub = rospy.Publisher("bypass_relay/set_state", Bool, queue_size = 10)
+    # air_pub = rospy.Publisher("air_relay/set_state", Bool, queue_size = 10)
+    # ropump_pub = rospy.Publisher("ropump_relay/set_state", Bool, queue_size = 10)
+    # mainpump_pub = rospy.Publisher("mainpump_relay/set_state", Bool, queue_size = 10)
+    rospy.wait_for_service('set_probe1')
+    probe_1_service = rospy.ServiceProxy('set_probe1', FloatCommand)
+    rospy.wait_for_service('set_probe2')
+    probe_2_service = rospy.ServiceProxy('set_probe2', FloatCommand)
     rospy.init_node('autonomy_core')
     rospy.Subscriber('drill_stp/current_position', Int32, drill_position_callback)
     rospy.Subscriber('drill_limit/current_state', Bool, drill_limit_callback)
     rospy.Subscriber('melt_stp/current_position', Int32, melt_position_callback)
     rospy.Subscriber('melt_limit/current_state', Bool, melt_limit_callback)
     state_machine = Carosel("carosel", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub, melt_motion_pub, melt_rel_motion_pub,
-        melt_stop_pub, heater_1_pub, heater_2_pub, power_pub,
-        backwash_pub, stage_1_pub, bypass_pub, air_pub, ropump_pub, mainpump_pub)
+        melt_stop_pub, probe_1_service, probe_2_service)
     rospy.Subscriber('ac/goal', Int32, goal_callback)
     rospy.Subscriber('ac/events', String, lambda event_data: state_machine.dispatch(Event(event_data.data, goal)))
     while not rospy.is_shutdown():
