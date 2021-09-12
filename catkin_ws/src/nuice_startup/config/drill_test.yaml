@@ -1,5 +1,2 @@
-data_file_name: "integrationtest"
+data_file_name: "bitetest"
 topics_list: ["/central_board/drill_relay/current_state", "/central_board/drill_stp/current_position", "/current_board/drill/current","/current_board/mains/current","/current_board/motor_supply/current","/drill_board/drill_hall/rate","/drill_board/drill_loadcell/load","/melt_board/loadcell1/load","/melt_board/probe_therm1/value","/melt_board/probe_therm2/value"]
-
-
-
