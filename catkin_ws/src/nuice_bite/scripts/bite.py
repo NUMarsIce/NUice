@@ -3,11 +3,8 @@
 import os
 import rospy
 import pickle
-from std_msgs.msg import String
-from std_msgs.msg import Float32
-from std_msgs.msg import Float64
-from std_msgs.msg import Int32
-#from ProbabilityVector.msg import ProbabilityVector
+from std_msgs.msg import String, Float32, Float64, Int32
+from nuice_msgs.msg import ProbabilityVector, LayerStatus
 
 
 POSITION_STRING = 'position'
@@ -15,17 +12,19 @@ WOB_STRING = 'wob'
 SPIN_SPEED_STRING = 'drill_hall'
 CURRENT_STRING = 'current'
 
+states = ['concrete', 'clay', 'sand', 'stone']
+
 # stored infromation
 feature_vector = {
-    POSITION_STRING: None,
-    WOB_STRING: None,
-    SPIN_SPEED_STRING: None,
-    CURRENT_STRING: None
+    POSITION_STRING: 0,
+    WOB_STRING: 0,
+    SPIN_SPEED_STRING: 0,
+    CURRENT_STRING: 0
 }
 
 def load_model():
     # TODO: get a correct filename
-    filepath = os.path.join(os.getcwd(), 'catkin_ws', 'src', 'nuice_bite', 'logistic_model.sav')
+    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'gradient0912.sav') #logistic_model
     infile = open(filepath,'rb')
     model = pickle.load(infile)
     infile.close() 
@@ -44,16 +43,19 @@ def read_current(data):
     feature_vector[CURRENT_STRING] = data.data
 
 def probability_list_to_probability_vector(probability_list, states):
-    probability_vector = []
-    for state_index in range(len(states)):
+    vector = ProbabilityVector()
+    for state_index, state in enumerate(states):
         layer_status = LayerStatus()
-        layer_status.layer_name = states[state_index]
-        layer_status.propability = probability_list[state_index]
-        probability_vector.append(layer_status)
+        layer_status.layer_name = state
+        layer_status.probability = probability_list[state_index]
+        vector.probability_vector.append(layer_status)
+    return vector
+
     
 def feature_dict_to_vector():
     # TODO: update this to work for values other than wob
-    return [feature_vector[POSITION_STRING], feature_vector[WOB_STRING]]
+    return [feature_vector[CURRENT_STRING], feature_vector[SPIN_SPEED_STRING], feature_vector[WOB_STRING]]
+
 
 
 def bite():
@@ -61,20 +63,16 @@ def bite():
     model = load_model()
     classes = model.classes_
 
-    # pub = rospy.Publisher('bite_probabilities', ProbabilityVector, queue_size=10)
-    pub = rospy.Publisher('bite_probabilities', String, queue_size=10)
+    pub = rospy.Publisher('bite_probabilities', ProbabilityVector, queue_size=10)
     rospy.init_node('bite', anonymous=True)
 
     # step up feature vector subsciping information
-    rospy.Subscriber("dril/loadcell/load", Float32, read_wob)
-    rospy.Subscriber("drill_stp/current_position", Int32, read_position)
-    rospy.Subscriber("drill_loadcell/load", Float32, read_wob)
+    rospy.Subscriber("drill_board/drill_loadcell/load", Float32, read_wob)
     rospy.Subscriber("central_board/drill_stp/current_position", Int32, read_position)
 
     # currently commented out because initial model used for testing only has wob and position data
-    # rospy.Subscriber("drill_hall/rate", Float64, read_drill_hall)
-
-    # rospy.Subscriber("drill_current", Float32, read_wob)
+    # rospy.Subscriber("drill_board/drill_hall/rate", Float64, read_drill_hall)
+    # rospy.Subscriber("current_board/drill_current", Float32, read_wob)
 
 
     rate = rospy.Rate(1) # 1hz
@@ -82,14 +80,12 @@ def bite():
         feature_list = feature_dict_to_vector()
         # current model requires a list of feature vectors
         probability_list = model.predict_proba([feature_list])[0]
-        prediction = model.predict(probability_list)[0]
+        prediction = model.predict([feature_list])[0]
 
         # WILL BE USED FOR CUSTOM MESSAGING
-        # probability_vector = probability_list_to_probability_vector(probability_list, states)
-        # msg = ProbabilityVector()
-        # msg.probability_vector = probability_vector
+        probability_vector = probability_list_to_probability_vector(probability_list, states)
 
-        pub.publish(prediction)
+        pub.publish(probability_vector)
         rate.sleep()
 
 if __name__ == '__main__':

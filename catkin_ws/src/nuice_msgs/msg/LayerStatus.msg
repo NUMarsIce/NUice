@@ -1,2 +1,2 @@
 string layer_name
-string probability
+float32 probability

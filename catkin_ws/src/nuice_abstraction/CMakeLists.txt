@@ -161,6 +161,8 @@ include_directories(
 catkin_install_python(PROGRAMS
 nodes/basic_stepper.py
 nodes/probe_control.py
+nodes/driver_bowl.py
+nodes/driver_melt.py
 DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
