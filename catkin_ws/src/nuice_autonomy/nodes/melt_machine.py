@@ -7,9 +7,7 @@ from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 from nuice_msgs.srv import FloatCommand, FloatCommandResponse
 
-melt_limit = True
-current_melt_position = 0
-mcp_correction = 0
+
 
 
 
@@ -17,6 +15,9 @@ class Melt(StateMachine):
 
     def __init__(self, name, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, probe_1_service, probe_2_service):
         super(Melt,self).__init__(name)
+        self.melt_limit = True
+        self.current_melt_position = 0
+        self.mcp_correction = 0
         self.idle = True
         self.stopped = False
         self.melt_motion_queue = Queue(maxsize = 0)
@@ -89,6 +90,12 @@ class Melt(StateMachine):
         
         self.worker_thread.start()
 
+    def melt_limit_callback(self, limit_data):
+        self.melt_limit = limit_data.data
+
+    def melt_position_callback(self, position_data):
+        self.current_melt_position = position_data.data - self.mcp_correction
+
     def idleOnEnter(self, state, event):
         self.idle = True
 
@@ -109,24 +116,6 @@ class Melt(StateMachine):
 
     def meltingOnExit(self, state, event):
         self.melt_stop_pub.publish(std_msgs.msg.Empty())
-        #self.heater_1_pub.publish(False)
-        ##self.heater_1_state = False
-        ##self.heater_2_pub.publish(False)
-        ##self.heater_2_state = False
-        #self.power_pub.publish(False)
-        #self.power_state = False
-        #self.backwash_pub.publish(False)
-        #self.backwash_state = False
-        #self.stage_1_pub.publish(False)
-        #self.stage_1_state = False
-        #self.bypass_pub.publish(False)
-        #self.bypass_state = False
-        #self.air_pub.publish(False)
-        #self.air_state = False
-        #self.ropump_pub.publish(False)
-        #self.ropump_state = False
-        #self.mainpump_pub.publish(False)
-        #self.mainpump_state = False
         self.melt_motion_queue = Queue(maxsize=0)
 
     def probe1Update(self, state, event):
@@ -135,61 +124,24 @@ class Melt(StateMachine):
     def probe2Update(self, state, event):
         print(self.probe_2_service(event.input))
 
-    # def heater1Update(self, state, event):
-    #     self.heater_1_state = not self.heater_1_state
-    #     self.heater_1_pub.publish(self.heater_1_state)
-
-    # def heater2Update(self, state, event):
-    #     self.heater_2_state = not self.heater_2_state
-    #     self.heater_2_pub.publish(self.heater_2_state)
-
-    # def powerUpdate(self, state, event):
-    #     self.power_state = not self.power_state
-    #     self.power_pub.publish(self.power_state)
-
-    # def backwashUpdate(self, state, event):
-    #     self.backwash_state = not self.power_state
-    #     self.backwash_pub.publish(self.power_state)
-
-    # def stage1Update(self, state, event):
-    #     self.stage_1_state = not self.stage_1_state
-    #     self.stage_1_pub.publish(self.stage_1_state)
-
-    # def bypassUpdate(self, state, event):
-    #     self.bypass_state = not self.bypass_state
-    #     self.bypass_pub.publish(self.bypass_state)
-
-    # def airUpdate(self, state, event):
-    #     self.air_state = not self.air_state
-    #     self.air_pub.publish(self.air_state)
-
-    # def ropumpUpdate(self, state, event):
-    #     self.ropump_state = not self.ropump_state
-    #     self.ropump_pub.publish(self.ropump_state)
-
-    # def mainpumpUpdate(self, state, event):
-    #     self.mainpump_state = not self.mainpump_state
-    #     self.mainpump_pub.publish(self.mainpump_state)
-
-
     def run(self):
         while not rospy.is_shutdown():
             if self.stopped:
                 continue
             if self.idle:
-                if not melt_limit:
-                    self.melt_stop_pub.publish(std_msgs.msg.Empty())
-                    if current_melt_position != 0:
-                        cmp_correction = current_melt_position
+                if not self.melt_limit:
+                    self.melt_stop_pub.publish(Empty())
+                    if self.current_melt_position != 0:
+                        self.cmp_correction = self.current_melt_position
                 else:
                     self.melt_rel_motion_pub.publish(-10)
             else:
-                if current_melt_position != self.melt_goal:
+                if self.current_melt_position != self.melt_goal:
                     self.melt_motion_pub.publish(self.melt_goal)
                 else:
                     if not self.melt_motion_queue.empty():
                         self.melt_goal = self.melt_motion_queue.get()
-                        if (self.melt_goal - current_melt_position) > 0:
+                        if (self.melt_goal - self.current_melt_position) > 0:
                             self.melt_pub.publish(True)
                         else:
                             self.melt_pub.publish(False)

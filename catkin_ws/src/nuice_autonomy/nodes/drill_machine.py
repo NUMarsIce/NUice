@@ -6,9 +6,6 @@ from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 
-drill_limit = True
-current_drill_position = 0
-cdp_correction = 0
 
 class Drill(StateMachine):
 
@@ -20,6 +17,9 @@ class Drill(StateMachine):
         #rospy.init_node("drill_machine")
         #rospy.Subscriber("drill_limit/current_state", std_msgs.msg.Bool, self.drill_limit_callback)
         #rospy.Subscriber("drill_stp/current_position", std_msgs.msg.Int32, self.drill_position_callback)
+        self.drill_limit = True
+        self.current_drill_position = 0
+        self.cdp_correction = 0
         self.idle = True
         self.stopped = False
         self.drill_motion_queue = Queue(maxsize = 0)
@@ -58,9 +58,16 @@ class Drill(StateMachine):
         stopped.handlers = {'enter' : self.stopOnEnter,
                                  'exit' : self.stopOnExit}
 
+        self.rate = rospy.Rate(20)
         self.worker_thread.start()
 
+    def drill_limit_callback(self, limit_data):
+        self.drill_limit = limit_data.data
     
+    def drill_position_callback(self, position_data):
+        self.current_drill_position = position_data.data - self.cdp_correction
+
+
     def idleOnEnter(self, state, event):
         self.idle = True
 
@@ -96,22 +103,23 @@ class Drill(StateMachine):
 
     def run(self):
         while not rospy.is_shutdown():
+            self.rate.sleep()
             if self.stopped:
                 continue
             if self.idle:
-                if not drill_limit:
-                    self.drill_stop_pub.publish(std_msgs.msg.Empty())
-                    if current_drill_position != 0:
-                        cdp_correction = current_drill_position
+                if not self.drill_limit:
+                    self.drill_stop_pub.publish(Empty())
+                    if self.current_drill_position != 0:
+                        self.cdp_correction = self.current_drill_position
                 else:
-                    self.drill_rel_motion_pub.publish(-10)
+                    self.drill_rel_motion_pub.publish(10)
             else:
-                if current_drill_position != self.drill_goal:
+                if self.current_drill_position != self.drill_goal:
                     self.drill_motion_pub.publish(self.drill_goal)
                 else:
                     if not self.drill_motion_queue.empty():
                         self.drill_goal = self.drill_motion_queue.get()
-                        if (self.drill_goal - current_drill_position) > 0:
+                        if (self.drill_goal - self.current_drill_position) > 0:
                             self.drill_pub.publish(True)
                         else:
                             self.drill_pub.publish(False)
