@@ -27,36 +27,14 @@ class Melt(StateMachine):
         self.melt_stop_pub = melt_stop_pub
         self.probe_1_service = probe_1_service
         self.probe_2_service = probe_2_service
-        #self.heater_1_pub = heater_1_pub
-        #self.heater_2_pub = heater_2_pub
-        #self.power_pub = power_pub
-        #self.backwash_pub = backwash_pub
-        #self.stage_1_pub = stage_1_pub
-        #self.bypass_pub = bypass_pub
-        #self.air_pub = air_pub
-        #self.ropump_pub = ropump_pub
-        #self.mainpump_pub = mainpump_pub
-        #self.heater_1_state = False
-        #self.heater_2_state = False
-        #self.power_state = False
-        #self.backwash_state = False
-        #self.stage_1_state = False
-        #self.bypass_state = False
-        #self.air_state = False
-        #self.ropump_state = False
-        #self.mainpump_state = False
         self.worker_thread = threading.Thread(target=self.run)
 
         idle = State("idle")
         melting = State("melting")
-        #rockwell = State("rockwell")
-        #bowl = State("bowl")
         stopped = State("stopped")
 
         self.add_state(idle, initial=True)
         self.add_state(melting)
-        #self.add_state(rockwell)
-        #self.add_state(bowl)
         self.add_state(stopped)
 
         self.add_transition(idle, melting, events=['melt'])
@@ -77,17 +55,8 @@ class Melt(StateMachine):
                                  'melt' : self.meltingUpdate,
                                  'probe1' : self.probe1Update,
                                  'probe2' : self.probe2Update
-                                 #'heater_1' : self.heater1Update,
-                                 #'heater_2' : self.heater2Update,
-                                 #'power' : self.powerUpdate,
-                                 #'backwash' : self.backwashUpdate,
-                                 #'stage_1' : self.stage1Update,
-                                 #'bypass' : self.bypassUpdate,
-                                 #'air' : self.airUpdate,
-                                 #'ropump' : self.ropumpUpdate,
-                                 #'mainpump' : self.mainpumpUpdate
                                  }      
-        
+        self.rate = rospy.Rate(20)
         self.worker_thread.start()
 
     def melt_limit_callback(self, limit_data):
@@ -126,6 +95,7 @@ class Melt(StateMachine):
 
     def run(self):
         while not rospy.is_shutdown():
+            self.rate.sleep()
             if self.stopped:
                 continue
             if self.idle:

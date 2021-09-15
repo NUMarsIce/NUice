@@ -14,9 +14,6 @@ class Drill(StateMachine):
 
     def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub):
         super(Drill, self).__init__(name)
-        #rospy.init_node("drill_machine")
-        #rospy.Subscriber("drill_limit/current_state", std_msgs.msg.Bool, self.drill_limit_callback)
-        #rospy.Subscriber("drill_stp/current_position", std_msgs.msg.Int32, self.drill_position_callback)
         self.drill_limit = True
         self.current_drill_position = 0
         self.cdp_correction = 0
@@ -28,7 +25,6 @@ class Drill(StateMachine):
         self.drill_rel_motion_pub = drill_rel_motion_pub
         self.drill_pub = drill_pub
         self.drill_stop_pub = drill_stop_pub
-        #Add publisher to set 0.
         self.worker_thread = threading.Thread(target=self.run)
          
 

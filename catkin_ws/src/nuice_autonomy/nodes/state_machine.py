@@ -18,7 +18,7 @@ class Carosel(StateMachine):
 
     def __init__(self, name):
         super(Carosel,self).__init__(name)
-        #self.worker_thread = threading.Thread(target=self.run)
+        self.worker_thread = threading.Thread(target=self.run)
         goal = 0
         drill_motion_pub = rospy.Publisher("/central_board/drill_stp/set_abs_pos", Int32, queue_size = 10)
         drill_rel_motion_pub = rospy.Publisher("/central_board/drill_stp/set_rel_pos", Int32, queue_size = 10)
@@ -79,8 +79,8 @@ class Carosel(StateMachine):
                                 'melt_probe_1' : lambda state, event: self.melt.dispatch(Event('probe1', event.input)),
                                 'melt_probe_2' : lambda state, event: self.melt.dispatch(Event('probe2', event.input))
                                 }
-
-        #worker_thread.start()
+        self.rate = rospy.Rate(20)
+        worker_thread.start()
     def goal_callback(self, goal_data):
         self.goal = goal_data.data
 
@@ -97,9 +97,9 @@ class Carosel(StateMachine):
         
 
 
-    #def run(self): #TODO
-     #   while True:
-      #      pass
+    def run(self):
+        while not rospy.is_shutdown():
+            self.rate.sleep()
 
 
 
