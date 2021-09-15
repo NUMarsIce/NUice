@@ -67,12 +67,12 @@ def bite():
     rospy.init_node('bite', anonymous=True)
 
     # step up feature vector subsciping information
-    rospy.Subscriber("drill_board/drill_loadcell/load", Float32, read_wob)
-    rospy.Subscriber("central_board/drill_stp/current_position", Int32, read_position)
+    rospy.Subscriber("/drill_board/drill_loadcell/load", Float32, read_wob)
+    rospy.Subscriber("/central_board/drill_stp/current_position", Int32, read_position)
 
     # currently commented out because initial model used for testing only has wob and position data
-    # rospy.Subscriber("drill_board/drill_hall/rate", Float64, read_drill_hall)
-    # rospy.Subscriber("current_board/drill_current", Float32, read_wob)
+    rospy.Subscriber("/drill_board/drill_hall/rate", Float64, read_drill_hall)
+    rospy.Subscriber("/current_board/drill/current", Float32, read_current)
 
 
     rate = rospy.Rate(1) # 1hz
