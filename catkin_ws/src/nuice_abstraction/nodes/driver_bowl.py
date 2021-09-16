@@ -7,8 +7,11 @@ from std_msgs.msg import Int32, UInt16
 
 ROT_MIN = 0
 ROT_MAX = 1600
+ROT_SPEED = 100
+
 P_MIN = 0
 P_MAX = 1600
+P_SPEED = 100
 
 p_pos = 0
 rot_pos = 0
@@ -22,12 +25,11 @@ def rot_cb(data):
     rot_pos = data.data
 
 def main():
-    global p_pos, rot_pos
-
     rospy.init_node("driver_bowl")
 
     pitch_pos_pub = rospy.Publisher("/melt_board/pitch_stp/set_abs_pos", Int32, queue_size=10)
     pitch_speed_pub = rospy.Publisher("/melt_board/pitch_stp/set_max_speed", UInt16, queue_size=10)
+    
     rot_pos_pub = rospy.Publisher("/melt_board/rot_stp/set_abs_pos", Int32, queue_size=10)
     rot_speed_pub = rospy.Publisher("/melt_board/rot_stp/set_max_speed", UInt16, queue_size=10)
 
@@ -37,8 +39,29 @@ def main():
     ### Sketchy code start
     input("Press enter to start...")
 
-    rot_speed_pub.publish(UInt16())
+    rot_speed_pub.publish(UInt16(ROT_SPEED))
+    ptich_speed_pub.publish(UInt16(P_SPEED))
 
+    rot_pos_pub.publish(Int32(ROT_MIN))
+    pitch_pos_pub.publish(Int32(P_MIN))
+
+    r = rospy.Rate(10)
+    while not rospy.is_shutdown():
+        r.sleep()
+
+        if rot_pos == ROT_MIN:
+            rot_pos_pub.publish(Int32(ROT_MAX))
+        elif rot_pos == ROT_MAX:
+            rot_pos_pub.publish(Int32(ROT_MIN))
+
+        if p_pos == 0:
+            pitch_pos_pub.publish(Int32(P_MAX))
+        elif p_pos == P_MAX:
+            print("Done with bowl!")
+            break
+    
+    rot_pos_pub.publish(Int32(ROT_MIN))
+    pitch_pos_pub.publish(Int32(P_MIN))
 
 
 if __name__ == '__main__':

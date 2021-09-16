@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-##### TODO WORK IN PROGRESS
-
 import rospy
 from std_msgs.msg import Int32, UInt16, Float32
 import sys
