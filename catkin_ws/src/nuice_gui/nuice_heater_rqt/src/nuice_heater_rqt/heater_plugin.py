@@ -63,7 +63,7 @@ class HeaterPlugin(Plugin):
     def set_temp1(self, temp_setpoint):
         try:
             self.setpoint1 = temp_setpoint
-            self.heat1_srv(float(temp_setpoint))
+            self.heat1_srv(float(temp_setpoint*2))
             self.update_signal.emit()
         except rospy.ServiceException:
             return
@@ -71,7 +71,7 @@ class HeaterPlugin(Plugin):
     def set_temp2(self, temp_setpoint):
         try:
             self.setpoint2 = temp_setpoint
-            self.heat2_srv(float(temp_setpoint))
+            self.heat2_srv(float(temp_setpoint*2))
             self.update_signal.emit()
         except rospy.ServiceException:
             return
@@ -104,12 +104,12 @@ class HeaterPlugin(Plugin):
 
     ### ROS callbacks
     def temp1_sub_cb(self, msg):
-        self.temp1 = msg.data
+        self.temp1 = msg.data/2
         self.update_signal.emit()
 
 
     def temp2_sub_cb(self, msg):
-        self.temp2 = msg.data
+        self.temp2 = msg.data/2
         self.update_signal.emit()
 
 

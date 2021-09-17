@@ -28,8 +28,9 @@ def run():
     global values_list
     #Get the desired name of the data file and the topics to log.
     rospy.init_node("logging_node", anonymous=True)
-    data_file_name = rospy.get_param("data_file_name", "log")
-    topics_list = rospy.get_param("topics_list")
+    data_file_name = rospy.get_param("~data_file_name", "log")
+    topics_list = rospy.get_param("~topics_list")
+    data_rate = rospy.get_param("~hz", 10)
 
     #Init list to store last published values
     values_list = [None] * len(topics_list)
@@ -56,7 +57,7 @@ def run():
 
         #Log data
         start = rospy.Time.now()
-        rate = rospy.Rate(10)  #Log at 10Hz
+        rate = rospy.Rate(data_rate)  #Log at data_rate Hz
         while not rospy.is_shutdown():
             data_file.write(str((rospy.Time.now() - start).to_sec()) + ',')
             for i in range(len(values_list) - 1):
