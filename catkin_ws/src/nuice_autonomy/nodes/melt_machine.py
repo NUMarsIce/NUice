@@ -5,6 +5,7 @@ import threading
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
+from std_msgs.msg import UInt16
 from nuice_msgs.srv import FloatCommand, FloatCommandResponse
 
 
@@ -13,7 +14,7 @@ from nuice_msgs.srv import FloatCommand, FloatCommandResponse
 
 class Melt(StateMachine):
 
-    def __init__(self, name, melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, probe_1_service, probe_2_service):
+    def __init__(self, name, melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_stop_pub, probe_1_service, probe_2_service):
         super(Melt,self).__init__(name)
         self.melt_limit = True
         self.current_melt_position = 0
@@ -24,6 +25,7 @@ class Melt(StateMachine):
         self.melt_goal = 0
         self.melt_motion_pub = melt_motion_pub
         self.melt_rel_motion_pub = melt_rel_motion_pub
+        self.melt_speed_pub = melt_speed_pub
         self.melt_stop_pub = melt_stop_pub
         self.probe_1_service = probe_1_service
         self.probe_2_service = probe_2_service
@@ -57,6 +59,7 @@ class Melt(StateMachine):
                                  'probe2' : self.probe2Update
                                  }      
         self.rate = rospy.Rate(20)
+        self.melt_speed_pub.publish(600)
         self.worker_thread.start()
 
     def melt_limit_callback(self, limit_data):
@@ -67,9 +70,11 @@ class Melt(StateMachine):
 
     def idleOnEnter(self, state, event):
         self.idle = True
+        self.melt_speed_pub.publish(600)
 
     def idleOnExit(self, state, event):
         self.idle = False
+        self.melt_speed_pub.publish(100)
 
     def stopOnEnter(self, state, event):
         self.stopped = True
@@ -104,7 +109,7 @@ class Melt(StateMachine):
                     if self.current_melt_position != 0:
                         self.cmp_correction = self.current_melt_position
                 else:
-                    self.melt_rel_motion_pub.publish(-10)
+                    self.melt_rel_motion_pub.publish(-100)
             else:
                 if self.current_melt_position != self.melt_goal:
                     self.melt_motion_pub.publish(self.melt_goal)

@@ -5,6 +5,7 @@ import threading
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
+from std_msgs.msg import UInt16
 
 
 class Drill(StateMachine):
@@ -12,7 +13,7 @@ class Drill(StateMachine):
     
 
 
-    def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub):
+    def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_stop_pub, drill_pub):
         super(Drill, self).__init__(name)
         self.drill_limit = True
         self.current_drill_position = 0
@@ -23,6 +24,7 @@ class Drill(StateMachine):
         self.drill_goal = 0
         self.drill_motion_pub = drill_motion_pub
         self.drill_rel_motion_pub = drill_rel_motion_pub
+        self.drill_speed_pub = drill_speed_pub
         self.drill_pub = drill_pub
         self.drill_stop_pub = drill_stop_pub
         self.worker_thread = threading.Thread(target=self.run)
@@ -55,6 +57,7 @@ class Drill(StateMachine):
                                  'exit' : self.stopOnExit}
 
         self.rate = rospy.Rate(20)
+        self.drill_speed_pub.publish(600)
         self.worker_thread.start()
 
     def drill_limit_callback(self, limit_data):
@@ -66,9 +69,11 @@ class Drill(StateMachine):
 
     def idleOnEnter(self, state, event):
         self.idle = True
+        self.drill_speed_pub.publish(600)
 
     def idleOnExit(self, state, event):
         self.idle = False
+
         
     def drillingOnEnter(self, state, event):
         self.drill_goal = event.input
@@ -108,7 +113,7 @@ class Drill(StateMachine):
                     if self.current_drill_position != 0:
                         self.cdp_correction = self.current_drill_position
                 else:
-                    self.drill_rel_motion_pub.publish(10)
+                    self.drill_rel_motion_pub.publish(100)
             else:
                 if self.current_drill_position != self.drill_goal:
                     self.drill_motion_pub.publish(self.drill_goal)
@@ -117,8 +122,10 @@ class Drill(StateMachine):
                         self.drill_goal = self.drill_motion_queue.get()
                         if (self.drill_goal - self.current_drill_position) > 0:
                             self.drill_pub.publish(True)
+                            self.drill_speed_pub.publish(50)
                         else:
                             self.drill_pub.publish(False)
+                            self.drill_speed_pub.publish(600)
                     else:
                         continue
 

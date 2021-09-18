@@ -9,6 +9,7 @@ from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 from std_msgs.msg import String
+from std_msgs.msg import UInt16
 from nuice_msgs.srv import FloatCommand, FloatCommandResponse
 
 
@@ -19,14 +20,16 @@ class Carosel(StateMachine):
     def __init__(self, name):
         super(Carosel,self).__init__(name)
         self.worker_thread = threading.Thread(target=self.run)
-        goal = 0
+        self.goal = 0
         drill_motion_pub = rospy.Publisher("/central_board/drill_stp/set_abs_pos", Int32, queue_size = 10)
         drill_rel_motion_pub = rospy.Publisher("/central_board/drill_stp/set_rel_pos", Int32, queue_size = 10)
+        drill_speed_pub = rospy.Publisher("/central_board/drill_stp/set_max_speed", UInt16, queue_size = 10)
         drill_stop_pub = rospy.Publisher("/central_board/drill_stp/quick_stop", Empty, queue_size = 10)
         drill_pub = rospy.Publisher("/central_board/drill_relay/set_state", Bool, queue_size = 10)
-        melt_motion_pub = rospy.Publisher("/central_board/melt_stp/set_abs_pos", Int32, queue_size = 10)
-        melt_rel_motion_pub = rospy.Publisher("/central_board/melt_stp/set_rel_pos", Int32, queue_size = 10)
-        melt_stop_pub = rospy.Publisher("/central_board/drill_stp/quick_stop", Empty, queue_size = 10)
+        melt_motion_pub = rospy.Publisher("/central_board/probe_stp/set_abs_pos", Int32, queue_size = 10)
+        melt_rel_motion_pub = rospy.Publisher("/central_board/probe_stp/set_rel_pos", Int32, queue_size = 10)
+        melt_speed_pub = rospy.Publisher("/central_board/probe_stp/set_max_speed", UInt16, queue_size = 10)
+        melt_stop_pub = rospy.Publisher("/central_board/probe_stp/quick_stop", Empty, queue_size = 10)
         rospy.wait_for_service('set_probe1')
         probe_1_service = rospy.ServiceProxy('set_probe1', FloatCommand)
         rospy.wait_for_service('set_probe2')
@@ -35,15 +38,15 @@ class Carosel(StateMachine):
         
         
         # Children state machines
-        self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_stop_pub, drill_pub)
-        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_stop_pub, probe_1_service, probe_2_service)
+        self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_stop_pub, drill_pub)
+        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_stop_pub, probe_1_service, probe_2_service)
 
         rospy.Subscriber('/central_board/drill_stp/current_position', Int32, self.drill.drill_position_callback)
         rospy.Subscriber('/central_board/drill_limit/current_state', Bool, self.drill.drill_limit_callback)
-        rospy.Subscriber('/central_board/melt_stp/current_position', Int32, self.melt.melt_position_callback)
-        rospy.Subscriber('/central_board/melt_limit/current_state', Bool, self.melt.melt_limit_callback)
+        rospy.Subscriber('/central_board/probe_stp/current_position', Int32, self.melt.melt_position_callback)
+        rospy.Subscriber('/central_board/probe_limit/current_state', Bool, self.melt.melt_limit_callback)
         rospy.Subscriber('ac/goal', Int32, self.goal_callback)
-        rospy.Subscriber('ac/events', String, lambda event_data: state_machine.dispatch(Event(event_data.data, goal)))
+        rospy.Subscriber('ac/events', String, lambda event_data: self.dispatch(Event(event_data.data, self.goal)))
         
         # Main states
         #init = State("init")
@@ -80,7 +83,7 @@ class Carosel(StateMachine):
                                 'melt_probe_2' : lambda state, event: self.melt.dispatch(Event('probe2', event.input))
                                 }
         self.rate = rospy.Rate(20)
-        worker_thread.start()
+        self.worker_thread.start()
     def goal_callback(self, goal_data):
         self.goal = goal_data.data
 
