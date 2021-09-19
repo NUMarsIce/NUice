@@ -1,0 +1,11 @@
+<launch>
+	<arg name="filename"/>
+	<arg name="hz" default="10"/>
+
+	<node pkg="nuice_startup" type="logging_node.py" name="logging_node">
+		<param name="data_file_name" value="$(arg filename)"/>
+		<param name="hz" value="$(arg hz)"/>
+		<param name="topics_list" type="yaml" value="['/central_board/drill_relay/current_state', '/central_board/drill_stp/current_position', '/current_board/drill/current','/current_board/mains/current','/current_board/motor_supply/current','/drill_board/drill_hall/rate','/drill_board/drill_loadcell/load','/melt_board/loadcell1/load','/melt_board/probe_therm1/value','/melt_board/probe_therm2/value']"/>
+	</node>
+
+</launch>

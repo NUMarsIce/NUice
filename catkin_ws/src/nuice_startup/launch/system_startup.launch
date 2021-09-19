@@ -1,14 +1,19 @@
 <launch>
-	<!-- <rosparam command="load" file="$(find nuice_startup)/config/drill_test.yaml"/> -->
-	<!-- <node pkg="nuice_startup" type="logging_node.py" name="logging_node"/> -->
 
-	<!-- <node pkg="rosbag" type="record" name="rosbag_recorder"
-		args="record -a -O testbag"/> -->
+	<!-- General Backup Logger -->
+	<include file="$(find nuice_startup)/launch/logging.launch">
+		<arg name="filename" value="base_log"/>
+		<arg name="hz" value="2"/>
+	</include>
 
+	<!-- Drivers -->
 	<include file="$(find nuice_startup)/launch/driver_init.launch" />
 
+	<!-- Abstractions -->
 	<include file="$(find nuice_abstraction)/launch/abstractions.launch" />
 
-	<!-- TODO: launch UI with configuration -->
+	<!-- Cameras -->
+	<include file="$(find nuice_startup)/launch/2cams.launch" />
+	<node name="web_video_server" pkg="web_video_server" type="web_video_server">
 
 </launch>

@@ -23,14 +23,10 @@ NUGPIO drill_relay(nh, "drill_relay", PB13, OUTPUT);
 NUGPIO power_relay(nh, "power_relay", PB14, OUTPUT);
 
 // Filtration relays J4: 3v3, PB0, PB1, PB10, PB12
-NUGPIO backwash_relay(nh, "backwash_relay", PB0, OUTPUT);
-NUGPIO stage1_relay(nh, "stage1_relay", PB1, OUTPUT);
-NUGPIO bypass_relay(nh, "bypass_relay", PB10, OUTPUT);
-NUGPIO air_relay(nh, "air_relay", PB12, OUTPUT);
-
-// Filtration pumps J3: 3v3, PA6, PA7, PC4, PC5
-NUGPIO ropump_relay(nh, "ropump_relay", PC4, OUTPUT);
-NUGPIO mainpump_relay(nh, "mainpump_relay", PC5, OUTPUT);
+NUGPIO ro_pump(nh, "filt_ro_pimp", PB0, OUTPUT);
+NUGPIO main_pump(nh, "filt_main_pump", PB1, OUTPUT);
+NUGPIO bypass(nh, "filt_bypass", PB10, OUTPUT);
+NUGPIO backwash(nh, "filt_backwash", PB12, OUTPUT);
 
 void setup(){
     nh.getHardware()->setBaud(115200);
@@ -47,12 +43,11 @@ void setup(){
     drill_relay.setup();
     power_relay.setup();
     
-    backwash_relay.setup();
-    stage1_relay.setup();
-    bypass_relay.setup();
-    air_relay.setup();
-    ropump_relay.setup();
-    mainpump_relay.setup();
+    ro_pump.setup();
+    main_pump.setup();
+    bypass.setup();
+    backwash.setup();
+
 }
 
 
@@ -70,10 +65,8 @@ void loop(){
     drill_relay.update();
     power_relay.update();
 
-    backwash_relay.update();
-    stage1_relay.update();
-    bypass_relay.update();
-    air_relay.update();
-    ropump_relay.update();
-    mainpump_relay.update();
+    ro_pump.update();
+    main_pump.update();
+    bypass.update();
+    backwash.update();
 }
