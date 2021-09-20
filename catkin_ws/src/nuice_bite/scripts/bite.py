@@ -5,6 +5,7 @@ import rospy
 import pickle
 from std_msgs.msg import String, Float32, Float64, Int32
 from nuice_msgs.msg import ProbabilityVector, LayerStatus
+from tensorflow import keras
 
 
 POSITION_STRING = 'position'
@@ -12,7 +13,7 @@ WOB_STRING = 'wob'
 SPIN_SPEED_STRING = 'drill_hall'
 CURRENT_STRING = 'current'
 
-states = ['concrete', 'clay', 'sand', 'stone']
+states = ['air', 'clay', 'concrete',  'ice', 'sand', 'stone']
 
 # stored infromation
 feature_vector = {
@@ -24,14 +25,15 @@ feature_vector = {
 
 def load_model():
     # TODO: get a correct filename
-    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'gradient0912.sav') #logistic_model
-    infile = open(filepath,'rb')
-    model = pickle.load(infile)
-    infile.close() 
+    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'neural_model') #logistic_model
+    # infile = open(filepath,'rb')
+    # model = pickle.load(infile)
+    # infile.close() 
+    model = keras.models.load_model(filepath)
     return model
 
 def read_position(data):
-    feature_vector[POSITION_STRING] = data.data
+    feature_vector[POSITION_STRING] = -1016.0/(300.0 * 400.0) * data.data
 
 def read_wob(data):
     feature_vector[WOB_STRING] = data.data
@@ -54,7 +56,7 @@ def probability_list_to_probability_vector(probability_list, states):
     
 def feature_dict_to_vector():
     # TODO: update this to work for values other than wob
-    return [feature_vector[CURRENT_STRING], feature_vector[SPIN_SPEED_STRING], feature_vector[WOB_STRING]]
+    return [feature_vector[POSITION_STRING], feature_vector[CURRENT_STRING], feature_vector[WOB_STRING]]
 
 
 
@@ -79,11 +81,11 @@ def bite():
     while not rospy.is_shutdown():
         feature_list = feature_dict_to_vector()
         # current model requires a list of feature vectors
-        probability_list = model.predict_proba([feature_list])[0]
+        # probability_list = model.predict_proba([feature_list])[0]
         prediction = model.predict([feature_list])[0]
 
         # WILL BE USED FOR CUSTOM MESSAGING
-        probability_vector = probability_list_to_probability_vector(probability_list, states)
+        probability_vector = probability_list_to_probability_vector(prediction, states)
 
         pub.publish(probability_vector)
         rate.sleep()
