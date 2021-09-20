@@ -14,7 +14,7 @@ from nuice_msgs.srv import FloatCommand, FloatCommandResponse
 
 class Melt(StateMachine):
 
-    def __init__(self, name, melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_stop_pub, probe_1_service, probe_2_service):
+    def __init__(self, name, melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_accel_pub, melt_stop_pub, probe_1_service, probe_2_service):
         super(Melt,self).__init__(name)
         self.melt_limit = True
         self.current_melt_position = 0
@@ -60,6 +60,7 @@ class Melt(StateMachine):
                                  }      
         self.rate = rospy.Rate(20)
         self.melt_speed_pub.publish(600)
+        melt_accel_pub.publish(400)
         self.worker_thread.start()
 
     def meltLimitCallback(self, limit_data):

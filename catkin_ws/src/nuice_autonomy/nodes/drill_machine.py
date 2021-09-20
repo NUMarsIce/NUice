@@ -13,7 +13,7 @@ class Drill(StateMachine):
     
 
 
-    def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_stop_pub, drill_pub):
+    def __init__(self, name, drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_accel_pub, drill_stop_pub, drill_pub):
         super(Drill, self).__init__(name)
         self.drill_limit = True
         self.current_drill_position = 0
@@ -58,6 +58,7 @@ class Drill(StateMachine):
 
         self.rate = rospy.Rate(20)
         self.drill_speed_pub.publish(600)
+        drill_accel_pub.publish(400)
         self.worker_thread.start()
 
     def drillLimitCallback(self, limit_data):

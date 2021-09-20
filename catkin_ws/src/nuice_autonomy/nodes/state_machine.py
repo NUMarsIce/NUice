@@ -26,11 +26,13 @@ class Carosel(StateMachine):
         drill_motion_pub = rospy.Publisher("/central_board/drill_stp/set_abs_pos", Int32, queue_size = 10)
         drill_rel_motion_pub = rospy.Publisher("/central_board/drill_stp/set_rel_pos", Int32, queue_size = 10)
         drill_speed_pub = rospy.Publisher("/central_board/drill_stp/set_max_speed", UInt16, queue_size = 10)
+        drill_accel_pub = rospy.Publisher("/central_board/drill_stp/set_accel", UInt16, queue_size = 10)
         drill_stop_pub = rospy.Publisher("/central_board/drill_stp/quick_stop", Empty, queue_size = 10)
         drill_pub = rospy.Publisher("/central_board/drill_relay/set_state", Bool, queue_size = 10)
         melt_motion_pub = rospy.Publisher("/central_board/probe_stp/set_abs_pos", Int32, queue_size = 10)
         melt_rel_motion_pub = rospy.Publisher("/central_board/probe_stp/set_rel_pos", Int32, queue_size = 10)
         melt_speed_pub = rospy.Publisher("/central_board/probe_stp/set_max_speed", UInt16, queue_size = 10)
+        melt_accel_pub = rospy.Publisher("/central_board/probe_stp/set_accel", UInt16, queue_size = 10)
         melt_stop_pub = rospy.Publisher("/central_board/probe_stp/quick_stop", Empty, queue_size = 10)
         rospy.wait_for_service('set_probe1')
         probe_1_service = rospy.ServiceProxy('set_probe1', FloatCommand)
@@ -41,8 +43,8 @@ class Carosel(StateMachine):
         
         
         # Children state machines
-        self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_stop_pub, drill_pub)
-        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_stop_pub, probe_1_service, probe_2_service)
+        self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_accel_pub, drill_stop_pub, drill_pub)
+        self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_accel_pub, melt_stop_pub, probe_1_service, probe_2_service)
 
         rospy.Subscriber('/central_board/drill_stp/current_position', Int32, self.drill.drillPositionCallback)
         rospy.Subscriber('/central_board/drill_limit/current_state', Bool, self.drill.drillLimitCallback)
