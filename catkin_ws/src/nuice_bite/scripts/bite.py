@@ -57,7 +57,7 @@ def probability_list_to_probability_vector(probability_list, states):
     
 def feature_dict_to_vector():
     # TODO: update this to work for values other than wob
-    return [feature_vector[CURRENT_STRING], feature_vector[WOB_STRING]] #feature_vector[SPIN_SPEED_STRING],
+    return [feature_vector[POSITION_STRING], feature_vector[CURRENT_STRING], feature_vector[WOB_STRING]] #feature_vector[SPIN_SPEED_STRING],
 
 
 
@@ -114,11 +114,11 @@ def bite():
                 if not data:
                     break
                 # publish data
-                probs = struct.unpack('<4f', data)
+                probs = struct.unpack('<6f', data)
                 pub.publish(probability_list_to_probability_vector(probs, states))
 
                 # send data
-                data_out = struct.pack('<4f',feature_vector[POSITION_STRING],feature_vector[WOB_STRING],feature_vector[SPIN_SPEED_STRING],feature_vector[CURRENT_STRING])
+                data_out = struct.pack('<3f',feature_vector[POSITION_STRING],feature_vector[CURRENT_STRING], feature_vector[WOB_STRING])
                 conn.sendall(data_out)
             conn.close()
 
