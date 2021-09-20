@@ -5,7 +5,10 @@ import rospy
 import pickle
 from std_msgs.msg import String, Float32, Float64, Int32
 from nuice_msgs.msg import ProbabilityVector, LayerStatus
+import socket
+import struct
 
+RUN_EXTERNAL = True
 
 POSITION_STRING = 'position'
 WOB_STRING = 'wob'
@@ -24,7 +27,7 @@ feature_vector = {
 
 def load_model():
     # TODO: get a correct filename
-    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logistic0912.sav') #logistic_model
+    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logistic0910.sav') #logistic_model logistic0912
     infile = open(filepath,'rb')
     model = pickle.load(infile)
     infile.close() 
@@ -54,11 +57,25 @@ def probability_list_to_probability_vector(probability_list, states):
     
 def feature_dict_to_vector():
     # TODO: update this to work for values other than wob
-    return [feature_vector[CURRENT_STRING], feature_vector[SPIN_SPEED_STRING], feature_vector[WOB_STRING]]
+    return [feature_vector[CURRENT_STRING], feature_vector[WOB_STRING]] #feature_vector[SPIN_SPEED_STRING],
 
 
 
 def bite():
+    if(RUN_EXTERNAL):
+        # Create a TCP/IP socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Bind the socket to the port
+        server_address = ('localhost', 50000)
+        s.bind(server_address)
+        # Listen for incoming connections
+        s.listen(1)
+
+
+    # load BITE from pickle
+    model = load_model()
+    classes = model.classes_
+
     # load BITE from pickle
     model = load_model()
     classes = model.classes_
@@ -77,16 +94,35 @@ def bite():
 
     rate = rospy.Rate(1) # 1hz
     while not rospy.is_shutdown():
-        feature_list = feature_dict_to_vector()
-        # current model requires a list of feature vectors
-        probability_list = model.predict_proba([feature_list])[0]
-        prediction = model.predict([feature_list])[0]
-
-        # WILL BE USED FOR CUSTOM MESSAGING
-        probability_vector = probability_list_to_probability_vector(probability_list, states)
-
-        pub.publish(probability_vector)
         rate.sleep()
+
+        if(not RUN_EXTERNAL):
+            feature_list = feature_dict_to_vector()
+            # current model requires a list of feature vectors
+            probability_list = model.predict_proba([feature_list])[0]
+            prediction = model.predict([feature_list])[0]
+
+            # WILL BE USED FOR CUSTOM MESSAGING
+            probability_vector = probability_list_to_probability_vector(probability_list, states)
+
+            pub.publish(probability_vector)
+        else:
+            # Run with sockets
+            conn, addr = s.accept()
+            while True:
+                data = conn.recv(1024)
+                if not data:
+                    break
+                # publish data
+                probs = struct.unpack('<4f', data)
+                pub.publish(probability_list_to_probability_vector(probs, states))
+
+                # send data
+                data_out = struct.pack('<4f',feature_vector[POSITION_STRING],feature_vector[WOB_STRING],feature_vector[SPIN_SPEED_STRING],feature_vector[CURRENT_STRING])
+                conn.sendall(data_out)
+            conn.close()
+
+            
 
 if __name__ == '__main__':
     try:
