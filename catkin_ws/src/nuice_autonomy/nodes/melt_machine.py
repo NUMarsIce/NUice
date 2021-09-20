@@ -98,6 +98,9 @@ class Melt(StateMachine):
     def probe2Update(self, state, event):
         print(self.probe_2_service(event.input))
 
+    def atZero(self):
+        return (self.current_position == 0)
+
     def run(self):
         while not rospy.is_shutdown():
             self.rate.sleep()

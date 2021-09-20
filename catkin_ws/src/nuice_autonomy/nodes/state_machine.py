@@ -21,6 +21,7 @@ class Carosel(StateMachine):
         super(Carosel,self).__init__(name)
         self.worker_thread = threading.Thread(target=self.run)
         self.goal = 0
+        self.repos_goal = 0
         drill_motion_pub = rospy.Publisher("/central_board/drill_stp/set_abs_pos", Int32, queue_size = 10)
         drill_rel_motion_pub = rospy.Publisher("/central_board/drill_stp/set_rel_pos", Int32, queue_size = 10)
         drill_speed_pub = rospy.Publisher("/central_board/drill_stp/set_max_speed", UInt16, queue_size = 10)
@@ -34,6 +35,7 @@ class Carosel(StateMachine):
         probe_1_service = rospy.ServiceProxy('set_probe1', FloatCommand)
         rospy.wait_for_service('set_probe2')
         probe_2_service = rospy.ServiceProxy('set_probe2', FloatCommand)
+        self.caroselPub = rospy.Publisher("/movement_board/carosel/set_pos", Int32, queue_size = 10)
 
         
         
@@ -49,60 +51,61 @@ class Carosel(StateMachine):
         rospy.Subscriber('ac/events', String, lambda event_data: self.dispatch(Event(event_data.data, self.goal)))
         
         # Main states
-        #init = State("init")
-        #manual = State("manual")
-        #repos = State("repos")
         steady = State("steady")
+        raising_tools = State("raising_tools")
+        repositioning = State("repositioning")
+        braking = State("braking")
         
         # Sub-States
-        #self.add_state(init, initial=True)
-        #self.add_state(manual)
-        #self.add_state(repos)
         self.add_state(steady, initial=True)
+        self.add_state(raising_tools)
+        self.add_state(repositioning)
+        self.add_state(braking)
 
         # Sub-state transitions
-        #self.add_transition(self.init, self.manual, event='manual')
-        #self.add_transition(self.repos, self.manual, event='manual')
-        #self.add_transition(self.steady, self.manual, event='manual')
-        #self.add_transition(self.manual, self.repos, event='reposition')
-        #self.add_transition(self.steady, self.repos, event='reposition')
-        #self.add_transition(self.init, self.repos, event='initialized')
-        #self.add_transition(self.repos, self.steady, event='steady')
+        self.add_transition(steady, raising_tools, events=['repos'])
+        self.add_transition(raising_tools, repositioning, events=['done_raising_tools'])
+        self.add_transition(repositioning, braking, events=['steady'])
+        self.add_transition(braking, steady, events=['done_braking'])
 
-        #self.init.handlers = {'enter': self.initOnEnter}
-        #self.repos.handlers = {'turn': self.turn,
-         #                      'exit': self.reposExit}
-        steady.handlers = {#'exit': self.exitSteady,
-                                'drill_idle': lambda state, event: self.drill.dispatch(Event('idle')),
-                                'drill_drill': lambda state, event: self.drill.dispatch(Event('drill', event.input)),
-                                'drill_stop': lambda state, event: self.drill.dispatch(Event('stop')),
-                                'melt_idle': lambda state, event: self.melt.dispatch(Event('idle')),
-                                'melt_melt': lambda state, event: self.melt.dispatch(Event('melt', event.input)),
-                                'melt_stop': lambda state, event: self.melt.dispatch(Event('stop')),
-                                'melt_probe_1' : lambda state, event: self.melt.dispatch(Event('probe1', event.input)),
-                                'melt_probe_2' : lambda state, event: self.melt.dispatch(Event('probe2', event.input))
-                                }
+        steady.handlers = {'drill_idle': lambda state, event: self.drill.dispatch(Event('idle')),
+                           'drill_drill': lambda state, event: self.drill.dispatch(Event('drill', event.input)),
+                           'drill_stop': lambda state, event: self.drill.dispatch(Event('stop')),
+                           'melt_idle': lambda state, event: self.melt.dispatch(Event('idle')),
+                           'melt_melt': lambda state, event: self.melt.dispatch(Event('melt', event.input)),
+                           'melt_stop': lambda state, event: self.melt.dispatch(Event('stop')),
+                           'melt_probe_1' : lambda state, event: self.melt.dispatch(Event('probe1', event.input)),
+                           'melt_probe_2' : lambda state, event: self.melt.dispatch(Event('probe2', event.input))}
+        raising_tools.handlers = {'enter': self.raiseTools}
+        repositioning.handlers = {'repos' : self.updateRepositioning}
+        braking.handlers = {'enter' : self.brake}
         self.rate = rospy.Rate(20)
         self.worker_thread.start()
+
     def goal_callback(self, goal_data):
         self.goal = goal_data.data
 
-    
-    
+    def raiseTools(self, state, event):
+        self.drill.dispatch('idle')
+        self.melt.dispatch('idle')
+        while (not self.drill.atZero) and (not self.melt.atZero):
+            sleep(1)
+        self.repos_goal = event.input
+        self.dispatch('done_raising_tools')
 
-    
+    def updateRepositioning(self, state, event):
+        self.repos_goal = event.input
 
-    #def turn(self, state, event):
-
-    #def reposExit(self, state, event):
-
-    #def exitSteady(self, state, event):
+    def brake(self, state, event):
+        #brake
+        self.dispatch('done_braking')
+        
         
 
 
     def run(self):
         while not rospy.is_shutdown():
-            self.rate.sleep()
+            self.caroselPub.publish(self.repos_goal)
 
 
 

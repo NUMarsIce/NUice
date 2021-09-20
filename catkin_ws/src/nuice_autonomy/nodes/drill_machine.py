@@ -100,6 +100,9 @@ class Drill(StateMachine):
     def stopOnExit(self, state, event):
         self.stopped = False
 
+    def atZero(self):
+        return (self.current_position == 0)
+
 
 
     def run(self):
