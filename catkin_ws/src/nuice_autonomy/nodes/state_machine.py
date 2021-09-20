@@ -49,7 +49,7 @@ class Carosel(StateMachine):
         rospy.Subscriber('/central_board/probe_stp/current_position', Int32, self.melt.meltPositionCallback)
         rospy.Subscriber('/central_board/probe_limit/current_state', Bool, self.melt.meltLimitCallback)
         self.caroselSub = rospy.Subscriber("/movement_board/carosel/current_position", Int32, self.caroselPositionCallback)
-        rospy.Subscriber('ac/goal', Int32, self goalCallback)
+        rospy.Subscriber('ac/goal', Int32, self.goalCallback)
         rospy.Subscriber('ac/events', String, lambda event_data: self.dispatch(Event(event_data.data, self.goal)))
         
         # Main states
