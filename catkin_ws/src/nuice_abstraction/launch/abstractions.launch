@@ -5,7 +5,7 @@
 	<node pkg="nuice_abstraction" type="basic_stepper.py" ns="drill_stepper" name="drill_stepper_abstract">
 		<param name="stepper_name" value="/central_board/drill_stp"/>
 		<param name="limit_name" value="/central_board/drill_limit"/>
-		<param name="steps_per_unit" value="118110"/>
+		<param name="steps_per_unit" value="122484"/>
 		<param name="max" value="0.8"/>
 		<param name="min" value="0"/>
 		<param name="max_speed" value="0.005"/>

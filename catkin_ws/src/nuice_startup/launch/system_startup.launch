@@ -1,5 +1,4 @@
 <launch>
-
 	<!-- General Backup Logger -->
 	<include file="$(find nuice_startup)/launch/logging.launch">
 		<arg name="filename" value="base_log"/>
@@ -15,5 +14,8 @@
 	<!-- Cameras -->
 	<include file="$(find nuice_startup)/launch/2cams.launch" />
 	<node name="web_video_server" pkg="web_video_server" type="web_video_server">
+		<param name="server_threads" value="4"/>
+		<param name="ros_threads" value="8"/>
+	</node>
 
 </launch>
