@@ -1,9 +1,11 @@
+import os
 import socket
 import struct
 import time
 from tensorflow import keras
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-model = keras.models.load_model('neural_model')
+filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'neural_model')
+model = keras.models.load_model(filepath)
 
 def main():
     s.connect(('localhost', 50000))
