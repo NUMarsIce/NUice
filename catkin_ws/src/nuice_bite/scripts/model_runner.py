@@ -4,7 +4,8 @@ import struct
 import time
 from tensorflow import keras
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'neural_model')
+filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'neural.h5')
+print('FILEPATH', filepath)
 model = keras.models.load_model(filepath)
 
 def main():
