@@ -62,10 +62,10 @@ class Melt(StateMachine):
         self.melt_speed_pub.publish(600)
         self.worker_thread.start()
 
-    def melt_limit_callback(self, limit_data):
+    def meltLimitCallback(self, limit_data):
         self.melt_limit = limit_data.data
 
-    def melt_position_callback(self, position_data):
+    def meltPositionCallback(self, position_data):
         self.current_melt_position = position_data.data - self.mcp_correction
 
     def idleOnEnter(self, state, event):

@@ -22,6 +22,7 @@ class Carosel(StateMachine):
         self.worker_thread = threading.Thread(target=self.run)
         self.goal = 0
         self.repos_goal = 0
+        self.carosel_position = 0
         drill_motion_pub = rospy.Publisher("/central_board/drill_stp/set_abs_pos", Int32, queue_size = 10)
         drill_rel_motion_pub = rospy.Publisher("/central_board/drill_stp/set_rel_pos", Int32, queue_size = 10)
         drill_speed_pub = rospy.Publisher("/central_board/drill_stp/set_max_speed", UInt16, queue_size = 10)
@@ -43,11 +44,12 @@ class Carosel(StateMachine):
         self.drill = drill_machine.Drill("drilling", drill_motion_pub, drill_rel_motion_pub, drill_speed_pub, drill_stop_pub, drill_pub)
         self.melt = melt_machine.Melt("melting", melt_motion_pub, melt_rel_motion_pub, melt_speed_pub, melt_stop_pub, probe_1_service, probe_2_service)
 
-        rospy.Subscriber('/central_board/drill_stp/current_position', Int32, self.drill.drill_position_callback)
-        rospy.Subscriber('/central_board/drill_limit/current_state', Bool, self.drill.drill_limit_callback)
-        rospy.Subscriber('/central_board/probe_stp/current_position', Int32, self.melt.melt_position_callback)
-        rospy.Subscriber('/central_board/probe_limit/current_state', Bool, self.melt.melt_limit_callback)
-        rospy.Subscriber('ac/goal', Int32, self.goal_callback)
+        rospy.Subscriber('/central_board/drill_stp/current_position', Int32, self.drill.drillPositionCallback)
+        rospy.Subscriber('/central_board/drill_limit/current_state', Bool, self.drill.drillLimitCallback)
+        rospy.Subscriber('/central_board/probe_stp/current_position', Int32, self.melt.meltPositionCallback)
+        rospy.Subscriber('/central_board/probe_limit/current_state', Bool, self.melt.meltLimitCallback)
+        self.caroselSub = rospy.Subscriber("/movement_board/carosel/current_position", Int32, self.caroselPositionCallback)
+        rospy.Subscriber('ac/goal', Int32, self goalCallback)
         rospy.Subscriber('ac/events', String, lambda event_data: self.dispatch(Event(event_data.data, self.goal)))
         
         # Main states
@@ -82,8 +84,11 @@ class Carosel(StateMachine):
         self.rate = rospy.Rate(20)
         self.worker_thread.start()
 
-    def goal_callback(self, goal_data):
+    def goalCallback(self, goal_data):
         self.goal = goal_data.data
+
+    def caroselPositionCallback(self, carosel_position_data):
+        self.carosel_position = carosel_position_data.data
 
     def raiseTools(self, state, event):
         self.drill.dispatch('idle')
@@ -105,7 +110,8 @@ class Carosel(StateMachine):
 
     def run(self):
         while not rospy.is_shutdown():
-            self.caroselPub.publish(self.repos_goal)
+            if not (self.carosel_position == self.repos_goal):
+                self.caroselPub.publish(self.repos_goal)
 
 
 

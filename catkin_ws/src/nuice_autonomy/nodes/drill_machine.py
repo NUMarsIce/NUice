@@ -60,10 +60,10 @@ class Drill(StateMachine):
         self.drill_speed_pub.publish(600)
         self.worker_thread.start()
 
-    def drill_limit_callback(self, limit_data):
+    def drillLimitCallback(self, limit_data):
         self.drill_limit = limit_data.data
     
-    def drill_position_callback(self, position_data):
+    def drillPositionCallback(self, position_data):
         self.current_drill_position = position_data.data - self.cdp_correction
 
 
