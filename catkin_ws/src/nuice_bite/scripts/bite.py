@@ -15,7 +15,7 @@ WOB_STRING = 'wob'
 SPIN_SPEED_STRING = 'drill_hall'
 CURRENT_STRING = 'current'
 
-states = ['concrete', 'clay', 'sand', 'stone']
+states = ['air', 'clay', 'concrete',  'ice', 'sand', 'stone']
 
 # stored infromation
 feature_vector = {
@@ -34,7 +34,7 @@ def load_model():
     return model
 
 def read_position(data):
-    feature_vector[POSITION_STRING] = data.data
+    feature_vector[POSITION_STRING] = -1016.0/(300.0 * 400.0) * data.data
 
 def read_wob(data):
     feature_vector[WOB_STRING] = data.data
