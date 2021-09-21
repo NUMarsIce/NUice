@@ -79,32 +79,41 @@ class Melt(StateMachine):
     def idleOnEnter(self, state, event):
         self.idle = True
         self.melt_speed_pub.publish(600)
+        print "melt entered idle"
 
     def idleOnExit(self, state, event):
         self.idle = False
         self.melt_speed_pub.publish(100)
+        print "melt exited idle"
 
     def stopOnEnter(self, state, event):
         self.stopped = True
+        print "melt entered stop"
 
     def stopOnExit(self, state, event):
         self.stopped = False
+        print "melt exited stop"
 
     def meltingOnEnter(self, state, event):
         self.melt_goal = event.cargo['source_event'].cargo['goal']
+        print "entered melting"
 
     def meltingUpdate(self, state, event):
         self.melt_goal = event.cargo['goal']
+        print "updated melting"
 
     def meltingOnExit(self, state, event):
         self.melt_stop_pub.publish(Empty())
         self.melt_motion_queue = Queue(maxsize=0)
+        print "exited melting"
 
     def probe1Update(self, state, event):
-        print(self.probe_1_service(event.cargo['source_event'].cargo['goal']))
+        print(self.probe_1_service(event.cargo['goal']))
+        print "updated probe 1"
 
     def probe2Update(self, state, event):
-        print(self.probe_2_service(event.cargo['source_event'].cargo['goal']))
+        print(self.probe_2_service(event.cargo['goal']))
+        print "updated probe 2"
 
     def atZero(self):
         return (self.current_position == 0)
@@ -123,15 +132,12 @@ class Melt(StateMachine):
                 else:
                     self.melt_rel_motion_pub.publish(-100)
             else:
-                if self.current_melt_position != self.melt_goal:
+                if (self.current_melt_position - self.melt_goal) > 3:
                     self.melt_motion_pub.publish(self.melt_goal)
                 else:
                     if not self.melt_motion_queue.empty():
                         self.melt_goal = self.melt_motion_queue.get()
-                        if (self.melt_goal - self.current_melt_position) > 0:
-                            self.melt_pub.publish(True)
-                        else:
-                            self.melt_pub.publish(False)
+                        print "changed melt goal"
                     else:
                         continue
 

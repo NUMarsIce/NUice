@@ -76,16 +76,20 @@ class Drill(StateMachine):
     def idleOnEnter(self, state, event):
         self.idle = True
         self.drill_speed_pub.publish(600)
+        print "Entered idle"
 
     def idleOnExit(self, state, event):
         self.idle = False
+        print "Exited idle"
 
         
     def drillingOnEnter(self, state, event):
-        self.drill_goal = event.cargo['source_event'].cargo['goal']
+        self.drill_goal = -abs(event.cargo['source_event'].cargo['goal'])
+        print "Entered drilling"
 
     def drillingUpdate(self, state, event):
-        self.drill_motion_queue.put(event.cargo['goal'])
+        self.drill_motion_queue.put(-abs(event.cargo['goal']))
+        print "Updated drilling"
     
     def bounce(self, state, event):
         n = self.current_drill_position
@@ -99,12 +103,15 @@ class Drill(StateMachine):
         self.drill_stop_pub.publish(Empty())
         self.drill_pub.publish(False)
         self.drill_motion_queue = Queue(maxsize=0)
+        print "exited drilling"
 
     def stopOnEnter(self, state, event):
         self.stopped = True
+        print "entered stopped"
 
     def stopOnExit(self, state, event):
         self.stopped = False
+        print "exited stopped"
 
     def atZero(self):
         return (self.current_position == 0)
@@ -124,17 +131,19 @@ class Drill(StateMachine):
                 else:
                     self.drill_rel_motion_pub.publish(100)
             else:
-                if self.current_drill_position != self.drill_goal:
+                if (self.current_drill_position - self.drill_goal) > 3:
                     self.drill_motion_pub.publish(self.drill_goal)
+                    if (self.drill_goal - self.current_drill_position) < 0:
+                            self.drill_pub.publish(True)
+                            self.drill_speed_pub.publish(50)
+                    else:
+                        self.drill_pub.publish(False)
+                        self.drill_speed_pub.publish(600)
                 else:
                     if not self.drill_motion_queue.empty():
                         self.drill_goal = self.drill_motion_queue.get()
-                        if (self.drill_goal - self.current_drill_position) > 0:
-                            self.drill_pub.publish(True)
-                            self.drill_speed_pub.publish(50)
-                        else:
-                            self.drill_pub.publish(False)
-                            self.drill_speed_pub.publish(600)
+                        print "changed drill goal"
+                        
                     else:
                         continue
 

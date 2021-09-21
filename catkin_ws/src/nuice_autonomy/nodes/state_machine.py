@@ -23,6 +23,7 @@ class Carosel(StateMachine):
         self.goal = 0
         self.repos_goal = 0
         self.carosel_position = 0
+        self.repositioning = False
         drill_motion_pub = rospy.Publisher("/central_board/drill_stp/set_abs_pos", Int32, queue_size = 10)
         drill_rel_motion_pub = rospy.Publisher("/central_board/drill_stp/set_rel_pos", Int32, queue_size = 10)
         drill_speed_pub = rospy.Publisher("/central_board/drill_stp/set_max_speed", UInt16, queue_size = 10)
@@ -34,9 +35,9 @@ class Carosel(StateMachine):
         melt_speed_pub = rospy.Publisher("/central_board/probe_stp/set_max_speed", UInt16, queue_size = 10)
         melt_accel_pub = rospy.Publisher("/central_board/probe_stp/set_accel", UInt16, queue_size = 10)
         melt_stop_pub = rospy.Publisher("/central_board/probe_stp/quick_stop", Empty, queue_size = 10)
-        #rospy.wait_for_service('set_probe1')
+        rospy.wait_for_service('set_probe1')
         probe_1_service = rospy.ServiceProxy('set_probe1', FloatCommand)
-        #rospy.wait_for_service('set_probe2')
+        rospy.wait_for_service('set_probe2')
         probe_2_service = rospy.ServiceProxy('set_probe2', FloatCommand)
         self.caroselPub = rospy.Publisher("/movement_board/carosel/set_pos", Int32, queue_size = 10)
 
@@ -83,7 +84,11 @@ class Carosel(StateMachine):
                            'melt_probe_1' : lambda state, event: self.melt.dispatch(event),
                            'melt_probe_2' : lambda state, event: self.melt.dispatch(event)}
         raising_tools.handlers = {'enter': self.raiseTools}
-        repositioning.handlers = {'repos' : self.updateRepositioning}
+        repositioning.handlers = {'enter' : self.enterRepositioning,
+                                  'repos' : self.updateRepositioning,
+                                  'exit' : self.exitRepositioning}
+        braking.handlers = {'enter' : self.enterBraking,
+                            'exit' : self.exitBraking}
         self.rate = rospy.Rate(20)
         self.worker_thread.start()
 
@@ -99,26 +104,36 @@ class Carosel(StateMachine):
         self.carosel_position = carosel_position_data.data
 
     def raiseTools(self, state, event):
+        print "raising tools"
         self.drill.dispatch(Event('drill_idle'))
         self.melt.dispatch(Event('melt_idle'))
         while (not self.drill.atZero) and (not self.melt.atZero):
             sleep(1)
         self.repos_goal = event.cargo['source_event'].cargo['goal']
-        print("raised_tools")
+        print "raised tools"
+
+    def enterRepositioning(self, state, event):
+        self.repositioning = True
+        print "entered repositioning"
 
     def updateRepositioning(self, state, event):
         self.repos_goal = event.cargo['goal']
+        print "updated repositioning"
 
-    
+    def exitRepositioning(self, state, event):
+        self.repositioning = False
+        print "exited repositioning"
 
+    def enterBraking(self, state, event):
+        print "entered braking"
 
-        
-        
-
+    def exitBraking(self, state, event):
+        print "exited braking"
 
     def run(self):
         while not rospy.is_shutdown():
-            if not (self.carosel_position == self.repos_goal):
+            self.rate.sleep()
+            if self.repositioning and (not (self.carosel_position == self.repos_goal)):
                 self.caroselPub.publish(self.repos_goal)
 
 
