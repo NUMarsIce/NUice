@@ -38,20 +38,20 @@ class Drill(StateMachine):
         self.add_state(drilling)
         self.add_state(stopped)
 
-        self.add_transition(drilling, idle, events=['idle'])
-        self.add_transition(stopped, idle, events=['idle'])
+        self.add_transition(drilling, idle, events=['drill_idle'])
+        self.add_transition(stopped, idle, events=['drill_idle'])
 
-        self.add_transition(idle, drilling, events=['drill'])
-        self.add_transition(stopped, drilling, events=['drill'])
+        self.add_transition(idle, drilling, events=['drill_drill'])
+        self.add_transition(stopped, drilling, events=['drill_drill'])
         
-        self.add_transition(idle, stopped, events=['stop'])
-        self.add_transition(drilling, stopped, events=['stop'])
+        self.add_transition(idle, stopped, events=['drill_stop'])
+        self.add_transition(drilling, stopped, events=['drill_stop'])
 
         idle.handlers = {'enter' : self.idleOnEnter,
                               'exit' : self.idleOnExit}
         drilling.handlers = {'enter': self.drillingOnEnter,
-                                  'drill' : self.drillingUpdate,
-                                  'bounce' : self.bounce,
+                                  'drill_drill' : self.drillingUpdate,
+                                  'drill_bounce' : self.bounce,
                                   'exit' : self.drillingOnExit}
         stopped.handlers = {'enter' : self.stopOnEnter,
                                  'exit' : self.stopOnExit}
@@ -59,6 +59,8 @@ class Drill(StateMachine):
         self.rate = rospy.Rate(20)
         self.drill_speed_pub.publish(600)
         drill_accel_pub.publish(400)
+        self.initialize()
+        print("initialized drill")
         self.worker_thread.start()
 
     def drillLimitCallback(self, limit_data):
@@ -77,21 +79,21 @@ class Drill(StateMachine):
 
         
     def drillingOnEnter(self, state, event):
-        self.drill_goal = event.input
+        self.drill_goal = event.cargo['source_event'].cargo['goal']
 
     def drillingUpdate(self, state, event):
-        self.drill_motion_queue.put(event.input)
+        self.drill_motion_queue.put(event.cargo['goal'])
     
     def bounce(self, state, event):
         n = self.current_drill_position
-        for i in range(event.input):
+        for i in range(event.cargo['goal']):
             self.drill_motion_queue.put(n + 15)
             self.drill_motion_queue.put(n + 5)
             n = n + 5
 
 
     def drillingOnExit(self, state, event):
-        self.drill_stop_pub.publish(std_msgs.msg.Empty())
+        self.drill_stop_pub.publish(Empty())
         self.drill_pub.publish(False)
         self.drill_motion_queue = Queue(maxsize=0)
 

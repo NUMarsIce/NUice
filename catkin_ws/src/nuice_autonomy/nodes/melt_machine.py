@@ -39,14 +39,14 @@ class Melt(StateMachine):
         self.add_state(melting)
         self.add_state(stopped)
 
-        self.add_transition(idle, melting, events=['melt'])
-        self.add_transition(stopped, melting, events=['melt'])
+        self.add_transition(idle, melting, events=['melt_melt'])
+        self.add_transition(stopped, melting, events=['melt_melt'])
 
-        self.add_transition(idle, stopped, events=['stop'])
-        self.add_transition(melting, stopped, events=['stop'])
+        self.add_transition(idle, stopped, events=['melt_stop'])
+        self.add_transition(melting, stopped, events=['melt_stop'])
 
-        self.add_transition(stopped, idle, events=['idle'])
-        self.add_transition(melting, idle, events=['idle'])
+        self.add_transition(stopped, idle, events=['melt_idle'])
+        self.add_transition(melting, idle, events=['melt_idle'])
 
         idle.handlers = {'enter' : self.idleOnEnter,
                               'exit' : self.idleOnExit}
@@ -54,13 +54,15 @@ class Melt(StateMachine):
                               'exit' : self.stopOnExit}
         melting.handlers = {'enter' : self.meltingOnEnter,
                                  'exit' : self.meltingOnExit,
-                                 'melt' : self.meltingUpdate,
-                                 'probe1' : self.probe1Update,
-                                 'probe2' : self.probe2Update
+                                 'melt_melt' : self.meltingUpdate,
+                                 'melt_probe_1' : self.probe1Update,
+                                 'melt_probe_2' : self.probe2Update
                                  }      
         self.rate = rospy.Rate(20)
         self.melt_speed_pub.publish(600)
         melt_accel_pub.publish(400)
+        self.initialize()
+        print("melt initialized")
         self.worker_thread.start()
 
     def meltLimitCallback(self, limit_data):
@@ -84,20 +86,20 @@ class Melt(StateMachine):
         self.stopped = False
 
     def meltingOnEnter(self, state, event):
-        self.melt_goal = event.input
+        self.melt_goal = event.cargo['source_event'].cargo['goal']
 
     def meltingUpdate(self, state, event):
-        self.melt_goal = event.input
+        self.melt_goal = event.cargo['goal']
 
     def meltingOnExit(self, state, event):
-        self.melt_stop_pub.publish(std_msgs.msg.Empty())
+        self.melt_stop_pub.publish(Empty())
         self.melt_motion_queue = Queue(maxsize=0)
 
     def probe1Update(self, state, event):
-        print(self.probe_1_service(event.input))
+        print(self.probe_1_service(event.cargo['source_event'].cargo['goal']))
 
     def probe2Update(self, state, event):
-        print(self.probe_2_service(event.input))
+        print(self.probe_2_service(event.cargo['source_event'].cargo['goal']))
 
     def atZero(self):
         return (self.current_position == 0)
