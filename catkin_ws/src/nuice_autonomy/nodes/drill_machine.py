@@ -29,7 +29,7 @@ class Drill(StateMachine):
         self.drill_stop_pub = drill_stop_pub
         self.worker_thread = threading.Thread(target=self.run)
          
-
+        # Main states
         idle = State("idle")
         drilling = State("drilling")
         stopped = State("stopped")
@@ -38,6 +38,7 @@ class Drill(StateMachine):
         self.add_state(drilling)
         self.add_state(stopped)
 
+        # State transitions
         self.add_transition(drilling, idle, events=['drill_idle'])
         self.add_transition(stopped, idle, events=['drill_idle'])
 
@@ -47,6 +48,7 @@ class Drill(StateMachine):
         self.add_transition(idle, stopped, events=['drill_stop'])
         self.add_transition(drilling, stopped, events=['drill_stop'])
 
+        # Event handlers
         idle.handlers = {'enter' : self.idleOnEnter,
                               'exit' : self.idleOnExit}
         drilling.handlers = {'enter': self.drillingOnEnter,
@@ -63,13 +65,14 @@ class Drill(StateMachine):
         print("initialized drill")
         self.worker_thread.start()
 
+    # Subscriber callbacks
     def drillLimitCallback(self, limit_data):
         self.drill_limit = limit_data.data
     
     def drillPositionCallback(self, position_data):
         self.current_drill_position = position_data.data - self.cdp_correction
 
-
+    # Action functions
     def idleOnEnter(self, state, event):
         self.idle = True
         self.drill_speed_pub.publish(600)
@@ -107,7 +110,7 @@ class Drill(StateMachine):
         return (self.current_position == 0)
 
 
-
+    # Control loop
     def run(self):
         while not rospy.is_shutdown():
             self.rate.sleep()

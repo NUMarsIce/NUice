@@ -60,18 +60,19 @@ class Carosel(StateMachine):
         repositioning = State("repositioning")
         braking = State("braking")
         
-        # Sub-States
+        
         self.add_state(steady, initial=True)
         self.add_state(raising_tools)
         self.add_state(repositioning)
         self.add_state(braking)
 
-        # Sub-state transitions
+        # State transitions
         self.add_transition(steady, raising_tools, events=['repos'])
         self.add_transition(raising_tools, repositioning, events=['done_raising_tools'])
         self.add_transition(repositioning, braking, events=['steady'])
         self.add_transition(braking, steady, events=['done_braking'])
 
+        #Event handlers
         steady.handlers = {'drill_idle': lambda state, event: self.drill.dispatch(event),
                            'drill_drill': lambda state, event: self.drill.dispatch(event),
                            'drill_bounce': lambda state, event: self.drill.dispatch(event),
@@ -86,9 +87,14 @@ class Carosel(StateMachine):
         self.rate = rospy.Rate(20)
         self.worker_thread.start()
 
+    #Subscriber callbacks
     def goalCallback(self, goal_data):
         self.goal = goal_data.data
 
+    def dispatchEvent(self, event_data):
+        self.dispatch(Event(event_data.data, goal=self.goal))
+
+    #Action functions
     def caroselPositionCallback(self, carosel_position_data):
         self.carosel_position = carosel_position_data.data
 
@@ -103,8 +109,7 @@ class Carosel(StateMachine):
     def updateRepositioning(self, state, event):
         self.repos_goal = event.cargo['goal']
 
-    def dispatchEvent(self, event_data):
-        self.dispatch(Event(event_data.data, goal=self.goal))
+    
 
 
         

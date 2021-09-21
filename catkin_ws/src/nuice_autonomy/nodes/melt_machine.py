@@ -31,6 +31,7 @@ class Melt(StateMachine):
         self.probe_2_service = probe_2_service
         self.worker_thread = threading.Thread(target=self.run)
 
+        # Main states
         idle = State("idle")
         melting = State("melting")
         stopped = State("stopped")
@@ -39,6 +40,7 @@ class Melt(StateMachine):
         self.add_state(melting)
         self.add_state(stopped)
 
+        # State transitions
         self.add_transition(idle, melting, events=['melt_melt'])
         self.add_transition(stopped, melting, events=['melt_melt'])
 
@@ -48,6 +50,7 @@ class Melt(StateMachine):
         self.add_transition(stopped, idle, events=['melt_idle'])
         self.add_transition(melting, idle, events=['melt_idle'])
 
+        # Event handlers
         idle.handlers = {'enter' : self.idleOnEnter,
                               'exit' : self.idleOnExit}
         stopped.handlers = {'enter' : self.stopOnEnter,
@@ -65,12 +68,14 @@ class Melt(StateMachine):
         print("melt initialized")
         self.worker_thread.start()
 
+    # Subscriber callbacks
     def meltLimitCallback(self, limit_data):
         self.melt_limit = limit_data.data
 
     def meltPositionCallback(self, position_data):
         self.current_melt_position = position_data.data - self.mcp_correction
 
+    # Action functions
     def idleOnEnter(self, state, event):
         self.idle = True
         self.melt_speed_pub.publish(600)
@@ -104,6 +109,7 @@ class Melt(StateMachine):
     def atZero(self):
         return (self.current_position == 0)
 
+    # Control loop
     def run(self):
         while not rospy.is_shutdown():
             self.rate.sleep()
