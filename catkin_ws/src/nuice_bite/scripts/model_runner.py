@@ -8,24 +8,25 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from tensorflow import keras
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-filepath = os.path.join(os.path.dirname(os.getcwd()), 'neural.h5')
-print(filepath)
+
+filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'neural.h5')
+print('FILEPATH', filepath)
 
 model = keras.models.load_model(filepath)
 
 def main():
     s.connect(('localhost', 50000))
+    predictions = [[0,0,0,0,0,0]]
     while True:
         time.sleep(0.1)
 
-        data = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        data_out = struct.pack('<6f', *data)
+        data_out = struct.pack('<6f', *data[0])
         s.sendall(data_out)
 
         data_in = s.recv(1024)
         features = struct.unpack('<3f', data_in)
 
-        model.predict([features])
+        predictions = model.predict([features])
 
 
 if __name__ == "__main__":

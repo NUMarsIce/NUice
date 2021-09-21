@@ -25,13 +25,13 @@ feature_vector = {
     CURRENT_STRING: 0
 }
 
-def load_model():
-    # TODO: get a correct filename
-    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logistic0910.sav') #logistic_model logistic0912
-    infile = open(filepath,'rb')
-    model = pickle.load(infile)
-    infile.close() 
-    return model
+# def load_model():
+#     # TODO: get a correct filename
+#     filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logistic0910.sav') #logistic_model logistic0912
+#     infile = open(filepath,'rb')
+#     model = pickle.load(infile)
+#     infile.close() 
+#     return model
 
 def read_position(data):
     feature_vector[POSITION_STRING] = -1016.0/(300.0 * 400.0) * data.data
@@ -72,13 +72,9 @@ def bite():
         s.listen(1)
 
 
-    # load BITE from pickle
-    model = load_model()
-    classes = model.classes_
-
-    # load BITE from pickle
-    model = load_model()
-    classes = model.classes_
+    # # load BITE from pickle
+    # model = load_model()
+    # classes = model.classes_
 
     pub = rospy.Publisher('bite_probabilities', ProbabilityVector, queue_size=10)
     rospy.init_node('bite', anonymous=True)
@@ -120,6 +116,7 @@ def bite():
                 # send data
                 data_out = struct.pack('<3f',feature_vector[POSITION_STRING],feature_vector[CURRENT_STRING], feature_vector[WOB_STRING])
                 conn.sendall(data_out)
+
             conn.close()
 
             

@@ -28,6 +28,11 @@ NUGPIO main_pump(nh, "filt_main_pump", PB1, OUTPUT);
 NUGPIO bypass(nh, "filt_bypass", PB10, OUTPUT);
 NUGPIO backwash(nh, "filt_backwash", PB12, OUTPUT);
 
+// Filtration pumps J3: 3v3, PA6, PA7, PC4, PC5
+NUGPIO temp(nh, "filt_temp", PC4, OUTPUT);
+NUGPIO main_pump2(nh, "filt_main_pump2", PC5, OUTPUT);
+
+
 void setup(){
     nh.getHardware()->setBaud(115200);
     nh.initNode();
@@ -47,7 +52,8 @@ void setup(){
     main_pump.setup();
     bypass.setup();
     backwash.setup();
-
+    temp.setup();
+    main_pump2.setup();
 }
 
 
@@ -69,4 +75,7 @@ void loop(){
     main_pump.update();
     bypass.update();
     backwash.update();
+    temp.update();
+    main_pump2.update();
+
 }
