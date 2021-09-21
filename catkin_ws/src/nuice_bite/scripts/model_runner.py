@@ -8,8 +8,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from tensorflow import keras
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-filepath = os.path.join(os.path.dirname(os.getcwd()), 'neural_model')
+filepath = os.path.join(os.path.dirname(os.getcwd()), 'neural.h5')
 print(filepath)
+
 model = keras.models.load_model(filepath)
 
 def main():
