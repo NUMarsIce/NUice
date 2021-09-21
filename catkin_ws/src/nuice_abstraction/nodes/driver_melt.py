@@ -19,7 +19,7 @@ def load1_cb(data):
 
 def load2_cb(data):
     global l1, l2, lavg
-    l1 = data.data
+    l2 = data.data
     lavg = (l1+l2)/2
 
 def pos_cb(data):

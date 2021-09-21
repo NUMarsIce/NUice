@@ -5,7 +5,7 @@ from std_msgs.msg import Int32, UInt16, Float32
 import sys
 
 NUDGE_VAL = -50
-SPEED = 200
+SPEED = 400
 LOAD_DELTA = 10
 STEPS_PER_METER = -118110
 

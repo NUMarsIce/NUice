@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
-##### TODO WORK IN PROGRESS
 
 import rospy
 from std_msgs.msg import Int32, UInt16
 
-ROT_MIN = 0
-ROT_MAX = 1600
-ROT_SPEED = 100
+ROT_MIN = -1800
+ROT_MAX = 0
+ROT_SPEED = 25
 
 P_MIN = 0
-P_MAX = 1600
-P_SPEED = 100
+P_MAX = 2000
+P_SPEED = 10
 
 p_pos = 0
 rot_pos = 0
@@ -25,6 +24,7 @@ def rot_cb(data):
     rot_pos = data.data
 
 def main():
+    global pitch_pos_pub, pitch_speed_pub, rot_pos_pub, rot_speed_pub
     rospy.init_node("driver_bowl")
 
     pitch_pos_pub = rospy.Publisher("/melt_board/pitch_stp/set_abs_pos", Int32, queue_size=10)
@@ -37,10 +37,10 @@ def main():
     rospy.Subscriber("/melt_board/rot_stp/current_position", Int32, rot_cb)
 
     ### Sketchy code start
-    input("Press enter to start...")
+    raw_input("Press enter to start...")
 
     rot_speed_pub.publish(UInt16(ROT_SPEED))
-    ptich_speed_pub.publish(UInt16(P_SPEED))
+    pitch_speed_pub.publish(UInt16(P_SPEED))
 
     rot_pos_pub.publish(Int32(ROT_MIN))
     pitch_pos_pub.publish(Int32(P_MIN))
@@ -69,3 +69,9 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
+    finally:
+        global pitch_pos_pub, pitch_speed_pub, rot_pos_pub, rot_speed_pub
+        pitch_pos_pub.publish(Int32(P_MIN))
+        pitch_speed_pub.publish(UInt16(P_SPEED*10))
+        rot_pos_pub.publish(Int32(ROT_MIN))
+        rot_speed_pub.publish(UInt16(ROT_SPEED*10))

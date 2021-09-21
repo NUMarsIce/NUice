@@ -20,7 +20,7 @@ def main():
     while True:
         time.sleep(0.1)
 
-        data_out = struct.pack('<6f', *data[0])
+        data_out = struct.pack('<6f', *predictions[0])
         s.sendall(data_out)
 
         data_in = s.recv(1024)
