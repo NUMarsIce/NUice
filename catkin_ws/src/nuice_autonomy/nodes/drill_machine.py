@@ -53,7 +53,6 @@ class Drill(StateMachine):
                               'exit' : self.idleOnExit}
         drilling.handlers = {'enter': self.drillingOnEnter,
                                   'drill_drill' : self.drillingUpdate,
-                                  'drill_bounce' : self.bounce,
                                   'exit' : self.drillingOnExit}
         stopped.handlers = {'enter' : self.stopOnEnter,
                                  'exit' : self.stopOnExit}
@@ -90,14 +89,6 @@ class Drill(StateMachine):
     def drillingUpdate(self, state, event):
         self.drill_motion_queue.put(-abs(event.cargo['goal']))
         print "Updated drilling"
-    
-    def bounce(self, state, event):
-        n = self.current_drill_position
-        for i in range(event.cargo['goal']):
-            self.drill_motion_queue.put(n + 15)
-            self.drill_motion_queue.put(n + 5)
-            n = n + 5
-
 
     def drillingOnExit(self, state, event):
         self.drill_stop_pub.publish(Empty())
