@@ -76,7 +76,6 @@ class Carosel(StateMachine):
         #Event handlers
         steady.handlers = {'drill_idle': lambda state, event: self.drill.dispatch(event),
                            'drill_drill': lambda state, event: self.drill.dispatch(event),
-                           'drill_bounce': lambda state, event: self.drill.dispatch(event),
                            'drill_stop': lambda state, event: self.drill.dispatch(event),
                            'melt_idle': lambda state, event: self.melt.dispatch(event),
                            'melt_melt': lambda state, event: self.melt.dispatch(event),
