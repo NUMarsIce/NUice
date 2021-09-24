@@ -50,7 +50,7 @@ class GPIOPlugin(Plugin):
         self._widget.highBtn.pressed.connect(lambda: self.set_state(True))
 
         ### Setup
-        self._widget.nameBox.sizeAdjustPolicy = 0 #Make it adjust to size
+        self._widget.nameBox.sizeAdjustPolicy = 0 # Make it adjust to size
 
     ### Signal handlers ###########################
     def set_state(self, state):
@@ -66,7 +66,7 @@ class GPIOPlugin(Plugin):
             self._widget.stateLbl.setStyleSheet("background-color: blue")
 
     def reload(self):
-        #refreshes the list of gpios
+        # refreshes the list of gpios
         
         self.gpios = []
         _, _, topic_type = rospy.get_master().getTopicTypes()

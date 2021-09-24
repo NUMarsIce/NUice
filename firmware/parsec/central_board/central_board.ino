@@ -30,7 +30,10 @@ NUGPIO backwash(nh, "filt_backwash", PB12, OUTPUT);
 
 // Filtration pumps J3: 3v3, PA6, PA7, PC4, PC5
 NUGPIO temp(nh, "filt_temp", PC4, OUTPUT);
-NUGPIO main_pump2(nh, "filt_main_pump2", PC5, OUTPUT);
+NUGPIO main_pump2(nh, "filt_rparastaltic", PC5, OUTPUT);
+
+// Motor driver for parastaltic J10: 5v, PB6, PB7, PB8, PB9
+L298NDriver main_pump2_motor(nh, "filt_mparastaltic", PB6, PB7);
 
 
 void setup(){

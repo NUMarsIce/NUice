@@ -17,6 +17,8 @@ CURRENT_STRING = 'current'
 
 states = ['air', 'clay', 'concrete',  'ice', 'sand', 'stone']
 
+base_position = 0
+
 # stored infromation
 feature_vector = {
     POSITION_STRING: 0,
@@ -37,7 +39,7 @@ def read_position(data):
     feature_vector[POSITION_STRING] = -3.26571432/(400.0) * data.data
 
 def read_wob(data):
-    feature_vector[WOB_STRING] = data.data
+    feature_vector[WOB_STRING] = data.data-base_position
 
 def read_drill_hall(data):
     feature_vector[SPIN_SPEED_STRING] = data.data
@@ -71,10 +73,10 @@ def bite():
         # Listen for incoming connections
         s.listen(1)
 
-
-    # # load BITE from pickle
-    # model = load_model()
-    # classes = model.classes_
+    print("Waiting for position")
+    global base_position
+    base_position = rospy.wait_for_message("/central_board/drill_stp/current_position", Float32)
+    print("got base position: %i" % base_position)
 
     pub = rospy.Publisher('bite_probabilities', ProbabilityVector, queue_size=10)
     rospy.init_node('bite', anonymous=True)
@@ -86,6 +88,7 @@ def bite():
     # currently commented out because initial model used for testing only has wob and position data
     rospy.Subscriber("/drill_board/drill_hall/rate", Float64, read_drill_hall)
     rospy.Subscriber("/current_board/drill/current", Float32, read_current)
+
 
 
     rate = rospy.Rate(1) # 1hz

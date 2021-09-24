@@ -11,6 +11,7 @@ pos = 0
 
 NUDGE_VAL = 50
 SPEED = 100
+STEPS_PER_M = 157480
 
 def load1_cb(data):
     global l1, l2, lavg
@@ -48,6 +49,9 @@ def main():
         print("Out of range, using default pressure")
         max_press = 100
     
+    initial_pos = pos/STEPS_PER_M
+    print("Melting from %0.4fm" % initial_pos)
+
     r = rospy.Rate(10) #10 Hz
     while not rospy.is_shutdown():
         r.sleep()
@@ -55,7 +59,7 @@ def main():
         if(lavg < max_press):
             rel_pos_pub.publish(Int32(NUDGE_VAL))
         
-        print 'Pressure: %.2f\r' % lavg,
+        print 'Pressure: %.2f, Distance: %0.3fm, Position: %0.3fm\r' % (lavg, pos/STEPS_PER_M, pos/STEPS_PER_M),
         sys.stdout.flush()
 
         
