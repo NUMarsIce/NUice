@@ -24,7 +24,7 @@ def main():
         s.sendall(data_out)
 
         data_in = s.recv(1024)
-        features = struct.unpack('<3f', data_in)
+        features = struct.unpack('<2f', data_in)
 
         predictions = model.predict([features])
 
