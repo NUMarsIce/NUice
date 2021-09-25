@@ -39,7 +39,7 @@ def read_position(data):
     feature_vector[POSITION_STRING] = -3.26571432/(400.0) * data.data
 
 def read_wob(data):
-    feature_vector[WOB_STRING] = data.data-base_position
+    feature_vector[WOB_STRING] = data.data
 
 def read_drill_hall(data):
     feature_vector[SPIN_SPEED_STRING] = data.data
